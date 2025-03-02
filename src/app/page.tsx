@@ -5,6 +5,7 @@ import Header from "./Components/Header/Header";
 import Navbar from "./Components/Navbar/Navbar";
 import SubHeader from "./Components/SubHeader/SubHeader";
 import Stages from "./Components/Stages/Stages";
+import Tasks from "./Components/Tasks/Tasks";
 
 export default function Home() {
   return (
@@ -34,6 +35,12 @@ export default function Home() {
             <div>
               <Stages/>
             </div>
+
+            <div>
+              <Tasks/>
+            </div>
+
+
           </div>
         </div>
       );

@@ -3,8 +3,8 @@ const Header = () =>{
     <div className="h-12 bg-[#AA96AF] w-full rounded-lg">
         <div className="h-full flex items-center">
             <div className=" flex space-x-4">
-                <ul className="text-white p-2">
-                    <li>Heading</li>
+                <ul className="text-white text-2xl px-8">
+                    <li>Month</li>
                 </ul>
             </div>
         </div>
