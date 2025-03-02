@@ -1,16 +1,15 @@
-const Header = () =>{
-    return <div className="mx-7 mt-4 relative z-10">
-    <div className="h-12 bg-[#AA96AF] w-full rounded-lg">
+const SubHeader = () => {
+    return <div className="mx-7 my-2 relative z-10">
+    <div className="h-9 bg-[#ADAAB2] w-full rounded-lg">
         <div className="h-full flex items-center">
             <div className=" flex space-x-4">
                 <ul className="text-white p-2">
-                    <li>Heading</li>
+                    <li>SubHeading</li>
                 </ul>
             </div>
         </div>
     </div>
     </div>
-    
 }
 
-export default Header;
+export default SubHeader;

@@ -3,6 +3,8 @@ import Board from "./Components/Board/Board";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import Header from "./Components/Header/Header";
 import Navbar from "./Components/Navbar/Navbar";
+import SubHeader from "./Components/SubHeader/SubHeader";
+import Stages from "./Components/Stages/Stages";
 
 export default function Home() {
   return (
@@ -19,10 +21,18 @@ export default function Home() {
             <div className="w-full">
               <Header />
             </div>
+
+            <div className="w-full">
+              <SubHeader/>
+            </div>
             
             {/* Board - takes remaining space */}
             <div className="flex-1 overflow-auto">
               <Board />
+            </div>
+
+            <div>
+              <Stages/>
             </div>
           </div>
         </div>
