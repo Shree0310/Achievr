@@ -37,6 +37,10 @@ export default function Home() {
             </div>
 
             <div>
+              <Dashboard/>
+            </div>
+
+            <div>
               <Tasks/>
             </div>
 
