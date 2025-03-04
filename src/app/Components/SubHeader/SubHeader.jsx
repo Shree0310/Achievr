@@ -1,6 +1,11 @@
+"use client"
+
 import Link from "next/link"
+import { usePathname } from "next/navigation";
 
 const SubHeader = () => {
+    const pathname = usePathname();
+
     return <div className="mx-7 my-2 relative z-10">
     <div className="h-9 bg-[#ADAAB2] w-full rounded-lg">
         <div className="h-full flex items-center">
@@ -12,12 +17,16 @@ const SubHeader = () => {
                         </Link>
                     </li>
                     <li className="mx-5">
-                        <Link href='/stages'>
+                        <Link 
+                        href='/board'
+                        className={`${pathname === '/board' ? 'underline underline-offset-4' : ''}`}>
                         Board
                         </Link>
                         </li>
                     <li className="mx-5">
-                        <Link href="/dashboard">
+                        <Link 
+                        href="/dashboard"
+                        className={`${pathname === '/dashboard' ? 'underline underline-offset-4' : ''}`}>
                         Dashboard
                         </Link></li>
                     <li className="mx-5">This Week</li>

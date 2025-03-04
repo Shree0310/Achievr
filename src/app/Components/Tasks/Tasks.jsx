@@ -1,5 +1,5 @@
 const Tasks = () => {
-    return <div className="absolute z-20 top-44 mx-10">
+    return <div className="absolute z-20 top-24 mx-4">
         <div className="flex gap-16">
             {/* Not Started tasks */}
 
