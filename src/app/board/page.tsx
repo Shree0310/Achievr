@@ -1,14 +1,11 @@
-import Image from "next/image";
-import Board from "./Components/Board/Board";
-import Dashboard from "./Components/Dashboard/Dashboard";
-import Header from "./Components/Header/Header";
-import Navbar from "./Components/Navbar/Navbar";
-import SubHeader from "./Components/SubHeader/SubHeader";
-import Stages from "./Components/Stages/Stages";
-import Tasks from "./Components/Tasks/Tasks";
+import Board from "../Components/Board/Board";
+import Header from "../Components/Header/Header";
+import Navbar from "../Components/Navbar/Navbar";
+import SubHeader from "../Components/SubHeader/SubHeader";
+import Stages from "../Components/Stages/Stages";
 
-export default function Home() {
-  return (
+export default function BoardPage() {
+    return (
 
         <div className="h-screen w-screen flex overflow-hidden">
           {/* Navbar - fixed on the left */}
@@ -36,13 +33,8 @@ export default function Home() {
               <Stages/>
             </div>
 
-            <div>
-              <Dashboard/>
-            </div>
-
 
           </div>
         </div>
       );
-    }
-
+  }

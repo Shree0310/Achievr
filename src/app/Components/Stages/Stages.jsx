@@ -1,5 +1,10 @@
+import Tasks from "../Tasks/Tasks";
+
 const Stages = () => {
-    return <div className="mx-7 mt-2 relative z-10">
+    return <div className="mx-[26px] mt-2 relative z-10">
+                <div>
+            <Tasks/>
+        </div>
         <div className="flex gap-4">
             <div className="bg-[#C1C1C1] w-72 h-screen rounded-lg">
                 <p className="py-4 text-center text-gray-700 text-lg">Not Started</p>
@@ -14,7 +19,6 @@ const Stages = () => {
                 <p className="py-4 text-center text-gray-700 text-lg">Completed</p>
             </div>
         </div>
-
     </div>
 }
 
