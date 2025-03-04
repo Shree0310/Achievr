@@ -4,6 +4,7 @@ import Header from "../Components/Header/Header";
 import SubHeader from "../Components/SubHeader/SubHeader";
 import Board from "../Components/Board/Board";
 import Stages from "../Components/Stages/Stages";
+import Activity from '../Components/Activity/Activity';
 
 export default function DashboardPage() {
     return (
@@ -24,10 +25,14 @@ export default function DashboardPage() {
                     <SubHeader />
                 </div>
 
-                {/* Board - takes remaining space */}
-                <div className="flex-1 overflow-auto">
-                    <Dashboard />
+                <div className="flex">
+                    {/* Board - takes remaining space */}
+                    <div className="flex-1 overflow-auto">
+                        <Dashboard />
+                    </div>
+   
                 </div>
+
             </div>
         </div>
     );
