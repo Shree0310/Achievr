@@ -7,15 +7,53 @@ import SubHeader from "./Components/SubHeader/SubHeader";
 import Stages from "./Components/Stages/Stages";
 import Tasks from "./Components/Tasks/Tasks";
 import Activity from "./Components/Activity/Activity";
+import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
+import UserName from './Components/UserName/UserName';
 
-export default function Home() {
-  return (
+export default async function Home() {
 
-    <div className="h-screen w-screen flex overflow-hidden">
-      {/* Navbar - fixed on the left */}
-      <div className="h-full flex-shrink-0">
-        <Navbar />
+  const supabase = await createClient();
+
+  const session = await supabase.auth.getSession();
+
+  // Force unauthenticated state for testing
+
+  // console.log(session);
+  // console.log(session.data.session?.user);
+
+  if (!session.data.session?.user) {
+    return (
+      <div className="flex flex-col items-center h-screen gap-4">
+        <h1>
+          Not Authenticated
+          <Link className="btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded ml-3" href='/auth'>
+            Sign In
+          </Link>
+        </h1>
       </div>
+    )
+  }
+
+  const {
+    user: { user_metadata, app_metadata }
+  } = session.data.session;
+
+  const { name, email, user_name, avatar_url } = user_metadata
+
+  const userName = user_name ? `@${user_name}` : 'user name not set';
+
+  return (
+    <div className="h-screen w-screen flex overflow-hidden">
+
+      {/* Navbar - fixed on the left */}
+      <div className="relative">
+        <UserName />
+        <div className="h-full flex-shrink-0">
+          <Navbar />
+        </div>
+      </div>
+
 
       {/* Main content area - takes remaining width */}
       <div className="flex-1 flex flex-col min-w-0">
@@ -36,11 +74,6 @@ export default function Home() {
         <div>
           <Stages />
         </div>
-
-        <div>
-          <Dashboard />
-        </div>
-
 
       </div>
     </div>
