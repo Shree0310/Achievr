@@ -5,7 +5,6 @@ import Header from "./Components/Header/Header";
 import Navbar from "./Components/Navbar/Navbar";
 import SubHeader from "./Components/SubHeader/SubHeader";
 import Stages from "./Components/Stages/Stages";
-import Tasks from "./Components/Tasks/Tasks";
 import Activity from "./Components/Activity/Activity";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
@@ -44,19 +43,17 @@ export default async function Home() {
   const userName = user_name ? `@${user_name}` : 'user name not set';
 
   return (
-    <div className="h-screen w-screen flex overflow-hidden">
-
-      {/* Navbar - fixed on the left */}
-      <div className="relative">
+    <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
+      {/* Navbar - fixed on the left, full width on mobile */}
+      <div className="relative w-full md:w-auto">
         <UserName />
-        <div className="h-full flex-shrink-0">
+        <div className="h-auto md:h-full flex-shrink-0">
           <Navbar />
         </div>
       </div>
 
-
       {/* Main content area - takes remaining width */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-auto">
         {/* Header - fixed at top */}
         <div className="w-full">
           <Header />
@@ -67,14 +64,14 @@ export default async function Home() {
         </div>
 
         {/* Board - takes remaining space */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1">
           <Board />
         </div>
 
-        <div>
+        {/* Stages (which now contains Tasks) */}
+        <div className="pb-6">
           <Stages />
         </div>
-
       </div>
     </div>
   );
