@@ -5,7 +5,6 @@ import Header from "./Components/Header/Header";
 import Navbar from "./Components/Navbar/Navbar";
 import SubHeader from "./Components/SubHeader/SubHeader";
 import Stages from "./Components/Stages/Stages";
-import Tasks from "./Components/Tasks/Tasks";
 import Activity from "./Components/Activity/Activity";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
