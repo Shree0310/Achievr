@@ -42,20 +42,24 @@ const Tasks = () => {
                         {/* Not Started tasks */}
                         <ul className="flex flex-col gap-2">
                             {data && data.map((item) => (
-                                <div className="bg-white w-60 h-44 rounded-lg shadow-lg">    <li key={item.id} className="text-gray-600 p-4">{item.title}</li></div>
+                                <div className="bg-white lg:w-[358px] w-60 h-44 rounded-lg shadow-lg">
+                                    <li key={item.id} className="text-gray-600 p-4">
+                                        {item.title}
+                                    </li>
+                                </div>
                             ))}
                         </ul>
 
                         {/* In Progress tasks */}
 
                         <div className="flex flex-col gap-2">
-                            <div className="bg-white w-60 h-44 rounded-lg shadow-lg">
+                            <div className="bg-white lg:w-[358px] w-60 h-44 rounded-lg shadow-lg">
                                 <p className="text-gray-600 p-4"> Task 1</p>
                             </div>
-                            <div className="bg-white w-60 h-44 rounded-lg shadow-lg">
+                            <div className="bg-white lg:w-[358px] w-60 h-44 rounded-lg shadow-lg">
                                 <p className="text-gray-600 p-4"> Task 2</p>
                             </div>
-                            <div className="bg-white w-60 h-44 rounded-lg shadow-lg">
+                            <div className="bg-white lg:w-[358px] w-60 h-44 rounded-lg shadow-lg">
                                 <p className="text-gray-600 p-4"> Task 3</p>
                             </div>
                         </div>
