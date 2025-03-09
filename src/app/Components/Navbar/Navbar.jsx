@@ -22,15 +22,12 @@ const Navbar = () => {
         }
     }
     return <div>
-        <div className="w-52 bg-[#ADAAB2] h-screen z-10">
-            <div className="rounded-xl p-4">
-                <ul className="space-y-4 ">
-                    {data && data.map((item) => (
-                        <li key={item.id} className="text-white text-xl py-20">
-                            {item.title}
-                        </li>
-                    ))}
-
+        <div className="w-full md:w-52 bg-[#ADAAB2] h-16 md:h-screen flex md:block">
+            <div className="rounded-xl p-2 md:p-4 flex items-center md:block">
+                <ul className="flex md:block space-x-4 md:space-x-0 md:space-y-4">
+                    <li className="text-white text-lg md:text-xl md:py-10">
+                        Cycles
+                    </li>
                 </ul>
             </div>
         </div>
