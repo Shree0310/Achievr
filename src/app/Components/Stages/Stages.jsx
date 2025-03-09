@@ -2,12 +2,24 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from "@/utils/supabase/client";
+import { closestCorners, DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 
 const Stages = () => {
 
     const [tasks, setTasks] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [activeId, setActiveId] = useState(null);
+    const [activeDragData, setActiveDragData] = useState(null);
+
+    //Configure sensors for drag detection
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 5,
+            }
+        })
+    );
 
     useEffect(() => {
         fetchData();
@@ -47,13 +59,12 @@ const Stages = () => {
 
         tasks.forEach(task => {
             const status = task.status?.toString().toLowerCase() || '';
-            console.log(status);
 
             if (status === 'not started') {
                 columns.notStarted.push(task);
-            } else if (status == 'in progress') {
+            } else if (status === 'in progress') {
                 columns.inProgress.push(task);
-            } else if (status == 'under review') {
+            } else if (status === 'under review') {
                 columns.underReview.push(task);
             } else {
                 columns.completed.push(task);
@@ -63,6 +74,95 @@ const Stages = () => {
     }
 
     const { notStarted, inProgress, underReview, completed } = filterTasksByStatus();
+
+    //Handle drag start
+    function handleDragStart(event) {
+        const { active } = event;
+        setActiveId(active.id);
+        setActiveDragData(active.data.current.task);
+
+    }
+
+    //Handle drag end
+    async function HandleDragEnd(event) {
+        const { active, over } = event;
+        if (!over) {
+            setActiveId(null);
+            setActiveDragData(null);
+            return;
+        }
+
+        //if dropped take the column in which it was dropped
+        const newStatus = over.id;
+
+        //Get the task that was dragged
+        const taskId = active.id;
+        const task = active.data.current.task;
+
+        //change the status acc to the column in which task wa sdroppped
+        let statusText;
+        switch (newStatus) {
+            case 'notStarted':
+                statusText = 'not started';
+                break;
+            case 'inProgress':
+                statusText = 'inProgress';
+                break;
+            case 'underReview':
+                statusText = 'under review';
+                break;
+            case 'completed':
+                statusText = 'completed';
+                break;
+            default:
+                statusText = 'not started';
+        }
+
+        //updating the UI immediately after
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
+                task.id === taskId ? { ...task, status: statusText } : task
+            )
+        );
+
+        //update in supabase
+        try {
+            const { error } = await supabase
+                .from('tasks')
+                .update({ status: statusText })
+                .eq('id', taskId)
+
+            if (error) {
+                throw error;
+            }
+        } catch (error) {
+            console.error(error);
+
+            //revert the UI if update fails
+            fetchData();
+        }
+
+        setActiveId(null);
+        setActiveDragData(null);
+    }
+
+    //Make each column droppable by making it a component
+    const DroppableColumn = ({ id, title, tasks }) => (
+        <div
+            id={id}
+            className="bg-[#C1C1C1] h-[400px] sm:h-[450px] md:h-[500px] lg:h-[calc(100vh-220px)] rounded-lg overflow-hidden flex flex-col">
+            <p className="py-3 text-center text-gray-700 text-base md:text-lg font-medium border-b border-gray-300">{title}</p>
+            <div className="overflow-y-auto p-2 flex-grow">
+                {loading ? (
+                    <p className="text-center text-gray-500 p-4">loading..</p>
+                ) : tasks.length == 0 ? (
+                    <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                ) : (
+                    tasks.map((task) => <TaskCard key={task.id} task={task} />)
+                )}
+            </div>
+        </div>
+    )
 
     // Task card component for consistent styling
     const TaskCard = ({ task }) => (
@@ -76,73 +176,59 @@ const Stages = () => {
         </div>
     );
 
-    return <div className="mx-2 md:mx-7 mt-2 relative z-10">
-        {error && (
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-                <p className="font-bold">Error</p>
-                <p>{error}</p>
-            </div>
-        )}
-
-        {/* Grid layout that adapts to screen size */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-            {/* Not Started column */}
-            <div className="bg-[#C1C1C1] h-[400px] sm:h-[450px] md:h-[500px] lg:h-[calc(100vh-220px)] rounded-lg overflow-hidden flex flex-col">
-                <p className="py-3 text-center text-gray-700 text-base md:text-lg font-medium border-b border-gray-300">Not Started</p>
-                <div className="overflow-y-auto p-2 flex-grow">
-                    {loading ? (
-                        <p className="text-center text-gray-500 p-4">loading..</p>
-                    ): notStarted.length == 0 ? (
-                        <p className="text-center text-gray-500 p-4">No Tasks..</p>
-                    ):(
-                        notStarted.map((task)=> <TaskCard key={task.id} task ={task}/>)
-                    )}
-                </div>
-            </div>
-
-            {/* In Progress column */}
-            <div className="bg-[#C1C1C1] h-[400px] sm:h-[450px] md:h-[500px] lg:h-[calc(100vh-220px)] rounded-lg overflow-hidden flex flex-col">
-                <p className="py-3 text-center text-gray-700 text-base md:text-lg font-medium border-b border-gray-300">In Progress</p>
-                <div className="overflow-y-auto p-2 flex-grow">
-                {loading ? (
-                    <p className="text-center text-gray-500 p-4">Loading...</p>
-                ): inProgress.length == 0 ? (
-                    <p className="text-center text-gray-500 p-4">No Tasks..</p>
-                ):(
-                    inProgress.map(task => <TaskCard key={task.id} task={task}/>)
+    return (
+        <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragEnd={HandleDragEnd}
+            autoScroll={true}
+        >
+            <div className="mx-2 md:mx-7 mt-2 relative z-10">
+                {error && (
+                    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                        <p className="font-bold">Error</p>
+                        <p>{error}</p>
+                    </div>
                 )}
-                </div>
-            </div>
 
-            {/* Under Review column */}
-            <div className="bg-[#C1C1C1] h-[400px] sm:h-[450px] md:h-[500px] lg:h-[calc(100vh-220px)] rounded-lg overflow-hidden flex flex-col">
-                <p className="py-3 text-center text-gray-700 text-base md:text-lg font-medium border-b border-gray-300">Under Review</p>
-                <div className="overflow-y-auto p-2 flex-grow">
-                    {loading ? (
-                        <p className="text-center text-gray-500 p-4">Loading..</p>
-                    ): underReview.length ==0 ? (
-                        <p className="text-center text-gray-500 p-4">No Tasks..</p>
-                    ):(
-                        underReview.map(task => <TaskCard key={task.id} task={task}/>)
-                    )}
-                </div>
-            </div>
+                {/* Grid layout that adapts to screen size */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                    {/* Not Started column */}
+                    <DroppableColumn
+                        id='notStarted' title='not started' tasks={notStarted} />
 
-            {/* Completed column */}
-            <div className="bg-[#C1C1C1] h-[400px] sm:h-[450px] md:h-[500px] lg:h-[calc(100vh-220px)] rounded-lg overflow-hidden flex flex-col">
-                <p className="py-3 text-center text-gray-700 text-base md:text-lg font-medium border-b border-gray-300">Completed</p>
-                <div className="overflow-y-auto p-2 flex-grow">
-                    {loading ? (
-                        <p className="text-center text-gray-500 p-4">Loading...</p>
-                    ) : completed.length === 0 ? (
-                        <p className="text-center text-gray-500 p-4">No tasks</p>
-                    ) : (
-                        completed.map(task => <TaskCard key={task.id} task={task}/>)
-                    )}
+
+                    {/* In Progress column */}
+                    <DroppableColumn
+                        id='inProgress'
+                        title='in progress'
+                        tasks={inProgress} />
+
+                    {/* Under Review column */}
+                    <DroppableColumn
+                        id='underReview'
+                        title='under review'
+                        tasks={underReview} />
+
+                    {/* Completed column */}
+                    <DroppableColumn
+                        id='completed'
+                        title='completed'
+                        tasks={completed} />
+
                 </div>
+                {/* DragOverlay shows the ghost of the dragged task */}
+                <DragOverlay>
+                    {activeDragData && activeId ? (
+                        <TaskCard task={activeDragData}/>
+                    ): null}
+                    
+                </DragOverlay>
             </div>
-        </div>
-    </div>
+        </DndContext>
+    );
 }
+
 
 export default Stages;
