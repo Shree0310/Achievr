@@ -1,23 +1,24 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { supabase } from "@/utils/supabase/client";
-import { closestCorners, DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import Task from '../Task/Task';
+import DroppableColumn from '../DroppableColumn/DroppableColumn';
 
 const Stages = () => {
-
     const [tasks, setTasks] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [activeId, setActiveId] = useState(null);
     const [activeDragData, setActiveDragData] = useState(null);
 
-    //Configure sensors for drag detection
+    // ✅ IMPORTANT: Always define sensors in the same way - don't change order or structure
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
                 distance: 5,
-            }
+            },
         })
     );
 
@@ -44,8 +45,8 @@ const Stages = () => {
         }
     }
 
-    //function to filter out tasks according to the stages
-    const filterTasksByStatus = () => {
+    // Filter tasks by status - wrapped in useMemo to prevent recalculation
+    const filteredTasks = useMemo(() => {
         const columns = {
             notStarted: [],
             inProgress: [],
@@ -66,79 +67,85 @@ const Stages = () => {
                 columns.inProgress.push(task);
             } else if (status === 'under review') {
                 columns.underReview.push(task);
-            } else {
+            } else if (status === 'completed') {
                 columns.completed.push(task);
+            } else {
+                // Default to not started for any unknown status
+                columns.notStarted.push(task);
             }
         });
         return columns;
-    }
+    }, [tasks]);
 
-    const { notStarted, inProgress, underReview, completed } = filterTasksByStatus();
+    // Destructure for easier access
+    const { notStarted, inProgress, underReview, completed } = filteredTasks;
 
-    //Handle drag start
+    // Handle drag start - defined as regular functions, not inside conditional blocks
     function handleDragStart(event) {
         const { active } = event;
-        setActiveId(active.id);
-        setActiveDragData(active.data.current.task);
-
+        if (active) {
+            setActiveId(active.id);
+            if (active.data?.current?.task) {
+                setActiveDragData(active.data.current.task);
+            }
+        }
     }
 
-    //Handle drag end
-    async function HandleDragEnd(event) {
+    // Handle drag end
+    async function handleDragEnd(event) {
         const { active, over } = event;
-        if (!over) {
+        
+        if (!over || !active) {
             setActiveId(null);
             setActiveDragData(null);
             return;
         }
 
-        //if dropped take the column in which it was dropped
+        // Get the column the task was dropped in
         const newStatus = over.id;
-
-        //Get the task that was dragged
+        
+        // Get the task that was dragged
         const taskId = active.id;
-        const task = active.data.current.task;
-
-        //change the status acc to the column in which task wa sdroppped
+        
+        // Different formatting based on column id
         let statusText;
-        switch (newStatus) {
-            case 'notStarted':
+        switch(newStatus) {
+            case 'notStarted': 
                 statusText = 'not started';
                 break;
-            case 'inProgress':
-                statusText = 'inProgress';
+            case 'inProgress': 
+                statusText = 'in progress';
                 break;
-            case 'underReview':
+            case 'underReview': 
                 statusText = 'under review';
                 break;
-            case 'completed':
+            case 'completed': 
                 statusText = 'completed';
                 break;
             default:
                 statusText = 'not started';
         }
 
-        //updating the UI immediately after
-        setTasks(prevTasks =>
-            prevTasks.map(task =>
+        // Update in UI immediately for responsiveness
+        setTasks(prevTasks => 
+            prevTasks.map(task => 
                 task.id === taskId ? { ...task, status: statusText } : task
             )
         );
 
-        //update in supabase
+        // Update in database
         try {
             const { error } = await supabase
                 .from('tasks')
                 .update({ status: statusText })
-                .eq('id', taskId)
+                .eq('id', taskId);
 
             if (error) {
                 throw error;
             }
         } catch (error) {
-            console.error(error);
-
-            //revert the UI if update fails
+            console.error("Error updating task status:", error);
+            // Revert UI changes if update fails
             fetchData();
         }
 
@@ -146,29 +153,11 @@ const Stages = () => {
         setActiveDragData(null);
     }
 
-    //Make each column droppable by making it a component
-    const DroppableColumn = ({ id, title, tasks }) => (
-        <div
-            id={id}
-            className="bg-[#C1C1C1] h-[400px] sm:h-[450px] md:h-[500px] lg:h-[calc(100vh-220px)] rounded-lg overflow-hidden flex flex-col">
-            <p className="py-3 text-center text-gray-700 text-base md:text-lg font-medium border-b border-gray-300">{title}</p>
-            <div className="overflow-y-auto p-2 flex-grow">
-                {loading ? (
-                    <p className="text-center text-gray-500 p-4">loading..</p>
-                ) : tasks.length == 0 ? (
-                    <p className="text-center text-gray-500 p-4">No Tasks..</p>
-                ) : (
-                    tasks.map((task) => <TaskCard key={task.id} task={task} />)
-                )}
-            </div>
-        </div>
-    )
-
-    // Task card component for consistent styling
+    // TaskCard for the drag overlay
     const TaskCard = ({ task }) => (
-        <div className='bg-white rounded-lg shadow-md p-3 mb-2'>
+        <div className='bg-white rounded-lg shadow-md p-3 mb-2 opacity-80'>
             <p className='text-gray-500 font-medium'>
-                {task.title || 'No Tasks'}
+                {task.title || 'Untitled Task'}
             </p>
             <p className='text-gray-600 text-sm'>
                 {task.description || 'No Description'}
@@ -177,12 +166,11 @@ const Stages = () => {
     );
 
     return (
-        <DndContext
+        <DndContext 
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
-            onDragEnd={HandleDragEnd}
-            autoScroll={true}
+            onDragEnd={handleDragEnd}
         >
             <div className="mx-2 md:mx-7 mt-2 relative z-10">
                 {error && (
@@ -192,43 +180,76 @@ const Stages = () => {
                     </div>
                 )}
 
-                {/* Grid layout that adapts to screen size */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                    {/* Not Started column */}
-                    <DroppableColumn
-                        id='notStarted' title='not started' tasks={notStarted} />
+                    <DroppableColumn 
+                        id="notStarted" 
+                        title="Not Started" 
+                    >
+                        {loading ? (
+                            <p className="text-center text-gray-500 p-4">loading..</p>
+                        ) : notStarted.length === 0 ? (
+                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                        ) : (
+                            notStarted.map((task) => (
+                                <Task key={task.id} id={task.id} task={task} />
+                            ))
+                        )}
+                    </DroppableColumn>
 
+                    <DroppableColumn 
+                        id="inProgress" 
+                        title="In Progress" 
+                    >
+                        {loading ? (
+                            <p className="text-center text-gray-500 p-4">loading..</p>
+                        ) : inProgress.length === 0 ? (
+                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                        ) : (
+                            inProgress.map((task) => (
+                                <Task key={task.id} id={task.id} task={task} />
+                            ))
+                        )}
+                    </DroppableColumn>
 
-                    {/* In Progress column */}
-                    <DroppableColumn
-                        id='inProgress'
-                        title='in progress'
-                        tasks={inProgress} />
+                    <DroppableColumn 
+                        id="underReview" 
+                        title="Under Review" 
+                    >
+                        {loading ? (
+                            <p className="text-center text-gray-500 p-4">loading..</p>
+                        ) : underReview.length === 0 ? (
+                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                        ) : (
+                            underReview.map((task) => (
+                                <Task key={task.id} id={task.id} task={task} />
+                            ))
+                        )}
+                    </DroppableColumn>
 
-                    {/* Under Review column */}
-                    <DroppableColumn
-                        id='underReview'
-                        title='under review'
-                        tasks={underReview} />
-
-                    {/* Completed column */}
-                    <DroppableColumn
-                        id='completed'
-                        title='completed'
-                        tasks={completed} />
-
+                    <DroppableColumn 
+                        id="completed" 
+                        title="Completed" 
+                    >
+                        {loading ? (
+                            <p className="text-center text-gray-500 p-4">loading..</p>
+                        ) : completed.length === 0 ? (
+                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                        ) : (
+                            completed.map((task) => (
+                                <Task key={task.id} id={task.id} task={task} />
+                            ))
+                        )}
+                    </DroppableColumn>
                 </div>
-                {/* DragOverlay shows the ghost of the dragged task */}
+
                 <DragOverlay>
-                    {activeDragData && activeId ? (
-                        <TaskCard task={activeDragData}/>
-                    ): null}
-                    
+                    {activeId && activeDragData ? (
+                        <TaskCard task={activeDragData} />
+                    ) : null}
                 </DragOverlay>
             </div>
         </DndContext>
     );
 }
-
 
 export default Stages;
