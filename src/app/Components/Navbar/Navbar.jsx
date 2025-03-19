@@ -25,7 +25,7 @@ const Navbar = () => {
         <div className="w-full md:w-52 bg-[#ADAAB2] h-16 md:h-screen flex md:block">
             <div className="rounded-xl p-2 md:p-4 flex items-center md:block">
                 <ul className="flex md:block space-x-4 md:space-x-0 md:space-y-4">
-                    <li className="text-white text-lg md:text-xl md:py-10">
+                    <li className="text-white text-lg md:text-xl md:py-32">
                         Cycles
                     </li>
                 </ul>
