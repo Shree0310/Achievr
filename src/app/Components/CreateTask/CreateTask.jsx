@@ -13,6 +13,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
     const [error, setError] = useState(null);
     const [cycles, setCycles] = useState([]);
     const [selectedCycle, setSelectedCycle] = useState('');
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
 
@@ -147,9 +148,28 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
 
     return (
         <>
-            <div className="fixed inset-0 flex justify-center py-36 px-20 bg-black bg-opacity-50 z-50">
+            <div className={`fixed bg-black bg-opacity-50 z-50 ${!isEditMode ? "inset-0 flex justify-center py-36 px-20" : "inset-0 flex justify-end pt-36 pl-20 pb-5"} `}>
                 <div className="bg-[#F4EEEE] w-1/2 h-full rounded-lg shadow-md">
-                    <h1 className="bg-[#D9D9D9] h-12 px-8 py-2 text-black text-lg shadow-sm rounded-md">{!isEditMode ? 'Create a task' : 'Edit Task'}</h1>
+                    <div className="bg-[#D9D9D9] h-12 px-8 py-2 flex justify-between items-center text-black text-lg shadow-sm rounded-md">
+                        <h1 className=" ">{!isEditMode ? 'Create a task' : 'Edit Task'}</h1>
+                        {isEditMode && (
+                            <div className="relative">
+                                <div
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    className=" cursor-pointer hover:bg-gray-300 rounded-full p-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                    </svg>
+                                </div>
+                                {isMenuOpen && (
+                                        <div className="absolute right-0  w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                                            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</a>
+                                        </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
                     <div className="flex flex-col p-10 space-y-4">
                         {error && (
                             <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded">
@@ -169,7 +189,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                             onChange={(e) => setDescription(e.target.value)}
                             className="h-24 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
                         />
-                        <div className="flex justify-center space-x-2">
+                        <div className={`flex ${!isEditMode ? "justify-center space-x-2": "flex-col space-y-4"}`}>
                             <select
                                 className="w-1/2 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
                                 value={priority}
@@ -202,7 +222,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 ))}
                             </select>
                         </div>
-                        <div className="flex px-4 space-x-2 justify-end">
+                        <div className={`flex  space-x-2 ${!isEditMode ? "justify-end px-4" : "justify-start py-4"}`}>
                             <button
                                 onClick={onClose}
                                 className="bg-[#D9D9D9] hover:bg-gray-300 text-black font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
