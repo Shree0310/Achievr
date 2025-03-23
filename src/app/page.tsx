@@ -38,7 +38,9 @@ export default async function Home() {
       {/* Navbar */}
       <div className="relative w-full md:w-auto md:h-screen">
         <UserName />
-        <CreateTask userId={session.data.session.user.id} />
+        <CreateTask 
+        onClose={() => {}}
+        userId={session.data.session.user.id} />
         <div className="h-auto md:h-full flex-shrink-0">
           <Navbar />
         </div>

@@ -140,17 +140,21 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
         }
     };
 
-    return <div>
+    const createTask = !isEditMode ? (
         <div className="absolute h-4 w-44 z-30 top-4 left-4 py-12 rounded-md">
             <div className="bg-[#D9D9D9] p-2 shadow-md rounded-md">
                 <button className="text-gray-800 items-center"
-                    onClick={() => setIsOpen(!isOpen)}>Create Task</button>
+                    onClick={() => setIsOpen(true)}>Create Task</button>
             </div>
-        </div>
+            </div>
+    ): null;
+
+    return (
+        <>
         {isOpen && (
             <div className="fixed inset-0 flex justify-center py-36 px-20 bg-black bg-opacity-50 z-50">
                 <div className="bg-[#F4EEEE] w-1/2 h-full rounded-lg shadow-md">
-                    <h1 className="bg-[#D9D9D9] h-12 px-8 py-2 text-black text-lg shadow-sm rounded-md">Create a task</h1>
+                    <h1 className="bg-[#D9D9D9] h-12 px-8 py-2 text-black text-lg shadow-sm rounded-md">{!isEditMode? 'Create a task': 'Edit Task'}</h1>
                     <div className="flex flex-col p-10 space-y-4">
                         {error && (
                             <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded">
@@ -220,7 +224,8 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                 </div>
             </div>
         )}
-    </div>
-}
+   </>
+    );
+};
 
 export default CreateTask;
