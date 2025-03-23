@@ -29,7 +29,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
         const fetchCycles = async () => {
             const { data, error } = await supabase
                 .from('cycles')
-                .select('id', 'name')
+                .select('id, title')
                 .order('created_at', { ascending: false });
 
             if (error) {
@@ -38,7 +38,16 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
             try {
                 if (data && data.length > 0) {
                     setCycles(data);
-                    setSelectedCycle(data[0].id)
+
+                    if (isEditMode && taskToEdit?.cycle_id) {
+                        console.log("cycle id", taskToEdit.cycle_id);
+                        setSelectedCycle(taskToEdit?.cycle_id);
+                        console.log("selected cycle id:", selectedCycle);
+                    }
+                    else if (!selectedCycle) {
+                        setSelectedCycle(data[0].id)
+
+                    }
 
                 }
             } catch (error) {
@@ -77,10 +86,14 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                 const { data, error } = await supabase
                     .from('tasks')
                     .update([
-                        title,
-                        description,
-                        priority || null,
-                        efforts || null
+                        {
+                            title: title,
+                            description: description,
+                            priority: priority === null ? '' : priority,
+                            efforts: efforts === null ? '' : efforts,
+                            cycle_id: selectedCycle,
+                            user_id: userId
+                        }
                     ])
                     .eq('id', taskToEdit.id)
                     .select();
@@ -184,9 +197,9 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 value={selectedCycle}
                                 onChange={(e) => setSelectedCycle(e.target.value)}>
                                 <option value='' disabled>Select cycle</option>
-                                {cycles.map(cycle => {
+                                {cycles.map(cycle => (
                                     <option key={cycle.id} value={cycle.id}>{cycle.title}</option>
-                                })}
+                                ))}
                             </select>
                         </div>
                         <div className="flex px-4 space-x-2 justify-end">
@@ -199,7 +212,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 onClick={handleCreateTask}
                                 disabled={isLoading}
                                 className="bg-[#AA96AF] hover:bg-violet-500 font-medium py-2 px-4 rounded-md hover:cursor-pointer text-white disabled:opacity-50">
-                                {isEditMode? 'Update' : 'Create Task'}
+                                {isEditMode ? 'Update' : 'Create Task'}
                             </button>
                         </div>
                     </div>
