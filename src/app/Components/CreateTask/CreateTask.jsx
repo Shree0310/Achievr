@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
+import CreateTaskButton from "./CreateTaskButton";
 
 const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) => {
-    const [isOpen, setIsOpen] = useState(isEditMode);
-    const [title, setTitle] = useState(taskToEdit?.title);
-    const [description, setDescription] = useState(taskToEdit?.description);
-    const [priority, setPriority] = useState(taskToEdit?.priority);
-    const [efforts, setEfforts] = useState(taskToEdit?.efforts);
+    const [title, setTitle] = useState(taskToEdit?.title || '');
+    const [description, setDescription] = useState(taskToEdit?.description || '');
+    const [priority, setPriority] = useState(taskToEdit?.priority?.toString() || '');
+    const [efforts, setEfforts] = useState(taskToEdit?.efforts?.toString() || '');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [cycles, setCycles] = useState([]);
@@ -19,8 +19,9 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
         if (isEditMode && taskToEdit) {
             setTitle(taskToEdit.title || '');
             setDescription(taskToEdit.description || '');
-            setPriority(taskToEdit.efforts || '');
-            setEfforts(taskToEdit.efforts || '')
+            setPriority(taskToEdit.priority?.toString() || '');
+            setEfforts(taskToEdit.efforts?.toString() || '')
+            setSelectedCycle(taskToEdit.cycle_id || '')
         }
 
 
@@ -108,8 +109,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
 
             // Reset form and close modal
             resetForm();
-            setIsOpen(false);
-            closeModal();
+            if (onClose) onClose();
 
             // Refresh the page to show the new task (could be optimized later)
             window.location.reload();
@@ -132,29 +132,11 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
         }
     };
 
-    const closeModal = () => {
-        resetForm();
-        setIsOpen(false);
-        if(isEditMode && taskToEdit){
-            onClose();
-        }
-    };
-
-    const createTask = !isEditMode ? (
-        <div className="absolute h-4 w-44 z-30 top-4 left-4 py-12 rounded-md">
-            <div className="bg-[#D9D9D9] p-2 shadow-md rounded-md">
-                <button className="text-gray-800 items-center"
-                    onClick={() => setIsOpen(true)}>Create Task</button>
-            </div>
-            </div>
-    ): null;
-
     return (
         <>
-        {isOpen && (
             <div className="fixed inset-0 flex justify-center py-36 px-20 bg-black bg-opacity-50 z-50">
                 <div className="bg-[#F4EEEE] w-1/2 h-full rounded-lg shadow-md">
-                    <h1 className="bg-[#D9D9D9] h-12 px-8 py-2 text-black text-lg shadow-sm rounded-md">{!isEditMode? 'Create a task': 'Edit Task'}</h1>
+                    <h1 className="bg-[#D9D9D9] h-12 px-8 py-2 text-black text-lg shadow-sm rounded-md">{!isEditMode ? 'Create a task' : 'Edit Task'}</h1>
                     <div className="flex flex-col p-10 space-y-4">
                         {error && (
                             <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded">
@@ -191,7 +173,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 value={efforts}
                                 onChange={(e) => setEfforts(e.target.value)}
                             >
-                                <option value="" disabled>Efforts</option>
+                                <option value=" " disabled>Efforts</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -209,7 +191,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                         </div>
                         <div className="flex px-4 space-x-2 justify-end">
                             <button
-                                onClick={closeModal}
+                                onClick={onClose}
                                 className="bg-[#D9D9D9] hover:bg-gray-300 text-black font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                                 Cancel
                             </button>
@@ -217,14 +199,13 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 onClick={handleCreateTask}
                                 disabled={isLoading}
                                 className="bg-[#AA96AF] hover:bg-violet-500 font-medium py-2 px-4 rounded-md hover:cursor-pointer text-white disabled:opacity-50">
-                                {isLoading ? 'Creating...' : 'Create'}
+                                {isEditMode? 'Update' : 'Create Task'}
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        )}
-   </>
+        </>
     );
 };
 

@@ -46,6 +46,8 @@ const { transform } = require("typescript");
         {isEditMode && (
             <CreateTask
             isEditMode={true}
+            taskToEdit={task}
+            userId={task.user_id}
             onClose={()=>{setIsEditMode(false)}}/>
         ) }
         </>

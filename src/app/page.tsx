@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import UserName from './Components/UserName/UserName';
 import CreateTask from './Components/CreateTask/CreateTask';
+import CreateTaskButton from './Components/CreateTask/CreateTaskButton';
 
 export default async function Home() {
   const supabase = await createClient();
@@ -27,20 +28,22 @@ export default async function Home() {
   }
 
   const {
-    user: { user_metadata }
+    user: { user_metadata, id }
   } = session.data.session;
 
   const { user_name } = user_metadata;
   const userName = user_name ? `@${user_name}` : 'user name not set';
 
+  const userId = session.data.session?.user?.id;
+
   return (
     <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
       {/* Navbar */}
       <div className="relative w-full md:w-auto md:h-screen">
-        <UserName />
-        <CreateTask 
-        onClose={() => {}}
-        userId={session.data.session.user.id} />
+        <UserName/>
+        <CreateTaskButton 
+        userId={id}
+        />
         <div className="h-auto md:h-full flex-shrink-0">
           <Navbar />
         </div>

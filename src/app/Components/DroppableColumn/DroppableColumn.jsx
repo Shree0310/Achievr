@@ -1,7 +1,6 @@
 'use client'
 
 import { useDroppable } from "@dnd-kit/core";
-import CreateTaskButton from "../CreateTaskButton/CreateTaskButton";
 
 const DroppableColumn = ({ id, title, children, }) => {
   const { setNodeRef, isOver } = useDroppable({
