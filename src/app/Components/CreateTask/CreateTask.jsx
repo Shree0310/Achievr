@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
-import CreateTaskButton from "./CreateTaskButton";
+import DeleteTask from "../DeleteTask/DeleteTask";
 
 const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) => {
     const [title, setTitle] = useState(taskToEdit?.title || '');
@@ -162,9 +162,8 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                     </svg>
                                 </div>
                                 {isMenuOpen && (
-                                        <div className="absolute right-0  w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                                            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</a>
-                                        </div>
+                                    <DeleteTask
+                                        taskToDelete={taskToEdit.id} />
                                 )}
                             </div>
                         )}
@@ -189,7 +188,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                             onChange={(e) => setDescription(e.target.value)}
                             className="h-24 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
                         />
-                        <div className={`flex ${!isEditMode ? "justify-center space-x-2": "flex-col space-y-4"}`}>
+                        <div className={`flex ${!isEditMode ? "justify-center space-x-2" : "flex-col space-y-4"}`}>
                             <select
                                 className="w-1/2 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
                                 value={priority}
@@ -222,7 +221,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 ))}
                             </select>
                         </div>
-                        <div className={`flex  space-x-2 ${!isEditMode ? "justify-end px-4" : "justify-start py-4"}`}>
+                        <div className={`flex  space-x-2 ${!isEditMode ? "justify-end px-4" : "justify-start py-8"}`}>
                             <button
                                 onClick={onClose}
                                 className="bg-[#D9D9D9] hover:bg-gray-300 text-black font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
