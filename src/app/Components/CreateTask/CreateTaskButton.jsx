@@ -12,7 +12,7 @@ const CreateTaskButton = ({userId}) =>{
     return (
         <>
             <div className="absolute h-4 w-44 z-30 top-4 left-4 py-12 rounded-md">
-                <div className="bg-[#D9D9D9] p-2 shadow-md rounded-md">
+                <div className="bg-white p-2 shadow-md rounded-md">
                     <button className="text-gray-800 items-center"
                         onClick={() =>setIsOpen(true)}>Create Task</button>
                 </div>

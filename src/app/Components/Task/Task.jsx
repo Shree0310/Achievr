@@ -34,8 +34,8 @@ const { transform } = require("typescript");
         {...listeners}
         {...attributes}
         onClick={handleClick}
-        className='bg-white rounded-lg shadow-md p-3 mb-2 cursor-move hover:shadow-md transition-shadow touch-manipulation'>
-            <p className='text-gray-500 font-medium'>
+        className='bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-2 cursor-move hover:shadow-md transition-shadow touch-manipulation'>
+            <p className='text-gray-700 font-medium'>
                 {task.title || 'Untitled Task'}
             </p>
             <p className='text-gray-600 text-sm'>

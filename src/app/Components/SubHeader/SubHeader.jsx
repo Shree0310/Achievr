@@ -7,10 +7,10 @@ const SubHeader = () => {
     const pathname = usePathname();
 
     return <div className="mx-7 my-2 relative z-10">
-    <div className="h-9 bg-[#ADAAB2] w-full rounded-lg">
+    <div className="h-9 bg-primary-500 w-full rounded-lg">
         <div className="h-full flex items-center">
             <div className=" flex justify-center space-x-4">
-                <ul className="flex text-xl text-gray-700 px-4">
+                <ul className="flex text-xl text-white px-4">
                     <li className="mx-5">
                         <Link href="/">
                         Overview

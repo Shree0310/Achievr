@@ -3,39 +3,68 @@
 @tailwind utilities;
 
 :root {
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
-  --secondary: #64748b;
-  --accent: #8b5cf6;
-  --background: #f9fafb;
-  --surface: #ffffff;
-  --border: #e5e7eb;
-  --text-primary: #1f2937;
-  --text-secondary: #4b5563;
-  --error: #ef4444;
-  --success: #10b981;
-  --warning: #f59e0b;
+  /* Modern Tech Palette */
+  --background: #F0F4F8; /* Soft Blue-Gray */
+  --surface: #FFFFFF;
+  
+  /* Primary colors (Google Blue) */
+  --primary-50: #E8F0FE;
+  --primary-100: #D2E3FC;
+  --primary-200: #AECBFA;
+  --primary-300: #97C1F7;
+  --primary-400: #94BDF3;
+  --primary-500: #1A73E8; /* Bright Google Blue */
+  --primary-600: #1967D2;
+  --primary-700: #185ABC;
+  --primary-800: #174EA6;
+  --primary-900: #133D81;
+  
+  /* Accent colors (Fresh Green) */
+  --accent-50: #E6F4EA;
+  --accent-100: #CEEAD6;
+  --accent-200: #A8DAB5;
+  --accent-300: #81C995;
+  --accent-400: #5BB974;
+  --accent-500: #34A853; /* Fresh Green */
+  --accent-600: #2D9D4B;
+  --accent-700: #1E8E3E;
+  --accent-800: #188038;
+  --accent-900: #0D652D;
+  
+  /* Neutral/Text colors */
+  --gray-50: #F8F9FA;
+  --gray-100: #F1F3F4;
+  --gray-200: #E8EAED;
+  --gray-300: #DADCE0;
+  --gray-400: #BDC1C6;
+  --gray-500: #9AA0A6;
+  --gray-600: #5F6368;
+  --gray-700: #3C4043;
+  --gray-800: #202124; /* Deep Charcoal for text */
+  --gray-900: #111216;
+  
+  /* Functional colors */
+  --success-500: #34A853; /* Same as accent */
+  --warning-500: #FBBC04; /* Google Yellow */
+  --error-500: #EA4335;   /* Google Red */
+  --info-500: #1A73E8;    /* Same as primary */
 }
 
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #3b82f6;
-    --primary-dark: #2563eb;
-    --secondary: #64748b;
-    --accent: #8b5cf6;
-    --background: #111827;
-    --surface: #1f2937;
-    --border: #374151;
-    --text-primary: #f9fafb;
-    --text-secondary: #e5e7eb;
-    --error: #ef4444;
-    --success: #10b981;
-    --warning: #f59e0b;
+    --background: #202124;
+    --surface: #303134;
   }
 }
 
 body {
-  color: var(--text-primary);
+  color: var(--gray-800);
   background: var(--background);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Column gradient */
+.column-gradient {
+  background: linear-gradient(180deg, #D2E3FC 0%, #FFFFFF 100%);
 }
