@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 const SubHeader = () => {
     const pathname = usePathname();
 
-    return <div className="mx-7 my-2 relative z-10">
-    <div className="h-9 bg-primary-500 w-full rounded-lg">
+    return <div className="my-2 relative z-10">
+    <div className="h-9 border-t border-gray-400 border-opacity-25 w-full py-6">
         <div className="h-full flex items-center">
             <div className=" flex justify-center space-x-4">
-                <ul className="flex text-xl text-white px-4">
+                <ul className="flex text-md font-black text-gray-700 px-4">
                     <li className="mx-5">
                         <Link href="/">
                         Overview

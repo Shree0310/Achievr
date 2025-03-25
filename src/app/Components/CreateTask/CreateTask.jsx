@@ -221,16 +221,16 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 ))}
                             </select>
                         </div>
-                        <div className={`flex  space-x-2 ${!isEditMode ? "justify-end px-4" : "justify-start py-8"}`}>
+                        <div className={`flex  space-x-2 ${!isEditMode ? "justify-end px-10 py-6" : "justify-start py-8"}`}>
                             <button
                                 onClick={onClose}
-                                className="bg-[#D9D9D9] hover:bg-gray-300 text-black font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                                className="bg-[#D9D9D9] hover:bg-gray-400 text-black font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                                 Cancel
                             </button>
                             <button
                                 onClick={handleCreateTask}
                                 disabled={isLoading}
-                                className="bg-primary-500 hover:bg-violet-500 font-medium py-2 px-4 rounded-md hover:cursor-pointer text-white disabled:opacity-50">
+                                className="bg-primary-400 hover:bg-primary-500 font-medium py-2 px-4 rounded-md hover:cursor-pointer text-white disabled:opacity-50">
                                 {isEditMode ? 'Update' : 'Create Task'}
                             </button>
                         </div>

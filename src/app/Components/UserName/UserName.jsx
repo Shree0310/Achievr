@@ -22,8 +22,8 @@ export default async function UserName() {
 
     return (
         <div>
-            <div className="absolute h-4  w-44 z-30 top-4 left-4">
-                <div className="bg-white p-2 shadow-md">
+            <div className="absolute h-4  w-44 z-30 top-4 left-4 rounded-md">
+                <div className="bg-white p-2 shadow-md rounded-md">
                 <p className="text-gray-800">{userName}</p>
                 </div>
             </div>
