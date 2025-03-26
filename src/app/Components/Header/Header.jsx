@@ -1,3 +1,5 @@
+import UserName from '../UserName/UserName';
+
 const Header = () =>{
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
@@ -10,8 +12,9 @@ const Header = () =>{
     <div className="bg-white rounded-lg">
         <div className="h-full flex items-center">
             <div className="flex space-x-4">
-                <ul className="text-primary-500 font-semibold text-2xl px-6">
+                <ul className="flex justify-around items-center text-primary-500 font-semibold text-2xl px-6">
                     <li>{currentMonth}</li>
+                    <li className='ml-[900px]'><UserName position="right"/></li>
                 </ul>
             </div>
         </div>

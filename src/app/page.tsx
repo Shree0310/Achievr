@@ -40,7 +40,6 @@ export default async function Home() {
     <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
       {/* Navbar */}
       <div className="relative w-full md:w-auto md:h-screen">
-        <UserName/>
         <CreateTaskButton 
         userId={id}
         />

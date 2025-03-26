@@ -1,6 +1,7 @@
 "use client"
 
 import { supabase } from "@/utils/supabase/client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const Navbar = () => {
@@ -23,10 +24,17 @@ const Navbar = () => {
     }
     return <div>
         <div className="w-full md:w-52 bg-primary-400 h-16 md:h-screen flex md:block">
-            <div className="rounded-xl p-2 md:p-4 flex items-center md:block">
+            <div className="rounded-xl p-2 md:px-4 flex items-center md:block">
                 <ul className="flex md:block space-x-4 md:space-x-0 md:space-y-4">
-                    <li className="text-white text-lg md:text-xl md:py-32">
+                    <li className="text-white text-sm md:text-lg md:pt-32 px-2 ">
                         Cycles
+                    </li>
+                    <li>
+                   <Link 
+                   href='/task-queue'
+                   className="text-white text-sm md:text-lg px-2 py-1 cursor-pointer hover:bg-primary-300 hover:text-primary-500 rounded-md">
+                        Tasks queue
+                        </Link>
                     </li>
                 </ul>
             </div>

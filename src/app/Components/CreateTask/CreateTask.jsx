@@ -150,8 +150,12 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
         <>
             <div className={`fixed bg-black bg-opacity-50 z-50 ${!isEditMode ? "inset-0 flex justify-center py-36 px-20" : "inset-0 flex justify-end pt-36 pl-20 pb-5"} `}>
                 <div className="bg-primary-100 w-1/2 h-full rounded-lg shadow-md">
-                    <div className="bg-primary-500 h-12 px-8 py-2 flex justify-between items-center text-black text-lg shadow-sm rounded-md">
-                        <h1 className=" ">{!isEditMode ? 'Create a task' : 'Edit Task'}</h1>
+                    <div className="bg-primary-500 h-12 px-8 py-2 flex justify-between items-center text-black text-lg shadow-sm">
+                        <h1 className=" ">{!isEditMode ? 'Create a task' : 'Edit Task'}
+                            {/* <span className="bg-black text-lg"
+                             onClick={onClose}>x</span> */}
+                        </h1>
+
                         {isEditMode && (
                             <div className="relative">
                                 <div
