@@ -34,7 +34,7 @@ export default async function UserName({position = "left"}) {
         <div>
             <div className=" z-30 top-4 left-4 pb-2">
                 <div className="p-2 rounded-full bg-accent-500 border-2 border-black">
-                <p className={`text-gray-800 font-semibold text-lg ${nameClasses}`}>{userInitials}</p>
+                <p className={`text-gray-800 font-semibold text-sm ${nameClasses}`}>{userInitials}</p>
                 </div>
             </div>
         </div>
