@@ -35,14 +35,29 @@ const Task = ({ task, id }) => {
                 {...listeners}
                 {...attributes}
                 onClick={handleClick}
-                className='bg-white rounded-lg shadow-sm border border-gray-200 mb-2 cursor-move hover:shadow-md transition-shadow touch-manipulation'>
-                <CardHeader>
+                className='bg-white rounded-lg h-32 max-h-32 overflow-hidden shadow-sm border border-gray-200 mb-2 cursor-move hover:shadow-md transition-shadow touch-manipulation'>
+                <CardHeader className="p-3 pb-1">
                     <CardTitle className='text-gray-700 font-medium'>
                         {task.title || 'Untitled Task'}
                     </CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <p className='text-gray-600 text-sm'>
+                <CardContent className="p-3 pt-0">
+                    <div className="flex space-x-3">
+                        {
+                            task.efforts && (
+                                <p className="text-[12px] h-4 w-12 px-3">
+                                    SP 
+                                    <span className="bg-white h-1 w-1 text-[12px]">{task.efforts}</span>
+                                </p>
+                            )
+                        }
+                        {
+                            task.priority && (
+                                <p className="text-sm">{task.priority || "priority not set"}</p>
+                            )
+                        }
+                    </div>
+                    <p className='text-gray-600 text-sm overflow-hidden line-clamp-3'>
                         {task.description || 'No Description'}
                     </p>
                 </CardContent>
