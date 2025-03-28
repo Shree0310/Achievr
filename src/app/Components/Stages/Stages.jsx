@@ -5,6 +5,7 @@ import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useS
 import { supabase } from "@/utils/supabase/client";
 import Task from '../Task/Task';
 import DroppableColumn from '../DroppableColumn/DroppableColumn';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Stages = ({ className = "" }) => {
     const [tasks, setTasks] = useState(null);
@@ -100,7 +101,7 @@ const Stages = ({ className = "" }) => {
     // Handle drag end
     async function handleDragEnd(event) {
         const { active, over } = event;
-        
+
         if (!over || !active) {
             setActiveId(null);
             setActiveDragData(null);
@@ -109,25 +110,25 @@ const Stages = ({ className = "" }) => {
 
         // Get the column the task was dropped in
         const newStatus = over.id;
-        
+
         // Get the task that was dragged
         const taskId = active.id;
-        
+
         console.log('Attempting to update task', taskId, 'to status', newStatus);
-        
+
         // Different formatting based on column id
         let statusText;
-        switch(newStatus) {
-            case 'notStarted': 
+        switch (newStatus) {
+            case 'notStarted':
                 statusText = 'not started';
                 break;
-            case 'inProgress': 
+            case 'inProgress':
                 statusText = 'in progress';
                 break;
-            case 'underReview': 
+            case 'underReview':
                 statusText = 'under review';
                 break;
-            case 'completed': 
+            case 'completed':
                 statusText = 'completed';
                 break;
             default:
@@ -135,8 +136,8 @@ const Stages = ({ className = "" }) => {
         }
 
         // Update in UI immediately for responsiveness
-        setTasks(prevTasks => 
-            prevTasks.map(task => 
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
                 task.id === taskId ? { ...task, status: statusText } : task
             )
         );
@@ -144,7 +145,7 @@ const Stages = ({ className = "" }) => {
         // Update in database
         try {
             console.log(`Making Supabase update call: UPDATE tasks SET status='${statusText}' WHERE id=${taskId}`);
-            
+
             const { data, error } = await supabase
                 .from('tasks')
                 .update({ status: statusText })
@@ -155,7 +156,7 @@ const Stages = ({ className = "" }) => {
                 console.error("Supabase update error:", error);
                 throw error;
             }
-            
+
             console.log("Update successful:", data);
         } catch (error) {
             console.error("Error updating task status:", error);
@@ -169,18 +170,22 @@ const Stages = ({ className = "" }) => {
 
     // TaskCard for the drag overlay
     const TaskCard = ({ task }) => (
-        <div className='bg-white rounded-lg shadow-md p-3 mb-2 opacity-80'>
-            <p className='text-gray-500 font-medium'>
-                {task.title || 'Untitled Task'}
-            </p>
-            <p className='text-gray-600 text-sm'>
-                {task.description || 'No Description'}
-            </p>
-        </div>
+        <Card className='bg-white rounded-lg shadow-md p-3 mb-2 opacity-80'>
+            <CardHeader>
+                <CardTitle className='text-gray-500 font-medium'>
+                    {task.title || 'Untitled Task'}
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className='text-gray-600 text-sm'>
+                    {task.description || 'No Description'}
+                </p>
+            </CardContent>
+        </Card>
     );
 
     return (
-        <DndContext 
+        <DndContext
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
@@ -195,9 +200,9 @@ const Stages = ({ className = "" }) => {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 h-full">
-                    <DroppableColumn 
-                        id="notStarted" 
-                        title="Not Started" 
+                    <DroppableColumn
+                        id="notStarted"
+                        title="Not Started"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
@@ -211,9 +216,9 @@ const Stages = ({ className = "" }) => {
                         )}
                     </DroppableColumn>
 
-                    <DroppableColumn 
-                        id="inProgress" 
-                        title="In Progress" 
+                    <DroppableColumn
+                        id="inProgress"
+                        title="In Progress"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
@@ -227,9 +232,9 @@ const Stages = ({ className = "" }) => {
                         )}
                     </DroppableColumn>
 
-                    <DroppableColumn 
-                        id="underReview" 
-                        title="Under Review" 
+                    <DroppableColumn
+                        id="underReview"
+                        title="Under Review"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
@@ -243,9 +248,9 @@ const Stages = ({ className = "" }) => {
                         )}
                     </DroppableColumn>
 
-                    <DroppableColumn 
-                        id="completed" 
-                        title="Completed" 
+                    <DroppableColumn
+                        id="completed"
+                        title="Completed"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (

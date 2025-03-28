@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 import DeleteTask from "../DeleteTask/DeleteTask";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) => {
     const [title, setTitle] = useState(taskToEdit?.title || '');
@@ -179,13 +181,13 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                                 <p>{error}</p>
                             </div>
                         )}
-                        <input
+                        <Input
                             type="text"
                             placeholder="Title"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             className="h-12 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500" />
-                        <input
+                        <Input
                             type="text"
                             placeholder="Description"
                             value={description}
@@ -226,17 +228,17 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                             </select>
                         </div>
                         <div className={`flex  space-x-2 ${!isEditMode ? "justify-end px-10 py-6" : "justify-start py-8"}`}>
-                            <button
+                            <Button
                                 onClick={onClose}
                                 className="bg-[#D9D9D9] hover:bg-gray-400 text-black font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                                 Cancel
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 onClick={handleCreateTask}
                                 disabled={isLoading}
                                 className="bg-primary-400 hover:bg-primary-500 font-medium py-2 px-4 rounded-md hover:cursor-pointer text-white disabled:opacity-50">
                                 {isEditMode ? 'Update' : 'Create Task'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

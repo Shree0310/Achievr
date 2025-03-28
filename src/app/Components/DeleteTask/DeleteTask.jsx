@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/utils/supabase/client";
 import { useState } from "react";
 
@@ -49,18 +50,18 @@ const DeleteTask = ({ taskToDelete, onClose }) => {
                     )}
                     
                     <div className="flex justify-end space-x-3">
-                        <button 
+                        <Button 
                             onClick={cancelDelete}
                             className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded transition-colors"
                         >
                             Cancel
-                        </button>
-                        <button 
+                        </Button>
+                        <Button 
                             onClick={confirmDelete}
                             className="px-3 py-1.5 bg-error-500 hover:bg-red-600 text-white text-sm font-medium rounded transition-colors"
                         >
                             Delete
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
