@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from  "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Cycles = () =>{
     const [cycles, setCycles] = useState([]);
@@ -49,6 +50,23 @@ const Cycles = () =>{
         }));
     };
 
+    async function handleSaveCycle() {
+        const { data, error } = await supabase
+        .from('cycles')
+        .insert([
+            {
+                title,
+                start_at,
+                end_at
+            }
+        ])
+        .select();
+    }
+
+    const hnadleCancel = () => {
+
+    }
+
     return <>
     <div className="flex items-center space-x-4 m-4">
       <div className="text-primary-500 font-bold text-lg">Cycles</div>
@@ -90,6 +108,34 @@ const Cycles = () =>{
                                 onChange={handleInputChange}
                                 placeholder="Cycle Title">
                             </Input>
+                        </TableCell>
+                        <TableCell className="border-r border-gray-400">
+                            <Input
+                                name='start_at'
+                                value={newCycle.start_at}
+                                onChange={handleInputChange}
+                                placeholder="Cycle start date">
+                            </Input>
+                        </TableCell>
+                        <TableCell className="border-r border-gray-400">
+                            <Input
+                                name="end_at"
+                                value={newCycle.end_at}
+                                onChange={handleInputChange}
+                                placeholder="Cycle end date">
+                            </Input>
+                        </TableCell>
+                        <TableCell className="border-r border-gray-400">
+                            <div className="flex">
+                                <Button 
+                                    onClick={hnadleCancel}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={handleSaveCycle}>
+                                    Add
+                                </Button>
+                            </div>
                         </TableCell>
                     </TableRow>
                 )}
