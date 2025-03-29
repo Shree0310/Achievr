@@ -35,7 +35,6 @@ const TaskQueue = () =>{
             <TableHeader>
                 <TableRow className="bg-primary-300">
                         <TableHead className="border-r border-gray-400 text-black">Title</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black">Description</TableHead>
                         <TableHead className="border-r border-gray-400 text-black">Status</TableHead>
                         <TableHead className="border-r border-gray-400 text-black">Priority</TableHead>
                         <TableHead className="border-r border-gray-400 text-black">Efforts</TableHead>
@@ -44,11 +43,20 @@ const TaskQueue = () =>{
             <TableBody className="bg-primary-100">
                 {tasks.map((task) =>(
                     <TableRow key={task.id}>
-                    <TableCell className="border-r border-gray-400">{task.title} </TableCell>
-                    <TableCell className="border-r border-gray-400">{task.description}</TableCell>
+                    <TableCell className=" border-l-primary-500 border-r border-gray-400">{task.title} </TableCell>
                     <TableCell className="border-r border-gray-400">{task.status}</TableCell>
-                    <TableCell className="border-r border-gray-400">{task.priority}</TableCell>
-                    <TableCell className="border-r border-gray-400">{task.efforts}</TableCell>
+                    {task.priority ? (
+                        <TableCell className="border-r border-gray-400">{task.priority}</TableCell>
+
+                    ):(
+                        <TableCell className="border-r border-gray-400">priority is not set</TableCell>
+                    )}
+                    {task.efforts ? (
+                        <TableCell className="border-r border-gray-400">{task.efforts}</TableCell>
+                    ):(
+                        <TableCell className="border-r border-gray-400">efforts not set</TableCell>
+
+                    )}
                 </TableRow>
                 ))}         
             </TableBody>

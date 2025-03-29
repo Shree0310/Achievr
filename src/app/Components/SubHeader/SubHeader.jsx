@@ -18,7 +18,7 @@ const SubHeader = () => {
                     </li>
                     <li className="mx-5">
                         <Link 
-                        href='/board'
+                        href='/'
                         className={`${pathname === '/board' ? 'underline underline-offset-4' : ''}`}>
                         Board
                         </Link>

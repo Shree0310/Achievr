@@ -36,6 +36,13 @@ const Navbar = () => {
                         Tasks queue
                         </Link>
                     </li>
+                    <li>
+                        <Link
+                        href='/cycles-list'
+                        className="text-white text-sm md:text-lg px-2 py-1 cursor-pointer hover:bg-primary-300 hover:text-primary-500 rounded-md">
+                            Cycles
+                        </Link>
+                    </li>
                 </ul>
             </div>
         </div>
