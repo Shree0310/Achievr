@@ -9,7 +9,8 @@ import { createClient } from '@/utils/supabase/server';
 export default async function CycleListPage(){
     const supabase = await createClient();
     const session = await supabase.auth.getSession();
-
+    const userId = session.data.session?.user?.id;
+    
 
     return (
         <div className="h-screen w-screen flex overflow-hidden">
@@ -36,7 +37,8 @@ export default async function CycleListPage(){
             <div className="flex">
                 {/* Board - takes remaining space */}
                 <div className="flex-1 overflow-auto">
-                    <Cycles/>
+                    <Cycles
+                    userId={userId}/>
                 </div>
 
             </div>
