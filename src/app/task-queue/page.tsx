@@ -15,7 +15,6 @@ export default async function TaskQueuePage(){
         <div className="h-screen w-screen flex overflow-hidden">
         {/* Navbar - fixed on the left */}
         <div className="relative w-full md:w-auto md:h-screen">
-        <UserName/>
         {/* <CreateTaskButton 
         /> */}
         <div className="h-auto md:h-full flex-shrink-0">
