@@ -23,7 +23,15 @@ const Cycles = () =>{
         setCycles(cycles);
     }
     return <>
-    <div className="text-primary-500 font-bold text-lg m-4">Cycles</div>
+    <div className="flex items-center space-x-4 m-4">
+      <div className="text-primary-500 font-bold text-lg">Cycles</div>
+      <button 
+        aria-label="Add new cycle"
+        className="bg-primary-500 hover:bg-primary-600 text-white w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-opacity-50 shadow-sm"
+      >
+        <span className="text-lg leading-none">+</span>
+      </button>
+    </div>
     <div className="rounded-md border m-4">
         <Table>
             <TableHeader>
