@@ -32,17 +32,19 @@ const TaskQueue = () =>{
     <div className="text-primary-500 font-bold text-lg m-4">Upcoming Tasks</div>
     <div className="rounded-md border m-4">
         <Table>
-            <TableHeader>
+            <TableHeader className="">
                 <TableRow className="bg-primary-300">
-                        <TableHead className="border-r border-gray-400 text-black">Title</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black">Status</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black">Priority</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black">Efforts</TableHead>
+                        <TableHead className="border-r border-gray-400 text-black text-center">Title</TableHead>
+                        <TableHead className="border-r border-gray-400 text-black text-center">Status</TableHead>
+                        <TableHead className="border-r border-gray-400 text-black text-center">Priority</TableHead>
+                        <TableHead className="border-r border-gray-400 text-black text-center">Efforts</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody className="bg-primary-100">
                 {tasks.map((task) =>(
-                    <TableRow key={task.id}>
+                    <TableRow 
+                    key={task.id}
+                    className="text-center">
                     <TableCell className=" border-l-primary-500 border-r border-gray-400">{task.title} </TableCell>
                     <TableCell className="border-r border-gray-400">{task.status}</TableCell>
                     {task.priority ? (
