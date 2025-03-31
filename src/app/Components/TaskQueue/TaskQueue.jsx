@@ -47,7 +47,7 @@ const TaskQueue = ({ userId }) => {
     async function fetchTasks() {
         const { data: tasks, error } = await supabase
             .from('tasks')
-            .select('*');
+            .select('*, cycles(id, title)');
 
         if (error) {
             throw error;
@@ -106,8 +106,15 @@ const TaskQueue = ({ userId }) => {
 
     }
 
-    const handleCancel =  () => {
-        isAddingtask(false);
+    const handleCancel = () => {
+        setIsAddingTask(false);
+        
+        setNewTask({
+            title: '',
+            status: '',
+            efforts: '',
+            priority: '',
+        });
     }
 
 
@@ -152,69 +159,76 @@ const TaskQueue = ({ userId }) => {
                                 <TableCell className="border-r border-gray-400">efforts not set</TableCell>
 
                             )}
-                            <TableCell className="border-r border-gray-400">{task.cycle_id}</TableCell>
+                            <TableCell className="border-r border-gray-400">
+                                {task.cycles ? task.cycles.title : "cycle not set"}
+                            </TableCell>
                         </TableRow>
                     ))}
                     {isAddingtask && (
-                        <TableRow>
-                            <TableCell className="border-r border-gray-400">
-                                <Input
-                                    name="title"
-                                    value={newTask.title}
-                                    onChange={handleInputChange}
-                                    placeholder="Task title" />
-                            </TableCell>
-                            <TableCell className="border-r border-gray-400">
-                                <Input
-                                    name="status"
-                                    value={newTask.status}
-                                    onChange={handleInputChange}
-                                    placeholder="Task status" />
-                            </TableCell>
-                            <TableCell className="border-r border-gray-400">
-                                <Input
-                                    name="priority"
-                                    value={newTask.priority}
-                                    onChange={handleInputChange}
-                                    placeholder="Task Priority" />
-                            </TableCell>
-                            <TableCell className="border-r border-gray-400">
-                                <Input
-                                    name="efforts"
-                                    value={newTask.efforts}
-                                    onChange={handleInputChange}
-                                    placeholder="Task Efforts" />
-                            </TableCell>
-                            <TableCell className="border-r border-gray-400">
-                                <Select
-                                    defaultValue={selectedCycle}
-                                    onValueChange={(value) => setSelectedCycle(value)}>
-                                    <SelectTrigger     className="w-[180px]">
-                                        <SelectValue placeholder="Select status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {cycles.map(cycle => (
-                                            <SelectItem key={cycle.id} value={cycle.id}>{cycle.title}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </TableCell>
-                            <TableCell>
-                                <div className="flex space-x-2">
-                                    <Button 
-                                    className="bg-gray-400"
-                                    onClick={handleCancel}>
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        className="bg-primary-400"
-                                        onClick={handleSaveTask}>
-                                        Add Task
-                                    </Button>
-                                </div>
-                            </TableCell>
-
-                        </TableRow>
+                        <>
+                            <TableRow>
+                                <TableCell className="border-r border-l border-gray-400">
+                                    <Input
+                                        name="title"
+                                        value={newTask.title}
+                                        onChange={handleInputChange}
+                                        placeholder="Task title" />
+                                </TableCell>
+                                <TableCell className="border-r border-gray-400">
+                                    <Input
+                                        name="status"
+                                        value={newTask.status}
+                                        onChange={handleInputChange}
+                                        placeholder="Task status" />
+                                </TableCell>
+                                <TableCell className="border-r border-gray-400">
+                                    <Input
+                                        name="priority"
+                                        value={newTask.priority}
+                                        onChange={handleInputChange}
+                                        placeholder="Task Priority" />
+                                </TableCell>
+                                <TableCell className="border-r border-gray-400">
+                                    <Input
+                                        name="efforts"
+                                        value={newTask.efforts}
+                                        onChange={handleInputChange}
+                                        placeholder="Task Efforts" />
+                                </TableCell>
+                                <TableCell className="border-r border-gray-400">
+                                    <Select
+                                        defaultValue={selectedCycle}
+                                        onValueChange={(value) => setSelectedCycle(value)}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select cycle" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {cycles.map(cycle => (
+                                                <SelectItem key={cycle.id} value={cycle.id}>{cycle.title}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </TableCell>
+                            </TableRow>
+                            
+                            <TableRow>
+                                <TableCell colSpan={5} className="border-r border-gray-400 bg-gray-50 p-3">
+                                    <div className="flex justify-end space-x-3">
+                                        <Button 
+                                            onClick={handleCancel}
+                                            variant="outline"
+                                            className="px-4 py-2 border border-gray-300 hover:bg-gray-100 transition-colors">
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            onClick={handleSaveTask}
+                                            className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-colors shadow-sm">
+                                            Add Task
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        </>
                     )}
                 </TableBody>
             </Table>

@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const Cycles = ({userId}) => {
+const Cycles = ({ userId }) => {
     const [cycles, setCycles] = useState([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -63,15 +63,15 @@ const Cycles = ({userId}) => {
             ])
             .select();
 
-            setCycles(prev => [...prev, data[0]]);
+        setCycles(prev => [...prev, data[0]]);
 
-            setNewCycle({
-                title: '',
-                start_at: '',
-                end_at: ''
-            });
+        setNewCycle({
+            title: '',
+            start_at: '',
+            end_at: ''
+        });
 
-            setIsAddingCycle(false);
+        setIsAddingCycle(false);
     }
 
     const handleCancel = () => {
@@ -142,22 +142,25 @@ const Cycles = ({userId}) => {
                                     placeholder="Cycle end date">
                                 </Input>
                             </TableCell>
-                            <TableCell className="border-r border-gray-300">
-                                <div className="flex space-x-2">
-                                    <Button
-                                        className="bg-gray-400 hover:bg-gray-300"
-                                        onClick={handleCancel}>
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        className="bg-primary-400 hover:bg-primary-300"
-                                        onClick={handleSaveCycle}>
-                                        Add
-                                    </Button>
-                                </div>
-                            </TableCell>
                         </TableRow>
                     )}
+                    <TableRow>
+                        <TableCell colSpan={5} className="border-r border-gray-400 bg-gray-50 p-3">
+                            <div className="flex justify-end space-x-3">
+                                <Button
+                                    onClick={handleCancel}
+                                    variant="outline"
+                                    className="px-4 py-2 border border-gray-300 hover:bg-gray-100 transition-colors">
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={handleSaveCycle}
+                                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-colors shadow-sm">
+                                    Add Cycle
+                                </Button>
+                            </div>
+                        </TableCell>
+                    </TableRow>
                 </TableBody>
             </Table>
         </div>
