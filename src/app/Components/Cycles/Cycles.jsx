@@ -97,28 +97,28 @@ const Cycles = ({userId}) => {
         </div>
         <div className="rounded-md border m-4">
             <Table>
-                <TableHeader>
+                <TableHeader className="bg-primary-200">
                     <TableRow>
-                        <TableHead className="border-r border-gray-400 text-black">Title</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black">Start date</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black">End Date</TableHead>
+                        <TableHead className="border border-gray-300 text-black">Title</TableHead>
+                        <TableHead className="border border-gray-300 text-black">Start date</TableHead>
+                        <TableHead className="border border-gray-300 text-black">End Date</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {cycles.map((cycle) => (
                         <TableRow key={cycle.id}>
-                            <TableCell className="border-r border-gray-400">{cycle.title}</TableCell>
-                            <TableCell className="border-r border-gray-400">{cycle.start_at}</TableCell>
+                            <TableCell className="border border-gray-300">{cycle.title}</TableCell>
+                            <TableCell className="border border-gray-300">{cycle.start_at}</TableCell>
                             {cycle.end_at ? (
-                                <TableCell className="border-r border-gray-400">{cycle.end_at}</TableCell>
+                                <TableCell className="border border-gray-300">{cycle.end_at}</TableCell>
                             ) : (
-                                <TableCell className="border-r border-gray-400">End date not set</TableCell>
+                                <TableCell className="border border-gray-300">End date not set</TableCell>
                             )}
                         </TableRow>
                     ))}
                     {isAddingCycle && (
                         <TableRow>
-                            <TableCell className="border-r border-gray-400">
+                            <TableCell className="border-r border-gray-300">
                                 <Input
                                     name="title"
                                     value={newCycle.title}
@@ -126,7 +126,7 @@ const Cycles = ({userId}) => {
                                     placeholder="Cycle Title">
                                 </Input>
                             </TableCell>
-                            <TableCell className="border-r border-gray-400">
+                            <TableCell className="border-r border-gray-300">
                                 <Input
                                     name='start_at'
                                     value={newCycle.start_at}
@@ -134,7 +134,7 @@ const Cycles = ({userId}) => {
                                     placeholder="Cycle start date">
                                 </Input>
                             </TableCell>
-                            <TableCell className="border-r border-gray-400">
+                            <TableCell className="border-r border-gray-300">
                                 <Input
                                     name="end_at"
                                     value={newCycle.end_at}
@@ -142,15 +142,15 @@ const Cycles = ({userId}) => {
                                     placeholder="Cycle end date">
                                 </Input>
                             </TableCell>
-                            <TableCell className="border-r border-gray-400">
+                            <TableCell className="border-r border-gray-300">
                                 <div className="flex space-x-2">
                                     <Button
-                                        className="bg-gray-400 hover:bg-gray-500"
+                                        className="bg-gray-400 hover:bg-gray-300"
                                         onClick={handleCancel}>
                                         Cancel
                                     </Button>
                                     <Button
-                                        className="bg-primary-400 hover:bg-primary-500"
+                                        className="bg-primary-400 hover:bg-primary-300"
                                         onClick={handleSaveCycle}>
                                         Add
                                     </Button>
