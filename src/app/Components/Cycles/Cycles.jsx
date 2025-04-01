@@ -117,6 +117,7 @@ const Cycles = ({ userId }) => {
                         </TableRow>
                     ))}
                     {isAddingCycle && (
+                        <>
                         <TableRow>
                             <TableCell className="border-r border-gray-300">
                                 <Input
@@ -142,9 +143,7 @@ const Cycles = ({ userId }) => {
                                     placeholder="Cycle end date">
                                 </Input>
                             </TableCell>
-                        </TableRow>
-                    )}
-                    <TableRow>
+                        </TableRow><TableRow>
                         <TableCell colSpan={5} className="border-r border-gray-400 bg-gray-50 p-3">
                             <div className="flex justify-end space-x-3">
                                 <Button
@@ -161,6 +160,10 @@ const Cycles = ({ userId }) => {
                             </div>
                         </TableCell>
                     </TableRow>
+                    </>
+                        
+                    )}
+                    
                 </TableBody>
             </Table>
         </div>
