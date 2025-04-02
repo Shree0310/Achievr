@@ -17,7 +17,6 @@ const Navbar = () => {
             .select('*');
 
         setData(data);
-        console.log(data);
         if (error) {
             throw error;
         }

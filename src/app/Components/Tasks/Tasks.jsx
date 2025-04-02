@@ -22,7 +22,6 @@ const Tasks = () => {
                 throw error;
             }
             setData(data);
-            console.log(data);
         } catch (error) {
             console.error("error fetching data", error);
         } finally {

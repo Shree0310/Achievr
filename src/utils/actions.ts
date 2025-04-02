@@ -16,8 +16,6 @@ const signInWith = (provider: any) => async () => {
         },
     })
 
-    console.log(data);
-
     if (error) {
         console.log(error);
     }

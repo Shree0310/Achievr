@@ -43,9 +43,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                     setCycles(data);
 
                     if (isEditMode && taskToEdit?.cycle_id) {
-                        console.log("cycle id", taskToEdit.cycle_id);
                         setSelectedCycle(taskToEdit?.cycle_id);
-                        console.log("selected cycle id:", selectedCycle);
                     }
                     else if (!selectedCycle) {
                         setSelectedCycle(data[0].id)

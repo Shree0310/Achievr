@@ -6,17 +6,11 @@ export default async function UserName({position = "left"}) {
 
     const session = await supabase.auth.getUser();
 
-    //console.log(session.data.user);
-
     const {
         data: { user }
     } = await supabase.auth.getUser();
 
-    console.log(user.user_metadata);
-
-
     const user_name = user.user_metadata?.name;
-    console.log("user_name: ", user_name);
 
     const getInitials =(name)=>{
         return name

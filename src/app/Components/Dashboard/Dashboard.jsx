@@ -17,10 +17,6 @@ return <div >
         <DashBoardCharts/>
     </div>
    </div>
-
-    <div className='mt-32'>
-        <Activity/>
-    </div>
     </div>
 
 

@@ -54,8 +54,6 @@ const TaskQueue = ({ userId }) => {
         }
 
         setTasks(tasks || []);
-        // console.log("tasks", tasks);
-
     }
 
     const handleAddTask = () => {

@@ -114,8 +114,6 @@ const Stages = ({ className = "" }) => {
         // Get the task that was dragged
         const taskId = active.id;
 
-        console.log('Attempting to update task', taskId, 'to status', newStatus);
-
         // Different formatting based on column id
         let statusText;
         switch (newStatus) {
@@ -144,8 +142,6 @@ const Stages = ({ className = "" }) => {
 
         // Update in database
         try {
-            console.log(`Making Supabase update call: UPDATE tasks SET status='${statusText}' WHERE id=${taskId}`);
-
             const { data, error } = await supabase
                 .from('tasks')
                 .update({ status: statusText })
