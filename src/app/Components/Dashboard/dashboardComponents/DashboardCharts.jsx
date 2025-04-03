@@ -13,12 +13,15 @@ import {
     ResponsiveContainer,
     Cell
 } from 'recharts';
-import { PieChart, Pie } from 'recharts';
+import { PieChart, Pie, Sector } from 'recharts';
 
 
 const DashBoardCharts = () => {
     const [tasks, setTasks] = useState([]);
-    const [chartData, setChartData] = useState([]);
+    const [statusData, setStatusData] = useState([]);
+    const [priorityData, setPriorityData] = useState([]);
+    const [activeIndex, setActiveIndex] = useState(0);
+
 
     const COLORS = [
         'var(--primary-400)',
@@ -43,7 +46,7 @@ const DashBoardCharts = () => {
             }
 
             if (!data) {
-                setChartData([]);
+                setStatusData([]);
                 return;
             }
 
@@ -64,34 +67,88 @@ const DashBoardCharts = () => {
                 count: statusCounts[status]
             }));
 
-            setChartData(formattedData);
+            setStatusData(formattedData);
+
+            const priorityCounts = {};
+
+            data.forEach(task => {
+                const priority = task.priority;
+                priorityCounts[priority] = (priorityCounts[priority] || 0) + 1;
+            });
+
+            const priorityChartData = Object.keys(priorityCounts).map(priority => ({
+                name: priority,
+                value: priorityCounts[priority]
+            }));
+
+            setPriorityData(priorityChartData);
+
+
         } catch (err) {
             console.error("Error fetching tasks:", err);
-            setChartData([]);
+            setStatusData([]);
         }
     }
 
-    const RADIAN = Math.PI / 180;
-    const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-        const x = cx + radius * Math.cos(-midAngle * RADIAN);
-        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    const onPieEnter = (_, index) => {
+        setActiveIndex(index);
+    };
+
+    // Custom active shape for pie chart
+    const renderActiveShape = (props) => {
+        const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
+            fill, payload, percent, value } = props;
+        const sin = Math.sin(-midAngle * Math.PI / 180);
+        const cos = Math.cos(-midAngle * Math.PI / 180);
+        const sx = cx + (outerRadius + 12) * cos;
+        const sy = cy + (outerRadius + 10) * sin;
+        const mx = cx + (outerRadius + 35) * cos;
+        const my = cy + (outerRadius + 30) * sin;
+        const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+        const ey = my;
+        const textAnchor = cos >= 0 ? 'start' : 'end';
 
         return (
-            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-                {`${(percent * 100).toFixed(0)}%`}
-            </text>
+            <g>
+                <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+                    {payload.name}
+                </text>
+                <Sector
+                    cx={cx}
+                    cy={cy}
+                    innerRadius={innerRadius}
+                    outerRadius={outerRadius}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    fill={fill}
+                />
+                <Sector
+                    cx={cx}
+                    cy={cy}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    innerRadius={outerRadius + 6}
+                    outerRadius={outerRadius + 10}
+                    fill={fill}
+                />
+                <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${value} tasks`}</text>
+                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
+                    {`(${(percent * 100).toFixed(0)}%)`}
+                </text>
+            </g>
         );
-    };
+    }
 
     return (
         <div className="flex gap-7">
-            <div className="h-96 w-[500px] rounded-lg shadow-md shadow-gray-400 bg-white">
+            <div className="h-96 w-[510px] rounded-lg shadow-md shadow-gray-400 bg-white">
                 <p className="text-center py-2 font-medium">Tasks by Status</p>
                 <div className="w-full h-80 px-4">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                            data={chartData}
+                            data={statusData}
                             margin={{
                                 top: 20,
                                 right: 30,
@@ -109,8 +166,10 @@ const DashBoardCharts = () => {
                             <YAxis
                                 label={{ value: 'Number of Tasks', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
                             />
-                            <Tooltip />
-                            <Legend />
+                            <Tooltip
+                                formatter={(value, name) => [`${value} tasks`, 'Count']}
+                                labelFormatter={(label) => `Status: ${label}`}
+                            />                            <Legend />
                             <defs>
                                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#1A73E8" stopOpacity={0.8} />
@@ -123,7 +182,7 @@ const DashBoardCharts = () => {
                                 radius={[4, 4, 0, 0]}
                                 fill="url(#colorCount)"
                             >
-                                {chartData.map((entry, index) => (
+                                {statusData.map((entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={COLORS[index % COLORS.length]}
@@ -134,25 +193,34 @@ const DashBoardCharts = () => {
                     </ResponsiveContainer>
                 </div>
             </div>
-            <div className="h-96 w-[500px] rounded-lg shadow-md shadow-gray-400 bg-white">
-                <p className="text-center py-2 font-medium">Chart 2</p>
+            <div className="h-96 w-[510px] rounded-lg shadow-md shadow-gray-400 bg-white">
+                <p className="text-center py-2 font-medium">Chart by Priority</p>
                 <div className=" w-full h-80 px-4 flex justify-center">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart width={400} height={400}>
                             <Pie
-                                data={chartData}
+                                data={priorityData}
+                                activeIndex={activeIndex}
+                                activeShape={renderActiveShape}
                                 cx="50%"
                                 cy="50%"
-                                labelLine={false}
-                                label={renderCustomizedLabel}
-                                outerRadius={80}
+                                innerRadius={80}
+                                outerRadius={110}
                                 fill="#8884d8"
-                                dataKey="count"
+                                dataKey="value"
+                                onMouseEnter={onPieEnter}
+
                             >
-                                {chartData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                {priorityData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={COLORS[index % COLORS.length]}
+                                    />
                                 ))}
                             </Pie>
+                            <Tooltip 
+                                formatter={(value) => [`${value} tasks`, 'Count']}
+                            />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
