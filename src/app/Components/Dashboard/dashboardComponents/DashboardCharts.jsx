@@ -111,7 +111,7 @@ const DashBoardCharts = () => {
         return (
             <g>
                 <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-                    {payload.name}
+                    {`Priority: ${payload.name}`}
                 </text>
                 <Sector
                     cx={cx}
@@ -133,7 +133,9 @@ const DashBoardCharts = () => {
                 />
                 <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
                 <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${value} tasks`}</text>
+                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">
+                    {`${value} ${value === 1 ? 'task' : 'tasks'}`}
+                </text>
                 <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                     {`(${(percent * 100).toFixed(0)}%)`}
                 </text>
@@ -142,46 +144,38 @@ const DashBoardCharts = () => {
     }
 
     return (
-        <div className="flex gap-7">
-            <div className="h-96 w-[510px] rounded-lg shadow-md shadow-gray-400 bg-white">
-                <p className="text-center py-2 font-medium">Tasks by Status</p>
-                <div className="w-full h-80 px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Status Chart */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-800">Tasks by Status</h3>
+                </div>
+                <div className="p-4" style={{ height: '300px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             data={statusData}
-                            margin={{
-                                top: 20,
-                                right: 30,
-                                left: 20,
-                                bottom: 40,
-                            }}
+                            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
                         >
-                            <CartesianGrid strokeDasharray="3 3" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                             <XAxis
                                 dataKey="status"
                                 angle={-45}
                                 textAnchor="end"
-                                height={70}
+                                height={60}
+                                tick={{ fill: '#666', fontSize: 12 }}
                             />
                             <YAxis
-                                label={{ value: 'Number of Tasks', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                                tick={{ fill: '#666', fontSize: 12 }}
                             />
                             <Tooltip
-                                formatter={(value, name) => [`${value} tasks`, 'Count']}
-                                labelFormatter={(label) => `Status: ${label}`}
-                            />                            <Legend />
-                            <defs>
-                                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#1A73E8" stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor="#1A73E8" stopOpacity={0.4} />
-                                </linearGradient>
-                            </defs>
-                            <Bar
-                                dataKey="count"
-                                name="Tasks"
-                                radius={[4, 4, 0, 0]}
-                                fill="url(#colorCount)"
-                            >
+                                contentStyle={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+                                    border: '1px solid #f0f0f0',
+                                    borderRadius: '6px',
+                                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                                }}
+                            />
+                            <Bar dataKey="count" name="Tasks">
                                 {statusData.map((entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
@@ -193,23 +187,26 @@ const DashBoardCharts = () => {
                     </ResponsiveContainer>
                 </div>
             </div>
-            <div className="h-96 w-[510px] rounded-lg shadow-md shadow-gray-400 bg-white">
-                <p className="text-center py-2 font-medium">Chart by Priority</p>
-                <div className=" w-full h-80 px-4 flex justify-center">
+
+            {/* Priority Chart */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-800">Tasks by Priority</h3>
+                </div>
+                <div className="p-4" style={{ height: '300px' }}>
                     <ResponsiveContainer width="100%" height="100%">
-                        <PieChart width={400} height={400}>
+                        <PieChart>
                             <Pie
                                 data={priorityData}
                                 activeIndex={activeIndex}
                                 activeShape={renderActiveShape}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={80}
-                                outerRadius={110}
+                                innerRadius={60}
+                                outerRadius={80}
                                 fill="#8884d8"
                                 dataKey="value"
                                 onMouseEnter={onPieEnter}
-
                             >
                                 {priorityData.map((entry, index) => (
                                     <Cell
@@ -218,9 +215,6 @@ const DashBoardCharts = () => {
                                     />
                                 ))}
                             </Pie>
-                            <Tooltip 
-                                formatter={(value) => [`${value} tasks`, 'Count']}
-                            />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>

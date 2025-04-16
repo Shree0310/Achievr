@@ -5,37 +5,37 @@ import { usePathname } from "next/navigation";
 
 const SubHeader = () => {
     const pathname = usePathname();
+    
+    const navItems = [
+        { name: 'Overview', path: '/' },
+        { name: 'Board', path: '/board' },
+        { name: 'Dashboard', path: '/dashboard' },
+        { name: 'This Week', path: '/week' },
+        { name: 'This Cycle', path: '/cycle' }
+    ];
 
-    return <div className="my-2 relative z-10">
-    <div className="h-9 border-t border-gray-400 border-opacity-25 w-full py-7">
-        <div className="h-full flex items-center">
-            <div className=" flex justify-center space-x-4">
-                <ul className="flex text-md font-black text-gray-700 px-4">
-                    <li className="mx-5">
-                        <Link href="/">
-                        Overview
+    return (
+        <div className="bg-white border-b border-gray-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <nav className="flex space-x-8" aria-label="Tabs">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.path}
+                            href={item.path}
+                            className={`
+                                px-3 py-4 text-sm font-medium border-b-2 transition-colors
+                                ${pathname === item.path
+                                    ? 'border-primary-500 text-primary-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                            `}
+                        >
+                            {item.name}
                         </Link>
-                    </li>
-                    <li className="mx-5">
-                        <Link 
-                        href='/board'
-                        className={`${pathname === '/board' ? 'underline underline-offset-4' : ''}`}>
-                        Board
-                        </Link>
-                        </li>
-                    <li className="mx-5">
-                        <Link 
-                        href="/dashboard"
-                        className={`${pathname === '/dashboard' ? 'underline underline-offset-4' : ''}`}>
-                        Dashboard
-                        </Link></li>
-                    <li className="mx-5">This Week</li>
-                    <li className="mx-5">This Cycle</li>
-                </ul>
+                    ))}
+                </nav>
             </div>
         </div>
-    </div>
-    </div>
+    );
 }
 
 export default SubHeader;

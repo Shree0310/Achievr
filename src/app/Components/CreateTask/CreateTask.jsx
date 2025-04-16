@@ -6,7 +6,7 @@ import DeleteTask from "../DeleteTask/DeleteTask";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) => {
+const CreateTask = ({ onClose, userId, isEditMode = false, taskToEdit }) => {
     const [title, setTitle] = useState(taskToEdit?.title || '');
     const [description, setDescription] = useState(taskToEdit?.description || '');
     const [priority, setPriority] = useState(taskToEdit?.priority?.toString() || '');
@@ -18,7 +18,6 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-
         if (isEditMode && taskToEdit) {
             setTitle(taskToEdit.title || '');
             setDescription(taskToEdit.description || '');
@@ -26,8 +25,6 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
             setEfforts(taskToEdit.efforts?.toString() || '')
             setSelectedCycle(taskToEdit.cycle_id || '')
         }
-
-
 
         const fetchCycles = async () => {
             const { data, error } = await supabase
@@ -47,9 +44,7 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                     }
                     else if (!selectedCycle) {
                         setSelectedCycle(data[0].id)
-
                     }
-
                 }
             } catch (error) {
                 console.log("cycle id not found");
@@ -100,7 +95,6 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
                     .select();
                 if (error) throw error;
                 console.log("Task created successfully:", data);
-
             } else {
                 // Insert task into Supabase
                 const { data, error } = await supabase
@@ -147,102 +141,140 @@ const CreateTask = ({ isEditMode = false, taskToEdit = null, onClose, userId }) 
     };
 
     return (
-        <>
-            <div className={`fixed bg-black bg-opacity-50 z-50 ${!isEditMode ? "inset-0 flex justify-center py-36 px-20" : "inset-0 flex justify-end pt-36 pl-20 pb-5"} `}>
-                <div className="bg-primary-100 w-1/2 h-full rounded-lg shadow-md">
-                    <div className="bg-primary-500 h-12 px-8 py-2 flex justify-between items-center text-black text-lg shadow-sm">
-                        <h1 className=" ">{!isEditMode ? 'Create a task' : 'Edit Task'}
-                            {/* <span className="bg-black text-lg"
-                             onClick={onClose}>x</span> */}
-                        </h1>
-
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className={`bg-white rounded-xl shadow-xl w-full max-w-2xl transform transition-all ${isEditMode ? 'h-auto' : 'h-auto'}`}>
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                        {!isEditMode ? 'Create New Task' : 'Edit Task'}
+                    </h2>
+                    <div className="flex items-center space-x-2">
                         {isEditMode && (
-                            <div className="relative">
-                                <div
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className=" cursor-pointer hover:bg-gray-300 rounded-full p-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                                    </svg>
-                                </div>
-                                {isMenuOpen && (
-                                    <DeleteTask
-                                        taskToDelete={taskToEdit.id} />
-                                )}
-                            </div>
+                            <button
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                            >
+                                <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                            </button>
                         )}
+                        {isMenuOpen && <DeleteTask taskToDelete={taskToEdit.id} />}
                     </div>
+                </div>
 
-                    <div className="flex flex-col p-10 space-y-4">
-                        {error && (
-                            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded">
-                                <p>{error}</p>
+                {/* Form Content */}
+                <div className="p-6 space-y-6">
+                    {error && (
+                        <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md text-sm">
+                            <p>{error}</p>
+                        </div>
+                    )}
+
+                    <div className="space-y-4">
+                        {/* Title Input */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Title
+                            </label>
+                            <Input
+                                type="text"
+                                placeholder="Enter task title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                            />
+                        </div>
+
+                        {/* Description Input */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Description
+                            </label>
+                            <textarea
+                                placeholder="Enter task description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                rows={4}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
+                            />
+                        </div>
+
+                        {/* Priority and Effort Selection */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Priority
+                                </label>
+                                <select
+                                    value={priority}
+                                    onChange={(e) => setPriority(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+                                >
+                                    <option value="" disabled>Select Priority</option>
+                                    <option value="1">High Priority (P1)</option>
+                                    <option value="2">Medium Priority (P2)</option>
+                                    <option value="3">Low Priority (P3)</option>
+                                </select>
                             </div>
-                        )}
-                        <Input
-                            type="text"
-                            placeholder="Title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="h-12 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500" />
-                        <Input
-                            type="text"
-                            placeholder="Description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="h-24 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
-                        />
-                        <div className={`flex ${!isEditMode ? "justify-center space-x-2" : "flex-col space-y-4"}`}>
-                            <select
-                                className="w-1/2 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
-                                value={priority}
-                                onChange={(e) => setPriority(e.target.value)}
-                            >
-                                <option value="" disabled>Priority</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
 
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Story Points
+                                </label>
+                                <select
+                                    value={efforts}
+                                    onChange={(e) => setEfforts(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+                                >
+                                    <option value=" " disabled>Select Points</option>
+                                    <option value="1">1 Point</option>
+                                    <option value="2">2 Points</option>
+                                    <option value="3">3 Points</option>
+                                    <option value="5">5 Points</option>
+                                    <option value="8">8 Points</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Cycle Selection */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Cycle
+                            </label>
                             <select
-                                className="w-1/2 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
-                                value={efforts}
-                                onChange={(e) => setEfforts(e.target.value)}
-                            >
-                                <option value=" " disabled>Efforts</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="5">5</option>
-                                <option value="8">8</option>
-                            </select>
-                            <select className="w-1/2 px-8 py-2 border border-gray-500 rounded-md shadow-sm focus:border-blue-500"
                                 value={selectedCycle}
-                                onChange={(e) => setSelectedCycle(e.target.value)}>
-                                <option value='' disabled>Select cycle</option>
+                                onChange={(e) => setSelectedCycle(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+                            >
+                                <option value="" disabled>Select Cycle</option>
                                 {cycles.map(cycle => (
                                     <option key={cycle.id} value={cycle.id}>{cycle.title}</option>
                                 ))}
                             </select>
                         </div>
-                        <div className={`flex  space-x-2 ${!isEditMode ? "justify-end px-10 py-6" : "justify-start py-8"}`}>
-                            <Button
-                                onClick={onClose}
-                                className="bg-[#D9D9D9] hover:bg-gray-400 text-black font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleCreateTask}
-                                disabled={isLoading}
-                                className="bg-primary-400 hover:bg-primary-500 font-medium py-2 px-4 rounded-md hover:cursor-pointer text-white disabled:opacity-50">
-                                {isEditMode ? 'Update' : 'Create Task'}
-                            </Button>
-                        </div>
                     </div>
                 </div>
+
+                {/* Footer Actions */}
+                <div className="px-6 py-4 bg-gray-50 rounded-b-xl border-t border-gray-200 flex justify-end space-x-3">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleCreateTask}
+                        disabled={isLoading}
+                        className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLoading ? 'Processing...' : isEditMode ? 'Update Task' : 'Create Task'}
+                    </button>
+                </div>
             </div>
-        </>
+        </div>
     );
-};
+}
 
 export default CreateTask;

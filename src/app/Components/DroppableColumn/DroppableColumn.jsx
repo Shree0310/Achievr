@@ -20,7 +20,9 @@ const DroppableColumn = ({ id, title, children, }) => {
       </p>
       {/* When we nest one component inside another component we use children, a prop */}
       <div className="overflow-y-auto p-2 flex-grow">
-        {children}
+        <div className="space-y-3">
+          {children}
+        </div>
       </div>
     </div>
   );
