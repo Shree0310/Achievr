@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
-import {
+import { 
     BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
+    Bar, 
+    XAxis, 
+    YAxis, 
+    CartesianGrid, 
+    Tooltip, 
+    Legend, 
     ResponsiveContainer,
     Cell
-} from 'recharts';
+  } from 'recharts';
 import { PieChart, Pie, Sector } from 'recharts';
 
 
@@ -38,8 +38,8 @@ const DashBoardCharts = () => {
     async function fetchTasks() {
         try {
             const { data, error } = await supabase
-                .from('tasks')
-                .select('*');
+            .from('tasks')
+            .select('*');
 
             if (error) {
                 throw error;
@@ -151,8 +151,8 @@ const DashBoardCharts = () => {
                     <h3 className="text-lg font-semibold text-gray-800">Tasks by Status</h3>
                 </div>
                 <div className="p-4" style={{ height: '300px' }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
+        <ResponsiveContainer width="100%" height="100%">
+        <BarChart
                             data={statusData}
                             margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
                         >
@@ -183,10 +183,10 @@ const DashBoardCharts = () => {
                                     />
                                 ))}
                             </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
+        </BarChart>
+      </ResponsiveContainer>
+        </div>
+   </div> 
 
             {/* Priority Chart */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -218,8 +218,8 @@ const DashBoardCharts = () => {
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
-            </div>
-        </div>
+   </div>   
+</div>
     );
 }
 

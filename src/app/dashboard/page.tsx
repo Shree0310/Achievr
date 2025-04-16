@@ -15,7 +15,7 @@ export default function DashboardPage() {
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Header - fixed at top */}
                 <div className="w-full">
-                    <Header />
+                    <Header user={undefined} />
                 </div>
 
                 <div className="w-full">

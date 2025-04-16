@@ -1,37 +1,43 @@
-import { createClient } from "@/utils/supabase/server";
+"use client"
 
-export default async function UserName({position = "left"}) {
+import { useEffect, useState } from "react";
 
-    const supabase = await createClient();
+export default function UserName({ user, position = "left" }) {
+    const [userName, setUserName] = useState("");
+    const [userInitials, setUserInitials] = useState("");
 
-    const session = await supabase.auth.getUser();
+    useEffect(() => {
+        if (user) {
+            // Check if it's a demo user
+            if (user.email === 'demo@example.com') {
+                setUserName('Demo User');
+                setUserInitials('D');
+            } else {
+                const name = user.user_metadata?.name || "User";
+                setUserName(name);
+                setUserInitials(getInitials(name));
+            }
+        }
+    }, [user]);
 
-    const {
-        data: { user }
-    } = await supabase.auth.getUser();
-
-    const user_name = user.user_metadata?.name;
-
-    const getInitials =(name)=>{
+    const getInitials = (name) => {
         return name
-        .split(' ')
-        .map(part => part.charAt(0).toUpperCase())
-        .join('');
+            .split(' ')
+            .map(part => part.charAt(0).toUpperCase())
+            .join('');
+    };
+
+    if (!user) {
+        return (
+            <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse flex items-center justify-center">
+                <div className="w-6 h-6"></div>
+            </div>
+        );
     }
 
-    const userInitials = getInitials(user_name);
-    const userName = user_name || "user name not set";
-
-    const nameClasses = position === "right" ? "text-right" : "text-left";
-
     return (
-        <div>
-            <div className=" z-30 top-4 left-4 pb-2">
-                <div className="p-2 rounded-full bg-accent-500 border-2 border-black">
-                <p className={`text-gray-800 font-semibold text-sm ${nameClasses}`}>{userInitials}</p>
-                </div>
-            </div>
+        <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+            <span className="text-white font-medium text-sm">{userInitials}</span>
         </div>
-    )
-
+    );
 }

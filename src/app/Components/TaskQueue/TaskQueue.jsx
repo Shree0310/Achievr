@@ -230,7 +230,7 @@ const TaskQueue = ({ userId }) => {
                     )}
                 </TableBody>
             </Table>
-        </div>
+    </div>
     </>
 }
 export default TaskQueue;

@@ -1,13 +1,34 @@
+"use client"
+
 import Header from '../Components/Header/Header';
 import Navbar from '../Components/Navbar/Navbar';
 import SubHeader from '../Components/SubHeader/SubHeader';
 import Cycles from '../Components/Cycles/Cycles';
-import { createClient } from '@/utils/supabase/server';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/utils/supabase/client';
 
-export default async function CycleListPage(){
-    const supabase = await createClient();
-    const session = await supabase.auth.getSession();
-    const userId = session.data.session?.user?.id;
+export default function CycleListPage(){
+    const [userId, setUserId] = useState<string | undefined>(undefined);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function getSession() {
+            const { data } = await supabase.auth.getSession();
+            setUserId(data.session?.user?.id);
+            setLoading(false);
+        }
+        
+        getSession();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+
     
 
     return (
@@ -25,7 +46,7 @@ export default async function CycleListPage(){
         <div className="flex-1 flex flex-col min-w-0">
             {/* Header - fixed at top */}
             <div className="w-full">
-                <Header />
+                <Header user={undefined} />
             </div>
 
             <div className="w-full">
