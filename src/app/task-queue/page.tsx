@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { User } from '@supabase/supabase-js';
 import Header from '../Components/Header/Header';
 import Navbar from '../Components/Navbar/Navbar';
 import SubHeader from '../Components/SubHeader/SubHeader';
