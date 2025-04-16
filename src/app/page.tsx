@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Board from "./Components/Board/Board";
 import Header from "./Components/Header/Header";
 import Navbar from "./Components/Navbar/Navbar";
@@ -6,9 +5,6 @@ import SubHeader from "./Components/SubHeader/SubHeader";
 import Stages from "./Components/Stages/Stages";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
-import UserName from './Components/UserName/UserName';
-import CreateTask from './Components/CreateTask/CreateTask';
-import CreateTaskButton from './Components/CreateTask/CreateTaskButton';
 
 export default async function Home() {
   const supabase = await createClient();
@@ -30,11 +26,6 @@ export default async function Home() {
   const {
     user: { user_metadata, id }
   } = session.data.session;
-
-  const { user_name } = user_metadata;
-  const userName = user_name ? `@${user_name}` : 'user name not set';
-
-  const userId = session.data.session?.user?.id;
 
   return (
     <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">

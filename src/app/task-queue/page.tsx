@@ -2,8 +2,6 @@ import Header from '../Components/Header/Header';
 import Navbar from '../Components/Navbar/Navbar';
 import SubHeader from '../Components/SubHeader/SubHeader';
 import TaskQueue from '../Components/TaskQueue/TaskQueue';
-import UserName from '../Components/UserName/UserName';
-import CreateTaskButton from '../Components/CreateTask/CreateTaskButton';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function TaskQueuePage(){
