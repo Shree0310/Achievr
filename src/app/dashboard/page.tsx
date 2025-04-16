@@ -2,9 +2,6 @@ import Dashboard from "../Components/Dashboard/Dashboard";
 import Navbar from "../Components/Navbar/Navbar";
 import Header from "../Components/Header/Header";
 import SubHeader from "../Components/SubHeader/SubHeader";
-import Board from "../Components/Board/Board";
-import Stages from "../Components/Stages/Stages";
-import Activity from '../Components/Activity/Activity';
 
 export default function DashboardPage() {
     return (

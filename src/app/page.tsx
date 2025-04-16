@@ -23,10 +23,6 @@ export default async function Home() {
     )
   }
 
-  const {
-    user: { user_metadata, id }
-  } = session.data.session;
-
   return (
     <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
       {/* Navbar */}

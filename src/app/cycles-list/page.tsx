@@ -1,8 +1,6 @@
 import Header from '../Components/Header/Header';
 import Navbar from '../Components/Navbar/Navbar';
 import SubHeader from '../Components/SubHeader/SubHeader';
-import TaskQueue from '../Components/TaskQueue/TaskQueue';
-import UserName from '../Components/UserName/UserName';
 import Cycles from '../Components/Cycles/Cycles';
 import { createClient } from '@/utils/supabase/server';
 
