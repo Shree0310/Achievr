@@ -1,10 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const SubHeader = () => {
     const pathname = usePathname();
+    const router = useRouter();
     
     const navItems = [
         { name: 'Overview', path: '/' },
@@ -14,6 +16,13 @@ const SubHeader = () => {
         { name: 'This Cycle', path: '/cycle' }
     ];
 
+    // Prefetch all routes
+    useEffect(() => {
+        navItems.forEach(item => {
+            router.prefetch(item.path);
+        });
+    }, [router]);
+
     return (
         <div className="bg-white border-b border-gray-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,6 +31,7 @@ const SubHeader = () => {
                         <Link
                             key={item.path}
                             href={item.path}
+                            prefetch={true}
                             className={`
                                 px-3 py-4 text-sm font-medium border-b-2 transition-colors
                                 ${pathname === item.path

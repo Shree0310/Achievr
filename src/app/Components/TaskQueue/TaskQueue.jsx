@@ -128,14 +128,14 @@ const TaskQueue = ({ userId }) => {
                 <span className="text-lg leading-none">+</span>
             </button>
         </div>    <div className="rounded-md border m-4">
-            <Table>
+            <Table className="border border-gray-400">
                 <TableHeader className="">
                     <TableRow className="bg-primary-300">
                         <TableHead className="border border-gray-400 text-black text-center">Title</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black text-center">Status</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black text-center">Priority</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black text-center">Efforts</TableHead>
-                        <TableHead className="border-r border-gray-400 text-black text-center">Cycle</TableHead>
+                        <TableHead className="border border-gray-400 text-black text-center">Status</TableHead>
+                        <TableHead className="border border-gray-400 text-black text-center">Priority</TableHead>
+                        <TableHead className="border border-gray-400 text-black text-center">Efforts</TableHead>
+                        <TableHead className="border border-gray-400 text-black text-center">Cycle</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className="bg-primary-50">
