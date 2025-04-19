@@ -19,31 +19,17 @@ export default function CycleListPage(){
                 const { data } = await supabase.auth.getSession();
                 const session = data.session;
                 
-                // First check if we're in demo mode by checking localStorage
-                const isDemoMode = localStorage.getItem('demoMode') === 'true';
+                console.log('Current session:', session);
                 
-                if (isDemoMode || session?.user?.email === 'demo@example.com') {
-                    console.log('Setting demo user');
-                    setUserId('demo-user-id');
-                    setUser({
-                        id: 'demo-user-id',
-                        email: 'demo@example.com',
-                        user_metadata: {
-                            name: 'Demo User'
-                        },
-                        app_metadata: {},
-                        aud: 'authenticated',
-                        created_at: new Date().toISOString(),
-                        role: 'authenticated',
-                        updated_at: new Date().toISOString()
-                    } as User);
-                } else if (session?.user) {
+                if (session?.user) {
+                    // If we have a real user session, clear demo mode
+                    localStorage.removeItem('demoMode');
                     console.log('Setting regular user:', session.user.id);
                     setUserId(session.user.id);
                     setUser(session.user);
                 } else {
+                    // Only set demo mode if there's no session
                     console.log('No session found, setting demo mode');
-                    // If no session, default to demo mode
                     localStorage.setItem('demoMode', 'true');
                     setUserId('demo-user-id');
                     setUser({
@@ -62,6 +48,7 @@ export default function CycleListPage(){
             } catch (error) {
                 console.error('Error getting session:', error);
                 // In case of error, default to demo mode
+                localStorage.setItem('demoMode', 'true');
                 setUserId('demo-user-id');
                 setUser({
                     id: 'demo-user-id',
@@ -81,6 +68,38 @@ export default function CycleListPage(){
         }
         
         getSession();
+
+        // Set up auth state change listener
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('Auth state changed:', _event, session);
+            if (session?.user) {
+                localStorage.removeItem('demoMode');
+                console.log('Auth state: Setting regular user:', session.user.id);
+                setUserId(session.user.id);
+                setUser(session.user);
+            } else {
+                console.log('Auth state: No session, setting demo mode');
+                localStorage.setItem('demoMode', 'true');
+                setUserId('demo-user-id');
+                setUser({
+                    id: 'demo-user-id',
+                    email: 'demo@example.com',
+                    user_metadata: {
+                        name: 'Demo User'
+                    },
+                    app_metadata: {},
+                    aud: 'authenticated',
+                    created_at: new Date().toISOString(),
+                    role: 'authenticated',
+                    updated_at: new Date().toISOString()
+                } as User);
+            }
+        });
+
+        // Cleanup subscription on unmount
+        return () => {
+            subscription.unsubscribe();
+        };
     }, []);
 
     if (loading) {

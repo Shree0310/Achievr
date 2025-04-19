@@ -31,12 +31,17 @@ const Cycles = ({ userId }) => {
     const isDemoMode = userId === 'demo-user-id';
 
     useEffect(() => {
+        console.log('Cycles component mounted/updated with userId:', userId);
+        console.log('Is demo mode:', isDemoMode);
+        
         if (!userId) {
             // Don't fetch if userId is undefined
+            console.log('No userId, skipping fetch');
             return;
         }
         if (isDemoMode) {
             // Initialize with demo cycles
+            console.log('Initializing demo cycles');
             const demoCycles = [
                 {
                     id: generateUUID(),
@@ -64,20 +69,25 @@ const Cycles = ({ userId }) => {
     async function fetchCycles() {
         try {
             if (!userId) {
+                console.log('No userId provided for fetching cycles');
                 return;
             }
 
+            console.log('Fetching cycles for userId:', userId);
             const { data: cycles, error } = await supabase
                 .from('cycles')
                 .select('*')
                 .eq('user_id', userId);
 
             if (error) {
+                console.error('Error fetching cycles:', error);
                 throw error;
             }
 
+            console.log('Fetched cycles:', cycles);
             setCycles(cycles || []);
         } catch (error) {
+            console.error('Error in fetchCycles:', error);
             setError(error.message);
         }
     }
@@ -131,6 +141,13 @@ const Cycles = ({ userId }) => {
                 setCycles(prev => [...prev, demoCycle]);
             } else {
                 // For real users, save to Supabase
+                console.log('Attempting to save cycle to Supabase:', {
+                    title: newCycle.title,
+                    start_at: newCycle.start_at?.toISOString(),
+                    end_at: newCycle.end_at?.toISOString(),
+                    user_id: userId
+                });
+
                 const { data, error } = await supabase
                     .from('cycles')
                     .insert([{
@@ -142,9 +159,12 @@ const Cycles = ({ userId }) => {
                     .select();
                 
                 if (error) {
+                    console.error('Error saving cycle:', error);
                     setError(error.message);
                     return;
                 }
+
+                console.log('Successfully saved cycle:', data);
                 setCycles(prev => [...prev, data[0]]);
             }
 
@@ -156,6 +176,7 @@ const Cycles = ({ userId }) => {
             setIsAddingCycle(false);
             setError('');
         } catch (error) {
+            console.error('Error in handleSaveCycle:', error);
             setError(error.message);
         }
     }

@@ -24,6 +24,28 @@ export async function createClient() {
   )
 }
 
+export async function signInWithGoogle() {
+  try {
+    const supabase = await createClient();
+    return await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Google sign in error:', error);
+    return { 
+      data: null,
+      error: error instanceof Error ? error.message : 'An unknown error occurred'
+    };
+  }
+}
+
 export async function demoLogin() {
   try {
     console.log('Starting demo session...');
