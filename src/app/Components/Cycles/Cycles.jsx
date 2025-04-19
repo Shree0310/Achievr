@@ -5,37 +5,81 @@ import { supabase } from "@/utils/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+// Function to generate a UUID v4
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
 const Cycles = ({ userId }) => {
     const [cycles, setCycles] = useState([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isAddingCycle, setIsAddingCycle] = useState(false);
-    const [newCycle, setNewCycle] = useState(
-        {
-            title: '',
-            start_at: '',
-            end_at: ''
-        }
-    );
+    const [newCycle, setNewCycle] = useState({
+        title: '',
+        start_at: null,
+        end_at: null
+    });
+
+    const isDemoMode = userId === 'demo-user-id';
 
     useEffect(() => {
+        if (!userId) {
+            // Don't fetch if userId is undefined
+            return;
+        }
+        if (isDemoMode) {
+            // Initialize with demo cycles
+            const demoCycles = [
+                {
+                    id: generateUUID(),
+                    title: 'Q1 2024',
+                    start_at: new Date('2024-01-01').toISOString(),
+                    end_at: new Date('2024-03-31').toISOString(),
+                    user_id: userId,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: generateUUID(),
+                    title: 'Q2 2024',
+                    start_at: new Date('2024-04-01').toISOString(),
+                    end_at: new Date('2024-06-30').toISOString(),
+                    user_id: userId,
+                    created_at: new Date().toISOString()
+                }
+            ];
+            setCycles(demoCycles);
+            return;
+        }
         fetchCycles();
-    }, []);
-
-
-
+    }, [userId, isDemoMode]);
 
     async function fetchCycles() {
-        const { data: cycles, error } = await supabase
-            .from('cycles')
-            .select('*');
+        try {
+            if (!userId) {
+                return;
+            }
 
-        if (error) {
-            throw error;
+            const { data: cycles, error } = await supabase
+                .from('cycles')
+                .select('*')
+                .eq('user_id', userId);
+
+            if (error) {
+                throw error;
+            }
+
+            setCycles(cycles || []);
+        } catch (error) {
+            setError(error.message);
         }
-
-        setCycles(cycles);
     }
 
     const handleAddCycle = () => {
@@ -50,123 +94,184 @@ const Cycles = ({ userId }) => {
         }));
     };
 
+    const handleDateChange = (date, field) => {
+        setNewCycle((prev) => ({
+            ...prev,
+            [field]: date
+        }));
+    };
+
     async function handleSaveCycle() {
-        const { data, error } = await supabase
-            .from('cycles')
-            .insert([
-                {
+        if (!userId) {
+            setError('User not authenticated. Please sign in again.');
+            return;
+        }
+
+        if (!newCycle.title.trim()) {
+            setError('Please enter a cycle title');
+            return;
+        }
+
+        if (!newCycle.start_at) {
+            setError('Please select a start date');
+            return;
+        }
+
+        try {
+            if (isDemoMode) {
+                // In demo mode, just add to local state
+                const demoCycle = {
+                    id: generateUUID(),
                     title: newCycle.title,
-                    start_at: newCycle.start_at,
-                    end_at: newCycle.end_at,
-                    user_id: userId
+                    start_at: newCycle.start_at?.toISOString(),
+                    end_at: newCycle.end_at?.toISOString(),
+                    user_id: generateUUID(),
+                    created_at: new Date().toISOString()
+                };
+                setCycles(prev => [...prev, demoCycle]);
+            } else {
+                // For real users, save to Supabase
+                const { data, error } = await supabase
+                    .from('cycles')
+                    .insert([{
+                        title: newCycle.title,
+                        start_at: newCycle.start_at?.toISOString(),
+                        end_at: newCycle.end_at?.toISOString(),
+                        user_id: userId
+                    }])
+                    .select();
+                
+                if (error) {
+                    setError(error.message);
+                    return;
                 }
-            ])
-            .select();
+                setCycles(prev => [...prev, data[0]]);
+            }
 
-        setCycles(prev => [...prev, data[0]]);
-
-        setNewCycle({
-            title: '',
-            start_at: '',
-            end_at: ''
-        });
-
-        setIsAddingCycle(false);
+            setNewCycle({
+                title: '',
+                start_at: null,
+                end_at: null
+            });
+            setIsAddingCycle(false);
+            setError('');
+        } catch (error) {
+            setError(error.message);
+        }
     }
 
     const handleCancel = () => {
         setNewCycle({
             title: '',
-            start_at: '',
-            end_at: ''
+            start_at: null,
+            end_at: null
         });
-
         setIsAddingCycle(false);
+        setError('');
     }
 
-    return <>
-        <div className="flex items-center space-x-4 m-4">
-            <div className="text-primary-500 font-bold text-lg">Cycles</div>
-            <button
-                aria-label="Add new cycle"
-                onClick={handleAddCycle}
-                className="bg-primary-500 hover:bg-primary-600 text-white w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-opacity-50 shadow-sm"
-            >
-                <span className="text-lg leading-none">+</span>
-            </button>
-        </div>
-        <div className="rounded-md border m-4">
-            <Table>
-                <TableHeader className="bg-primary-200">
-                    <TableRow>
-                        <TableHead className="border border-gray-300 text-black">Title</TableHead>
-                        <TableHead className="border border-gray-300 text-black">Start date</TableHead>
-                        <TableHead className="border border-gray-300 text-black">End Date</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {cycles.map((cycle) => (
-                        <TableRow key={cycle.id}>
-                            <TableCell className="border border-gray-300">{cycle.title}</TableCell>
-                            <TableCell className="border border-gray-300">{cycle.start_at}</TableCell>
-                            {cycle.end_at ? (
-                                <TableCell className="border border-gray-300">{cycle.end_at}</TableCell>
-                            ) : (
-                                <TableCell className="border border-gray-300">End date not set</TableCell>
-                            )}
-                        </TableRow>
-                    ))}
-                    {isAddingCycle && (
-                        <>
+    const formatDate = (dateString) => {
+        if (!dateString) return;
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    return (
+        <div className="p-4">
+            <div className="flex items-center space-x-4 mb-4">
+                <div className="text-primary-500 font-bold text-lg">Cycles</div>
+                <button
+                    aria-label="Add new cycle"
+                    onClick={handleAddCycle}
+                    className="bg-primary-500 hover:bg-primary-600 text-white w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-opacity-50 shadow-sm"
+                >
+                    <span className="text-lg leading-none">+</span>
+                </button>
+            </div>
+            
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md">
+                    {error}
+                </div>
+            )}
+
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader className="bg-primary-200">
                         <TableRow>
-                            <TableCell className="border-r border-gray-300">
-                                <Input
-                                    name="title"
-                                    value={newCycle.title}
-                                    onChange={handleInputChange}
-                                    placeholder="Cycle Title">
-                                </Input>
-                            </TableCell>
-                            <TableCell className="border-r border-gray-300">
-                                <Input
-                                    name='start_at'
-                                    value={newCycle.start_at}
-                                    onChange={handleInputChange}
-                                    placeholder="Cycle start date">
-                                </Input>
-                            </TableCell>
-                            <TableCell className="border-r border-gray-300">
-                                <Input
-                                    name="end_at"
-                                    value={newCycle.end_at}
-                                    onChange={handleInputChange}
-                                    placeholder="Cycle end date">
-                                </Input>
-                            </TableCell>
-                        </TableRow><TableRow>
-                        <TableCell colSpan={5} className="border-r border-gray-400 bg-gray-50 p-3">
-                            <div className="flex justify-end space-x-3">
-                                <Button
-                                    onClick={handleCancel}
-                                    variant="outline"
-                                    className="px-4 py-2 border border-gray-300 hover:bg-gray-100 transition-colors">
-                                    Cancel
-                                </Button>
-                                <Button
-                                    onClick={handleSaveCycle}
-                                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-colors shadow-sm">
-                                    Add Cycle
-                                </Button>
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                    </>
-                        
-                    )}
-                    
-                </TableBody>
-            </Table>
+                            <TableHead className="border border-gray-300 text-black">Title</TableHead>
+                            <TableHead className="border border-gray-300 text-black">Start date</TableHead>
+                            <TableHead className="border border-gray-300 text-black">End Date</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {cycles.map((cycle) => (
+                            <TableRow key={cycle.id}>
+                                <TableCell className="border border-gray-300">{cycle.title}</TableCell>
+                                <TableCell className="border border-gray-300">{formatDate(cycle.start_at)}</TableCell>
+                                <TableCell className="border border-gray-300">{formatDate(cycle.end_at)}</TableCell>
+                            </TableRow>
+                        ))}
+                        {isAddingCycle && (
+                            <TableRow>
+                                <TableCell className="border border-gray-300">
+                                    <Input
+                                        name="title"
+                                        value={newCycle.title}
+                                        onChange={handleInputChange}
+                                        placeholder="Cycle Title"
+                                        className="w-full"
+                                    />
+                                </TableCell>
+                                <TableCell className="border border-gray-300">
+                                    <DatePicker
+                                        selected={newCycle.start_at}
+                                        onChange={(date) => handleDateChange(date, 'start_at')}
+                                        dateFormat="MMM d, yyyy"
+                                        placeholderText="Start Date"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    />
+                                </TableCell>
+                                <TableCell className="border border-gray-300">
+                                    <DatePicker
+                                        selected={newCycle.end_at}
+                                        onChange={(date) => handleDateChange(date, 'end_at')}
+                                        dateFormat="MMM d, yyyy"
+                                        placeholderText="End Date"
+                                        minDate={newCycle.start_at}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+                {isAddingCycle && (
+                    <div className="p-3 bg-gray-50 border-t border-gray-200">
+                        <div className="flex justify-end space-x-3">
+                            <Button
+                                onClick={handleCancel}
+                                variant="outline"
+                                className="px-4 py-2"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleSaveCycle}
+                                className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white"
+                            >
+                                Add Cycle
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
-    </>
+    );
 }
+
 export default Cycles;
