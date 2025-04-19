@@ -10,7 +10,6 @@ import { supabase } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 
 export default function BoardPage() {
-    const [userId, setUserId] = useState<string | undefined>(undefined);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
 
@@ -23,12 +22,10 @@ export default function BoardPage() {
                 if (session?.user) {
                     // If we have a real user session, clear demo mode
                     localStorage.removeItem('demoMode');
-                    setUserId(session.user.id);
                     setUser(session.user);
                 } else {
                     // Only set demo mode if there's no session
                     localStorage.setItem('demoMode', 'true');
-                    setUserId('demo-user-id');
                     const demoUser: User = {
                         id: 'demo-user-id',
                         email: 'demo@example.com',
@@ -47,7 +44,6 @@ export default function BoardPage() {
                 console.error('Error getting session:', error);
                 // In case of error, default to demo mode
                 localStorage.setItem('demoMode', 'true');
-                setUserId('demo-user-id');
                 const demoUser: User = {
                     id: 'demo-user-id',
                     email: 'demo@example.com',
@@ -78,26 +74,25 @@ export default function BoardPage() {
     }
 
     return (
-        <div className="h-screen w-screen flex overflow-hidden">
-            {/* Navbar - fixed on the left */}
-            <div className="h-full flex-shrink-0">
-                <Navbar />
+        <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
+            {/* Navbar */}
+            <div className="relative w-full md:w-auto md:h-screen">
+                <div className="h-auto md:h-full flex-shrink-0">
+                    <Navbar />
+                </div>
             </div>
 
-            {/* Main content area - takes remaining width */}
-            <div className="flex-1 flex flex-col min-w-0">
-                {/* Header - fixed at top */}
-                <div className="w-full">
+            {/* Main content area */}
+            <div className="flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
+                {/* Fixed header area */}
+                <div className="flex-shrink-0">
                     <Header user={user} />
-                </div>
-
-                <div className="w-full">
                     <SubHeader />
-                </div>
-
-                {/* Board and Stages - takes remaining space */}
-                <div className="flex-1 overflow-auto">
                     <Board />
+                </div>
+                
+                {/* Stages component - explicitly take all remaining space */}
+                <div className="flex-1 overflow-hidden">
                     <Stages />
                 </div>
             </div>
