@@ -1,12 +1,13 @@
 "use client"
 
 import UserName from '../UserName/UserName';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/client';
 
 const Header = ({ user }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isDemoMode, setIsDemoMode] = useState(false);
     const router = useRouter();
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
@@ -16,11 +17,23 @@ const Header = ({ user }) => {
     const currentMonth = monthNames[new Date().getMonth()];
     const currentYear = new Date().getFullYear();
 
+    useEffect(() => {
+        // Check demo mode status on client side
+        const checkDemoMode = () => {
+            if (typeof window !== 'undefined') {
+                setIsDemoMode(user?.email === 'demo@example.com' || localStorage.getItem('demoMode') === 'true');
+            }
+        };
+        checkDemoMode();
+    }, [user]);
+
     const handleLogout = async () => {
         setIsLoading(true);
         try {
-            // First clear any local storage data
-            localStorage.clear();
+            // Clear local storage only if it's available
+            if (typeof window !== 'undefined') {
+                localStorage.clear();
+            }
             
             try {
                 // Attempt to sign out from Supabase, but don't block on errors
@@ -30,17 +43,19 @@ const Header = ({ user }) => {
             }
 
             // Force a hard refresh to the auth page
-            window.location.href = '/auth';
+            if (typeof window !== 'undefined') {
+                window.location.href = '/auth';
+            }
         } catch (error) {
             console.error('Logout error:', error);
             // Even if there's an error, redirect to auth page
-            window.location.href = '/auth';
+            if (typeof window !== 'undefined') {
+                window.location.href = '/auth';
+            }
         } finally {
             setIsLoading(false);
         }
     };
-
-    const isDemoMode = user?.email === 'demo@example.com' || localStorage.getItem('demoMode') === 'true';
 
     return (
         <div className="flex-shrink-0">
