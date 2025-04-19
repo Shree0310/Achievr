@@ -23,6 +23,7 @@ const TaskQueue = ({ userId }) => {
     const [isAddingtask, setIsAddingTask] = useState(false);
     const [cycles, setCycles] = useState([]);
     const [selectedCycle, setSelectedCycle] = useState('');
+    const [currPage, setCurrPage] = useState(0);
     const [newTask, setNewTask] = useState(
         {
             title: '',
@@ -31,6 +32,11 @@ const TaskQueue = ({ userId }) => {
             efforts: ''
         }
     )
+    const PAGE_SIZE = 5;
+    const totalTasks = tasks.length;
+    const totalPages = Math.ceil(totalTasks/PAGE_SIZE);
+    const start = currPage * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
 
     const isDemoMode = userId === "demo-user-id";
 
@@ -145,7 +151,17 @@ const TaskQueue = ({ userId }) => {
         });
     }
 
+    const handlePageChange = (x) => {
+        setCurrPage(x);
+    }
 
+    const handlePrevPage = (x) => {
+        setCurrPage((prev) => prev-1);
+    }
+
+    const handleNextPage = () => {
+        setCurrPage((prev) => prev+1);
+    }
 
     return <>
         <div className="flex items-center space-x-4 m-4">
@@ -169,7 +185,7 @@ const TaskQueue = ({ userId }) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody className="bg-primary-50">
-                    {tasks.map((task) => (
+                    {tasks.slice(start,end).map((task) => (
                         <TableRow
                             key={task.id}
                             className="text-center">
@@ -260,6 +276,57 @@ const TaskQueue = ({ userId }) => {
                     )}
                 </TableBody>
             </Table>
+    </div>
+                {/* Pagination */}
+                <div className="flex justify-center items-center mt-4 mb-4 space-x-2">
+                    <button
+                        disabled={currPage === 0}
+                        onClick={() => handlePrevPage()}
+                        className={`px-3 py-1 rounded-md text-sm font-medium 
+                            bg-white border border-gray-300 
+                            hover:bg-gray-50 hover:border-blue-500
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                            transition-colors duration-200
+                            ${currPage === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        {"<"}
+                    </button>
+                    {[...Array(totalPages).keys()].map((p) => {
+                        // Show first 3 pages, current page, and last page
+                        if (p < 3 || p === currPage || p === totalPages - 1) {
+                            return (
+                                <button
+                                    key={p}
+                                    onClick={() => handlePageChange(p)}
+                                    className={`px-3 py-1 rounded-md text-sm font-medium 
+                                        ${currPage === p ? 'bg-blue-500 text-white' : 'bg-white'} 
+                                        border border-gray-300 
+                                        hover:bg-gray-50 hover:border-blue-500
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                        transition-colors duration-200`}
+                                >
+                                    {p + 1}
+                                </button>
+                            );
+                        } else if (p === 3) {
+                            // Show ellipsis after first 3 numbers
+                            return <span key="ellipsis" className="px-2">...</span>;
+                        }
+                        // Hide other numbers
+                        return null;
+                    })}
+                    <button
+                        disabled={currPage === totalPages - 1}
+                        onClick={() => handleNextPage()}
+                        className={`px-3 py-1 rounded-md text-sm font-medium 
+                            bg-white border border-gray-300 
+                            hover:bg-gray-50 hover:border-blue-500
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                            transition-colors duration-200
+                            ${currPage === totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        {">"}
+                    </button>
     </div>
     </>
 }

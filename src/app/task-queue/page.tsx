@@ -77,30 +77,25 @@ export default function TaskQueuePage() {
     }
 
     return (
-        <div className="h-screen w-screen flex overflow-hidden">
-            {/* Navbar - fixed on the left */}
+        <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
+            {/* Navbar */}
             <div className="relative w-full md:w-auto md:h-screen">
                 <div className="h-auto md:h-full flex-shrink-0">
                     <Navbar />
                 </div>
             </div>
 
-            {/* Main content area - takes remaining width */}
-            <div className="flex-1 flex flex-col min-w-0">
-                {/* Header - fixed at top */}
-                <div className="w-full">
+            {/* Main content area */}
+            <div className="flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
+                {/* Fixed header area */}
+                <div className="flex-shrink-0">
                     <Header user={user} />
-                </div>
-
-                <div className="w-full">
                     <SubHeader />
                 </div>
 
-                <div className="flex">
-                    {/* Board - takes remaining space */}
-                    <div className="flex-1 overflow-auto">
-                        <TaskQueue userId={userId} />
-                    </div>
+                {/* Scrollable content area */}
+                <div className="flex-1 overflow-auto">
+                    <TaskQueue userId={userId} />
                 </div>
             </div>
         </div>

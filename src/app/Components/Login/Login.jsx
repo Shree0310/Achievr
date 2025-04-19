@@ -38,15 +38,22 @@ const Login = () => {
         setIsDemoLoading(true);
         setError('');
         try {
-            const result = await demoLogin();
-            if (result.success) {
-                router.push('/');
-            } else {
-                throw new Error(result.error || 'Failed to login');
-            }
+            // Set demo mode in localStorage directly
+            localStorage.setItem('demoMode', 'true');
+            localStorage.setItem('demoUser', JSON.stringify({
+                id: 'demo-user-id',
+                email: 'demo@example.com',
+                user_metadata: {
+                    name: 'Demo User'
+                }
+            }));
+            
+            // Navigate to the board page
+            router.push('/board');
         } catch (error) {
             console.error("Demo login error:", error);
             setError(error.message);
+        } finally {
             setIsDemoLoading(false);
         }
     };

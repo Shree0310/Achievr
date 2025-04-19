@@ -49,45 +49,21 @@ export async function signInWithGoogle() {
 export async function demoLogin() {
   try {
     console.log('Starting demo session...');
-    const supabase = await createClient();
     
-    // Sign in anonymously
-    const { error } = await supabase.auth.signInWithPassword({
-      email: 'demo@example.com',
-      password: 'demo123',
-    });
-
-    if (error) {
-      // If sign in fails, create a new demo user
-      const { error: signUpError } = await supabase.auth.signUp({
+    // Set demo mode in localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('demoMode', 'true');
+      localStorage.setItem('demoUser', JSON.stringify({
+        id: 'demo-user-id',
         email: 'demo@example.com',
-        password: 'demo123',
-        options: {
-          data: {
-            name: 'Demo User',
-          },
-        },
-      });
-
-      if (signUpError) {
-        console.error('Failed to create demo user:', signUpError);
-        throw signUpError;
-      }
-
-      // Try to sign in again with the newly created user
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: 'demo@example.com',
-        password: 'demo123',
-      });
-
-      if (signInError) {
-        console.error('Failed to sign in with demo user:', signInError);
-        throw signInError;
-      }
+        user_metadata: {
+          name: 'Demo User'
+        }
+      }));
     }
 
     console.log('Demo session created successfully!');
-    return { success: true, url: 'http://localhost:3000/' };
+    return { success: true, url: '/' };
   } catch (error) {
     console.error('Demo login error:', error);
     return { 
