@@ -54,30 +54,34 @@ export default function Home() {
     };
   }, []);
 
-  const handleDemoLogin = () => {
-    setError(null);
-    startTransition(() => {
-      try {
-        console.log('Entering demo mode...');
-        setIsDemoMode(true);
-        setUser({
-          id: 'demo-user-id',
-          email: 'demo@example.com',
-          user_metadata: {
-            name: 'Demo User'
-          },
-          app_metadata: {},
-          aud: 'authenticated',
-          created_at: new Date().toISOString(),
-          role: 'authenticated',
-          updated_at: new Date().toISOString()
-        } as User);
-        router.push('/');
-      } catch (error) {
-        console.error('Error entering demo mode:', error);
-        setError('Failed to enter demo mode');
-      }
-    });
+  const handleDemoLogin = async () => {
+    try {
+      // Set demo mode flag in localStorage
+      localStorage.setItem('demoMode', 'true');
+      
+      // Create a demo user object with all required properties
+      const demoUser: User = {
+        id: 'demo-user-id',
+        email: 'demo@example.com',
+        user_metadata: {
+          name: 'Demo User'
+        },
+        app_metadata: {},
+        aud: 'authenticated',
+        created_at: new Date().toISOString(),
+        role: 'authenticated',
+        updated_at: new Date().toISOString()
+      };
+
+      // Update the user state with demo user
+      setUser(demoUser);
+
+      // Redirect to the board page
+      router.push('/board');
+    } catch (error) {
+      console.error('Demo login error:', error);
+      setError('Failed to start demo mode. Please try again.');
+    }
   };
 
   if (loading && !isDemoMode) {

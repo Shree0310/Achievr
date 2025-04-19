@@ -85,7 +85,14 @@ const Header = ({ user }) => {
                             {isLoading ? 'Signing out...' : 'Sign out'}
                         </button>
                     )}
-                    <UserName user={user} position="right" />
+                    {isDemoMode ? (
+                        <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-600">Demo Mode</span>
+                            <UserName user={user} position="right" />
+                        </div>
+                    ) : (
+                        <UserName user={user} position="right" />
+                    )}
                 </div>
             </div>
         </div>

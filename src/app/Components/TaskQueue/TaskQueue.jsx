@@ -7,6 +7,14 @@ import { supabase } from "@/utils/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 const TaskQueue = ({ userId }) => {
 
     const [loading, setLoading] = useState(false);
@@ -24,10 +32,32 @@ const TaskQueue = ({ userId }) => {
         }
     )
 
+    const isDemoMode = userId === "demo-user-id";
+
     useEffect(() => {
+        if(!isDemoMode){
+            fetchTasks();
+            fetchCycles();
+        }
+
+        if(isDemoMode){
+            console.log('initiating demo tasks');
+            const demoTasks = [
+                {
+                    id: generateUUID(),
+                    title: "complete sysytem design",
+                    user_id: userId,
+                    status: "In progress",
+                    efforts: "1",
+                    priority: "1",
+                    cycle_id:generateUUID()
+                }
+            ];
+            setTasks(demoTasks);
+            return;
+        }
         fetchTasks();
-        fetchCycles();
-    }, [])
+    }, [userId, isDemoMode])
 
     async function fetchCycles() {
         const { data, error } = await supabase

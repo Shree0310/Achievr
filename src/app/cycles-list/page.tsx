@@ -32,7 +32,7 @@ export default function CycleListPage(){
                     console.log('No session found, setting demo mode');
                     localStorage.setItem('demoMode', 'true');
                     setUserId('demo-user-id');
-                    setUser({
+                    const demoUser: User = {
                         id: 'demo-user-id',
                         email: 'demo@example.com',
                         user_metadata: {
@@ -43,14 +43,15 @@ export default function CycleListPage(){
                         created_at: new Date().toISOString(),
                         role: 'authenticated',
                         updated_at: new Date().toISOString()
-                    } as User);
+                    };
+                    setUser(demoUser);
                 }
             } catch (error) {
                 console.error('Error getting session:', error);
                 // In case of error, default to demo mode
                 localStorage.setItem('demoMode', 'true');
                 setUserId('demo-user-id');
-                setUser({
+                const demoUser: User = {
                     id: 'demo-user-id',
                     email: 'demo@example.com',
                     user_metadata: {
@@ -61,7 +62,8 @@ export default function CycleListPage(){
                     created_at: new Date().toISOString(),
                     role: 'authenticated',
                     updated_at: new Date().toISOString()
-                } as User);
+                };
+                setUser(demoUser);
             } finally {
                 setLoading(false);
             }
@@ -81,7 +83,7 @@ export default function CycleListPage(){
                 console.log('Auth state: No session, setting demo mode');
                 localStorage.setItem('demoMode', 'true');
                 setUserId('demo-user-id');
-                setUser({
+                const demoUser: User = {
                     id: 'demo-user-id',
                     email: 'demo@example.com',
                     user_metadata: {
@@ -92,11 +94,11 @@ export default function CycleListPage(){
                     created_at: new Date().toISOString(),
                     role: 'authenticated',
                     updated_at: new Date().toISOString()
-                } as User);
+                };
+                setUser(demoUser);
             }
         });
 
-        // Cleanup subscription on unmount
         return () => {
             subscription.unsubscribe();
         };
@@ -113,12 +115,8 @@ export default function CycleListPage(){
     return (
         <div className="h-screen w-screen flex overflow-hidden">
             {/* Navbar - fixed on the left */}
-            <div className="relative w-full md:w-auto md:h-screen">
-                {/* <CreateTaskButton 
-                /> */}
-                <div className="h-auto md:h-full flex-shrink-0">
-                    <Navbar />
-                </div>
+            <div className="h-full flex-shrink-0">
+                <Navbar />
             </div>
 
             {/* Main content area - takes remaining width */}
@@ -133,7 +131,7 @@ export default function CycleListPage(){
                 </div>
 
                 <div className="flex">
-                    {/* Board - takes remaining space */}
+                    {/* Cycles - takes remaining space */}
                     <div className="flex-1 overflow-auto">
                         <Cycles userId={userId} />
                     </div>

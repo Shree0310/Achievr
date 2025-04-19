@@ -135,7 +135,7 @@ const Cycles = ({ userId }) => {
                     title: newCycle.title,
                     start_at: newCycle.start_at?.toISOString(),
                     end_at: newCycle.end_at?.toISOString(),
-                    user_id: generateUUID(),
+                    user_id: userId,
                     created_at: new Date().toISOString()
                 };
                 setCycles(prev => [...prev, demoCycle]);
