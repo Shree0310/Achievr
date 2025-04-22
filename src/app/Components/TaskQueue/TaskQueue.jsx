@@ -21,6 +21,8 @@ const TaskQueue = ({ userId }) => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [searchInput, setSearchInput] = useState("");
+    const [showResults, setShowResults] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [isAddingtask, setIsAddingTask] = useState(false);
     const [cycles, setCycles] = useState([]);
@@ -43,6 +45,8 @@ const TaskQueue = ({ userId }) => {
     const isDemoMode = userId === "demo-user-id";
 
     useEffect(() => {
+        const timer = setTimeout(filterTasks(searchInput), 1000);
+
         if (!isDemoMode) {
             fetchTasks();
             fetchCycles();
@@ -53,7 +57,7 @@ const TaskQueue = ({ userId }) => {
             const demoTasks = [
                 {
                     id: generateUUID(),
-                    title: "complete sysytem design",
+                    title: "complete system design",
                     user_id: userId,
                     status: "In progress",
                     efforts: "1",
@@ -65,7 +69,10 @@ const TaskQueue = ({ userId }) => {
             return;
         }
         fetchTasks();
-    }, [userId, isDemoMode])
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [userId, isDemoMode, searchInput])
 
     async function fetchCycles() {
         const { data, error } = await supabase
@@ -82,10 +89,16 @@ const TaskQueue = ({ userId }) => {
         }
     }
 
-    async function fetchTasks() {
-        const { data: tasks, error } = await supabase
+    async function fetchTasks(searchQuery = "") {
+        let query = supabase
             .from('tasks')
             .select('*, cycles(id, title)');
+
+        if (searchQuery) {
+            query = query.or(`title.ilike.%${searchQuery}%, description.ilike.%${searchQuery}%`);
+        }
+
+        const { data: tasks, error } = await query;
 
         if (error) {
             throw error;
@@ -96,6 +109,19 @@ const TaskQueue = ({ userId }) => {
 
     const handleAddTask = () => {
         setIsAddingTask(true);
+    }
+
+    const filterTasks = (tasks) => {
+       if(!Array.isArray(tasks)) {return []; }
+
+       const searchTerm = searchInput.toLowerCase();
+       return tasks.filter(task => {
+        return (
+            (task.title?.toLowerCase() || '').includes(searchTerm) ||
+            (task.description?.toLowerCase() ||  '').includes(searchTerm)
+            )
+            
+       }) 
     }
 
     const handleInputChange = (e) => {
@@ -207,7 +233,7 @@ const TaskQueue = ({ userId }) => {
                         </svg>
                         <span>New Task</span>
                     </DropdownMenuItem>
-                    
+
                     <DropdownMenuItem
                         className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
                     >
@@ -226,7 +252,15 @@ const TaskQueue = ({ userId }) => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-        </div>    <div className="rounded-md border m-4">
+            <Input
+                value={searchInput}
+                placeholder="Search tasks..."
+                className="rounded-md w-64 h-8 border-gray-200"
+                onChange={(e) => setSearchInput(e.target.value)}
+            />
+        </div>
+
+        <div className="rounded-md border m-4">
             <Table className="border border-gray-400">
                 <TableHeader className="">
                     <TableRow className="bg-primary-300">
@@ -238,7 +272,7 @@ const TaskQueue = ({ userId }) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody className="bg-primary-50">
-                    {tasks.slice(start, end).map((task) => (
+                    {filterTasks(tasks).slice(start, end).map((task) => (
                         <TableRow
                             key={task.id}
                             className="text-center">
@@ -330,6 +364,7 @@ const TaskQueue = ({ userId }) => {
                 </TableBody>
             </Table>
         </div>
+
         {/* Pagination */}
         <div className="flex justify-center items-center mt-4 mb-4 space-x-2">
             <button
