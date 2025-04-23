@@ -233,7 +233,7 @@ const TaskQueue = ({ userId }) => {
                         </svg>
                         <span>New Task</span>
                     </DropdownMenuItem>
-
+                    
                     <DropdownMenuItem
                         className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
                     >

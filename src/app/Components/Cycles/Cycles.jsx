@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 // Function to generate a UUID v4
 function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0;
         const v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
@@ -21,6 +21,7 @@ const Cycles = ({ userId }) => {
     const [cycles, setCycles] = useState([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [searchInput, setSearchInput] = useState('');
     const [isAddingCycle, setIsAddingCycle] = useState(false);
     const [newCycle, setNewCycle] = useState({
         title: '',
@@ -33,7 +34,7 @@ const Cycles = ({ userId }) => {
     useEffect(() => {
         console.log('Cycles component mounted/updated with userId:', userId);
         console.log('Is demo mode:', isDemoMode);
-        
+
         if (!userId) {
             // Don't fetch if userId is undefined
             console.log('No userId, skipping fetch');
@@ -157,7 +158,7 @@ const Cycles = ({ userId }) => {
                         user_id: userId
                     }])
                     .select();
-                
+
                 if (error) {
                     console.error('Error saving cycle:', error);
                     setError(error.message);
@@ -201,6 +202,16 @@ const Cycles = ({ userId }) => {
         });
     }
 
+    const filterCycles = (cycles) => {
+        if (!Array.isArray(cycles)) { return []; }
+        const searchTerm = searchInput.toString();
+        return cycles.filter(cycle => {
+            return (
+                (cycle.title.toLowerCase() || '').includes(searchTerm)
+            )
+        })
+    }
+
     return (
         <div className="p-4">
             <div className="flex items-center space-x-4 mb-4">
@@ -213,12 +224,18 @@ const Cycles = ({ userId }) => {
                     <span className="text-lg leading-none">+</span>
                 </button>
             </div>
-            
+
             {error && (
                 <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md">
                     {error}
                 </div>
             )}
+            <Input
+                value={searchInput}
+                placeholder="Search cycles..."
+                className="rounded-md w-64 h-8 border-gray-200 my-2"
+                onChange={(e) => setSearchInput(e.target.value)}
+            />
 
             <div className="rounded-md border">
                 <Table>
@@ -230,7 +247,7 @@ const Cycles = ({ userId }) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {cycles.map((cycle) => (
+                        {filterCycles(cycles).map((cycle) => (
                             <TableRow key={cycle.id}>
                                 <TableCell className="border border-gray-300">{cycle.title}</TableCell>
                                 <TableCell className="border border-gray-300">{formatDate(cycle.start_at)}</TableCell>
