@@ -24,8 +24,14 @@ const TaskQueue = ({ userId }) => {
     const [searchInput, setSearchInput] = useState("");
     const [showResults, setShowResults] = useState(false);
     const [showSortDialog, setShowSortDialog] = useState(false);
-    const [sortOrder, setSortOrder] = useState('asc');
-    const [sortColumn, setSortColumn] = useState('title');
+    const [sortOrder, setSortOrder] = useState(() => {
+        const saved = localStorage.getItem('taskSortOrder');
+        return saved || 'asc';
+    });
+    const [sortColumn, setSortColumn] = useState(() => {
+        const saved = localStorage.getItem('taskSortColumn');
+        return saved || 'title';
+    });
     const [tasks, setTasks] = useState([]);
     const [isAddingtask, setIsAddingTask] = useState(false);
     const [cycles, setCycles] = useState([]);
@@ -93,23 +99,30 @@ const TaskQueue = ({ userId }) => {
     }
 
     async function fetchTasks(searchQuery = "") {
-        let query = supabase
-            .from('tasks')
-            .select('*, cycles(id, title)');
+        try {
+            let query = supabase
+                .from('tasks')
+                .select('*, cycles(id, title)');
 
-        if (searchQuery) {
-            query = query.or(`title.ilike.%${searchQuery}%, description.ilike.%${searchQuery}%`);
+            if (searchQuery) {
+                query = query.or(`title.ilike.%${searchQuery}%, description.ilike.%${searchQuery}%`);
+            }
+
+            query = query.order(sortColumn, { ascending: sortOrder === 'asc' });
+
+            const { data: tasks, error } = await query;
+
+            if (error) {
+                throw error;
+            }
+
+            setTasks(tasks || []);
+        } catch (error) {
+            setError('Failed to fetch tasks');
+            console.error('Error fetching tasks:', error);
+        } finally {
+            setLoading(false);
         }
-
-        query = query.order(sortColumn, { ascending: sortOrder === 'asc' });
-
-        const { data: tasks, error } = await query;
-
-        if (error) {
-            throw error;
-        }
-
-        setTasks(tasks || []);
     }
 
     const handleAddTask = () => {
@@ -131,15 +144,23 @@ const TaskQueue = ({ userId }) => {
 
     const sortTask = (columnName) => {
         return () => {
-            if(sortColumn == columnName){
-                setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+            if(sortColumn === columnName) {
+                const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                setSortOrder(newOrder);
+                localStorage.setItem('taskSortOrder', newOrder);
+            } else {
+                setSortColumn(columnName);
+                localStorage.setItem('taskSortColumn', columnName);
+            }
+            fetchTasks(searchInput);
         }
-        else{
-            setSortColumn(columnName);
-            setSortOrder('asc')
-        }
+    }
+
+    const handleSortOrderChange = (order) => {
+        setSortOrder(order);
+        localStorage.setItem('taskSortOrder', order);
+        setShowSortDialog(false); // Only close dialog after order is selected
         fetchTasks(searchInput);
-        }
     }
 
     const handleInputChange = (e) => {
@@ -210,6 +231,11 @@ const TaskQueue = ({ userId }) => {
     }
 
     return <>
+        {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative m-4" role="alert">
+                <span className="block sm:inline">{error}</span>
+            </div>
+        )}
         <div className="flex items-center space-x-4 m-4">
             <div className="text-primary-500 font-bold text-lg">Upcoming Tasks</div>
             <DropdownMenu>
@@ -340,20 +366,18 @@ const TaskQueue = ({ userId }) => {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-40 border-gray-200">
                                     <DropdownMenuItem
-                                    onClick={() => {
-                                        setSortOrder('asc')
-                                    }}
-                                     className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                        onClick={() => handleSortOrderChange('asc')}
+                                        className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
                                         </svg>
                                         Ascending
                                     </DropdownMenuItem>
                                     <DropdownMenuItem 
-                                    onClick={() => {
-                                        setSortOrder('desc')
-                                    }}
-                                    className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                        onClick={() => handleSortOrderChange('desc')}
+                                        className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
                                         </svg>
@@ -371,37 +395,119 @@ const TaskQueue = ({ userId }) => {
             <Table className="border border-gray-400">
                 <TableHeader className="">
                     <TableRow className="bg-primary-300">
-                        <TableHead className="border border-gray-400 text-black text-center">Title</TableHead>
-                        <TableHead className="border border-gray-400 text-black text-center">Status</TableHead>
-                        <TableHead className="border border-gray-400 text-black text-center">Priority</TableHead>
-                        <TableHead className="border border-gray-400 text-black text-center">Efforts</TableHead>
+                        <TableHead 
+                            onClick={sortTask("title")} 
+                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors group"
+                        >
+                            <div className="flex items-center justify-center space-x-1">
+                                <span>Title</span>
+                                {sortColumn === "title" && (
+                                    <svg 
+                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 20 20" 
+                                        fill="currentColor"
+                                    >
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </div>
+                        </TableHead>
+                        <TableHead 
+                            onClick={sortTask("status")} 
+                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors"
+                        >
+                            <div className="flex items-center justify-center space-x-1">
+                                <span>Status</span>
+                                {sortColumn === "status" && (
+                                    <svg 
+                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 20 20" 
+                                        fill="currentColor"
+                                    >
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </div>
+                        </TableHead>
+                        <TableHead 
+                            onClick={sortTask("priority")} 
+                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors"
+                        >
+                            <div className="flex items-center justify-center space-x-1">
+                                <span>Priority</span>
+                                {sortColumn === "priority" && (
+                                    <svg 
+                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 20 20" 
+                                        fill="currentColor"
+                                    >
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </div>
+                        </TableHead>
+                        <TableHead 
+                            onClick={sortTask("efforts")} 
+                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors"
+                        >
+                            <div className="flex items-center justify-center space-x-1">
+                                <span>Efforts</span>
+                                {sortColumn === "efforts" && (
+                                    <svg 
+                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 20 20" 
+                                        fill="currentColor"
+                                    >
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </div>
+                        </TableHead>
                         <TableHead className="border border-gray-400 text-black text-center">Cycle</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className="bg-primary-50">
-                    {filterTasks(tasks).slice(start, end).map((task) => (
-                        <TableRow
-                            key={task.id}
-                            className="text-center">
-                            <TableCell className="border-r border-l border-gray-400">{task.title} </TableCell>
-                            <TableCell className="border-r border-gray-400">{task.status}</TableCell>
-                            {task.priority ? (
-                                <TableCell className="border-r border-gray-400">{task.priority}</TableCell>
-
-                            ) : (
-                                <TableCell className="border-r border-gray-400">priority is not set</TableCell>
-                            )}
-                            {task.efforts ? (
-                                <TableCell className="border-r border-gray-400">{task.efforts}</TableCell>
-                            ) : (
-                                <TableCell className="border-r border-gray-400">efforts not set</TableCell>
-
-                            )}
-                            <TableCell className="border-r border-gray-400">
-                                {task.cycles ? task.cycles.title : "cycle not set"}
+                    {loading ? (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center py-4">
+                                <div className="flex items-center justify-center">
+                                    <svg className="animate-spin h-5 w-5 mr-3 text-primary-500" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                    </svg>
+                                    <span>Loading tasks...</span>
+                                </div>
                             </TableCell>
                         </TableRow>
-                    ))}
+                    ) : (
+                        filterTasks(tasks).slice(start, end).map((task) => (
+                            <TableRow
+                                key={task.id}
+                                className="text-center">
+                                <TableCell className="border-r border-l border-gray-400">{task.title} </TableCell>
+                                <TableCell className="border-r border-gray-400">{task.status}</TableCell>
+                                {task.priority ? (
+                                    <TableCell className="border-r border-gray-400">{task.priority}</TableCell>
+
+                                ) : (
+                                    <TableCell className="border-r border-gray-400">priority is not set</TableCell>
+                                )}
+                                {task.efforts ? (
+                                    <TableCell className="border-r border-gray-400">{task.efforts}</TableCell>
+                                ) : (
+                                    <TableCell className="border-r border-gray-400">efforts not set</TableCell>
+
+                                )}
+                                <TableCell className="border-r border-gray-400">
+                                    {task.cycles ? task.cycles.title : "cycle not set"}
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    )}
                     {isAddingtask && (
                         <>
                             <TableRow>
