@@ -252,12 +252,38 @@ const TaskQueue = ({ userId }) => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <Input
-                value={searchInput}
-                placeholder="Search tasks..."
-                className="rounded-md w-64 h-8 border-gray-200"
-                onChange={(e) => setSearchInput(e.target.value)}
-            />
+            <div className="relative">
+                {showResults ? (
+                    <Input
+                        value={searchInput}
+                        placeholder="Search tasks..."
+                        className="rounded-md w-64 h-8 border-gray-200 pl-8 bg-primary-200"
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        autoFocus
+                        onBlur={() => {
+                            if (!searchInput) {
+                                setShowResults(false);
+                            }
+                        }}
+                    />
+                ) : (
+                    <div 
+                        onClick={() => setShowResults(true)}
+                        className="flex items-center cursor-pointer px-3 py-1.5 rounded-md hover:bg-gray-100"
+                    >
+                        <svg 
+                            className="h-4 w-4 text-gray-500" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span className="ml-2 text-sm text-gray-600">Search</span>
+                    </div>
+                )}
+            </div>
         </div>
 
         <div className="rounded-md border m-4">

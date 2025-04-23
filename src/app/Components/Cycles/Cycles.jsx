@@ -22,6 +22,7 @@ const Cycles = ({ userId }) => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [searchInput, setSearchInput] = useState('');
+    const [isSearchActive, setIsSearchActive] = useState(false);
     const [isAddingCycle, setIsAddingCycle] = useState(false);
     const [newCycle, setNewCycle] = useState({
         title: '',
@@ -34,6 +35,8 @@ const Cycles = ({ userId }) => {
     useEffect(() => {
         console.log('Cycles component mounted/updated with userId:', userId);
         console.log('Is demo mode:', isDemoMode);
+
+        const timer = setTimeout(filterCycles(cycles), 1000);
 
         if (!userId) {
             // Don't fetch if userId is undefined
@@ -65,6 +68,9 @@ const Cycles = ({ userId }) => {
             return;
         }
         fetchCycles();
+        return () => {
+            clearTimeout(timer);
+        }
     }, [userId, isDemoMode]);
 
     async function fetchCycles() {
@@ -223,6 +229,30 @@ const Cycles = ({ userId }) => {
                 >
                     <span className="text-lg leading-none">+</span>
                 </button>
+                {isSearchActive ? (
+                    <Input
+                        value={searchInput}
+                        placeholder="Search cycles..."
+                        className="rounded-md w-64 h-8 border-gray-200 my-2 bg-primary-200"
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        autoFocus
+                        onBlur={() => {
+                            if (!searchInput) {
+                                setIsSearchActive(false)
+                            }
+                        }}
+                    />
+                ) : (
+                    <div
+                        className="flex cursor-pointer"
+                        onClick={() => setIsSearchActive(true)}
+                    >
+                        <svg className="h-4 w-4 my-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                        <span className="h-3 w-3 my-1 mx-1 text-gray-500">Search</span>
+                    </div>
+                )}
             </div>
 
             {error && (
@@ -230,13 +260,6 @@ const Cycles = ({ userId }) => {
                     {error}
                 </div>
             )}
-            <Input
-                value={searchInput}
-                placeholder="Search cycles..."
-                className="rounded-md w-64 h-8 border-gray-200 my-2"
-                onChange={(e) => setSearchInput(e.target.value)}
-            />
-
             <div className="rounded-md border">
                 <Table>
                     <TableHeader className="bg-primary-200">
