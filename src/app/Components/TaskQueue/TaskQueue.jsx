@@ -24,6 +24,8 @@ const TaskQueue = ({ userId }) => {
     const [searchInput, setSearchInput] = useState("");
     const [showResults, setShowResults] = useState(false);
     const [showSortDialog, setShowSortDialog] = useState(false);
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [sortColumn, setSortColumn] = useState('title');
     const [tasks, setTasks] = useState([]);
     const [isAddingtask, setIsAddingTask] = useState(false);
     const [cycles, setCycles] = useState([]);
@@ -73,7 +75,7 @@ const TaskQueue = ({ userId }) => {
         return () => {
             clearTimeout(timer);
         };
-    }, [userId, isDemoMode, searchInput])
+    }, [userId, isDemoMode, searchInput, sortColumn, sortOrder])
 
     async function fetchCycles() {
         const { data, error } = await supabase
@@ -99,6 +101,8 @@ const TaskQueue = ({ userId }) => {
             query = query.or(`title.ilike.%${searchQuery}%, description.ilike.%${searchQuery}%`);
         }
 
+        query = query.order(sortColumn, { ascending: sortOrder === 'asc' });
+
         const { data: tasks, error } = await query;
 
         if (error) {
@@ -123,6 +127,19 @@ const TaskQueue = ({ userId }) => {
             )
 
         })
+    }
+
+    const sortTask = (columnName) => {
+        return () => {
+            if(sortColumn == columnName){
+                setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+        }
+        else{
+            setSortColumn(columnName);
+            setSortOrder('asc')
+        }
+        fetchTasks(searchInput);
+        }
     }
 
     const handleInputChange = (e) => {
@@ -301,36 +318,44 @@ const TaskQueue = ({ userId }) => {
                         <div className="flex gap-2 p-4">
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
-                                    <span>Select Field</span>
+                                    <span>{sortColumn.charAt(0) +}</span>
                                     <svg className="zw-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
-                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Title</DropdownMenuItem>
-                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Status</DropdownMenuItem>
-                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Priority</DropdownMenuItem>
-                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Efforts</DropdownMenuItem>
+                                <DropdownMenuContent  className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
+                                    <DropdownMenuItem onClick={sortTask("title")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Title</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={sortTask("status")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Status</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={sortTask("priority")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Priority</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={sortTask("efforts")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Efforts</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
-                                    <span>Order</span>
+                                    <span>{sortOrder}</span>
                                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-40 border-gray-200">
-                                    <DropdownMenuItem className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                    <DropdownMenuItem
+                                    onClick={() => {
+                                        setSortOrder('asc')
+                                    }}
+                                     className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
                                         </svg>
                                         Ascending
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+                                    <DropdownMenuItem 
+                                    onClick={() => {
+                                        setSortOrder('desc')
+                                    }}
+                                    className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
                                         </svg>
                                         Descending
                                     </DropdownMenuItem>
