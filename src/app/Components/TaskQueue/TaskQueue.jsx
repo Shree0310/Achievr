@@ -23,6 +23,7 @@ const TaskQueue = ({ userId }) => {
     const [error, setError] = useState('');
     const [searchInput, setSearchInput] = useState("");
     const [showResults, setShowResults] = useState(false);
+    const [showSortDialog, setShowSortDialog] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [isAddingtask, setIsAddingTask] = useState(false);
     const [cycles, setCycles] = useState([]);
@@ -112,16 +113,16 @@ const TaskQueue = ({ userId }) => {
     }
 
     const filterTasks = (tasks) => {
-       if(!Array.isArray(tasks)) {return []; }
+        if (!Array.isArray(tasks)) { return []; }
 
-       const searchTerm = searchInput.toLowerCase();
-       return tasks.filter(task => {
-        return (
-            (task.title?.toLowerCase() || '').includes(searchTerm) ||
-            (task.description?.toLowerCase() ||  '').includes(searchTerm)
+        const searchTerm = searchInput.toLowerCase();
+        return tasks.filter(task => {
+            return (
+                (task.title?.toLowerCase() || '').includes(searchTerm) ||
+                (task.description?.toLowerCase() || '').includes(searchTerm)
             )
-            
-       }) 
+
+        })
     }
 
     const handleInputChange = (e) => {
@@ -215,7 +216,7 @@ const TaskQueue = ({ userId }) => {
                     </Button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent className="w-56 p-1 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                <DropdownMenuContent className="w-56 p-1 bg-white rounded-lg shadow-lg border border-gray-200 z-10 ">
                     <DropdownMenuItem
                         onClick={handleAddTask}
                         className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
@@ -233,7 +234,7 @@ const TaskQueue = ({ userId }) => {
                         </svg>
                         <span>New Task</span>
                     </DropdownMenuItem>
-                    
+
                     <DropdownMenuItem
                         className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
                     >
@@ -267,20 +268,75 @@ const TaskQueue = ({ userId }) => {
                         }}
                     />
                 ) : (
-                    <div 
+                    <div
                         onClick={() => setShowResults(true)}
                         className="flex items-center cursor-pointer px-3 py-1.5 rounded-md hover:bg-gray-100"
                     >
-                        <svg 
-                            className="h-4 w-4 text-gray-500" 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
+                        <svg
+                            className="h-4 w-4 text-gray-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
                             stroke="currentColor"
                         >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <span className="ml-2 text-sm text-gray-600">Search</span>
+                    </div>
+                )}
+            </div>
+            <div className="relative">
+                <div className="flex text-gray-500 cursor-pointer z-10" onClick={() => setShowSortDialog((prev) => !prev)}>
+                    <svg
+                        className="h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                    </svg>
+                    <span className="text-sm text-gray-500 mx-1">Sort</span>
+                </div>
+
+                {showSortDialog && (
+                    <div className="absolute top-full left-0 mt-2 bg-white h-36 w-[400px] shadow-md rounded-md z-50">
+                        <h1 className="px-4 font-medium py-4">Sort By</h1>
+                        <div className="flex gap-2 p-4">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                    <span>Select Field</span>
+                                    <svg className="zw-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
+                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Title</DropdownMenuItem>
+                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Status</DropdownMenuItem>
+                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Priority</DropdownMenuItem>
+                                    <DropdownMenuItem className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Efforts</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                    <span>Order</span>
+                                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-40 border-gray-200">
+                                    <DropdownMenuItem className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+                                        </svg>
+                                        Ascending
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+                                        </svg>
+                                        Descending
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 )}
             </div>
