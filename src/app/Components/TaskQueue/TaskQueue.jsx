@@ -318,7 +318,7 @@ const TaskQueue = ({ userId }) => {
                         <div className="flex gap-2 p-4">
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
-                                    <span>{sortColumn.charAt(0) +}</span>
+                                    <span>{sortColumn.charAt(0).toUpperCase() +sortColumn.slice(1)}</span>
                                     <svg className="zw-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
@@ -333,7 +333,7 @@ const TaskQueue = ({ userId }) => {
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
-                                    <span>{sortOrder}</span>
+                                    <span>{sortOrder == 'asc'? "Ascending" : "Descending"}</span>
                                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
