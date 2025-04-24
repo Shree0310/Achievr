@@ -305,6 +305,8 @@ const Cycles = ({ userId }) => {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
                                         <DropdownMenuItem onClick={sortCycles("title")}>Title</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={sortCycles("start_at")}>Start date</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={sortCycles("end_at")}>End date</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                                 <DropdownMenu>
