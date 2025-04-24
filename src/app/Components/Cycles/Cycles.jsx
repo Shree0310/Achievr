@@ -274,60 +274,61 @@ const Cycles = ({ userId }) => {
                     </div>
                 )}
 
-            </div>
-            <div className="relative">
-                <div className="flex text-gray-500 cursor-pointer z-10"
-                    onClick={() => setShowSortDialog((prev) => !prev)}>
-                    <svg
-                        className="h-4 w-4"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
-                    </svg>
-                    <span className="text-sm text-gray-500 mx-1">Sort</span>
-
-                </div>
-                {showSortDialog && (
-                    <div className="absolute top-full left-0 mt-2 bg-white h-36 w-[400px] shadow-md rounded-md z-50">
-                        <h1 className="px-4 font-medium py-4">Sort By</h1>
-                        <div className="flex gap-2 p-4">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
-                                    <span>{sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1)}</span>
-                                    <svg className="zw-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
-                                    <DropdownMenuItem onClick={sortCycles("title")}>Title</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
-                                    <span>{sortOrder == 'asc'? 'Ascending' : 'Descending'}</span>
-                                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
-                                            </svg>
-                                            Ascending
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
-                                            </svg>
-                                            Descending
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenuTrigger>
-                            </DropdownMenu>
-                        </div>
+                <div className="relative">
+                    <div className="flex text-gray-500 cursor-pointer z-10 mx-8 my-1"
+                        onClick={() => setShowSortDialog((prev) => !prev)}>
+                        <svg
+                            className="h-4 w-4"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                        </svg>
+                        <span className="text-sm text-gray-500 mx-1">Sort</span>
 
                     </div>
-                )}
+                    {showSortDialog && (
+                        <div className="absolute top-full left-0 mt-2 bg-white h-36 w-[400px] shadow-md rounded-md z-50">
+                            <h1 className="px-4 font-medium py-4">Sort By</h1>
+                            <div className="flex gap-2 p-4">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                        <span>{sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1)}</span>
+                                        <svg className="zw-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
+                                        <DropdownMenuItem onClick={sortCycles("title")}>Title</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                        <span>{sortOrder == 'asc' ? 'Ascending' : 'Descending'}</span>
+                                        <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuItem>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+                                                </svg>
+                                                Ascending
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
+                                                </svg>
+                                                Descending
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenuTrigger>
+                                </DropdownMenu>
+                            </div>
+
+                        </div>
+                    )}
+
+                </div>
 
             </div>
 
