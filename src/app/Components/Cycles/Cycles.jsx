@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
@@ -36,6 +36,22 @@ const Cycles = ({ userId }) => {
     });
 
     const isDemoMode = userId === 'demo-user-id';
+
+    const sortDialogRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (sortDialogRef.current && !sortDialogRef.current.contains(event.target)) {
+                setShowSortDialog(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+    }, []);
 
     useEffect(() => {
         console.log('Cycles component mounted/updated with userId:', userId);
@@ -86,7 +102,7 @@ const Cycles = ({ userId }) => {
             }
 
             let query = supabase
-                .from('cycles')
+        .from('cycles')
                 .select('*')
                 .eq('user_id', userId);
 
@@ -96,7 +112,7 @@ const Cycles = ({ userId }) => {
 
             if (error) {
                 console.error('Error fetching cycles:', error);
-                throw error;
+            throw error;
             }
 
             console.log('Fetched cycles:', cycles);
@@ -282,8 +298,8 @@ const Cycles = ({ userId }) => {
 
                 <div className="relative">
                     <div className="flex text-gray-500 cursor-pointer z-10 mx-8 my-1"
-                        onClick={() => setShowSortDialog((prev) => !prev)}
-                        onBlur={() => setShowSortDialog(false)}>
+                        onClick={() => setShowSortDialog(true)}
+                       >
                         <svg
                             className="h-4 w-4"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -293,7 +309,7 @@ const Cycles = ({ userId }) => {
 
                     </div>
                     {showSortDialog && (
-                        <div className="absolute top-full left-0 mt-2 bg-white h-36 w-[400px] shadow-md rounded-md z-50">
+                        <div ref={sortDialogRef} className="absolute top-full left-0 mt-2 bg-white h-36 w-[400px] shadow-md rounded-md z-50">
                             <h1 className="px-4 font-medium py-4">Sort By</h1>
                             <div className="flex gap-2 p-4">
                                 <DropdownMenu>
@@ -339,30 +355,30 @@ const Cycles = ({ userId }) => {
 
                 </div>
 
-            </div>
+        </div>
 
             {error && (
                 <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md">
                     {error}
-                </div>
+    </div>
             )}
             <div className="rounded-md border">
-                <Table>
+        <Table>
                     <TableHeader className="bg-primary-200">
-                        <TableRow>
+                <TableRow>
                             <TableHead className="border border-gray-300 text-black">Title</TableHead>
                             <TableHead className="border border-gray-300 text-black">Start date</TableHead>
                             <TableHead className="border border-gray-300 text-black">End Date</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
                         {filterCycles(cycles).map((cycle) => (
-                            <TableRow key={cycle.id}>
+                    <TableRow key={cycle.id}>
                                 <TableCell className="border border-gray-300">{cycle.title}</TableCell>
                                 <TableCell className="border border-gray-300">{formatDate(cycle.start_at)}</TableCell>
                                 <TableCell className="border border-gray-300">{formatDate(cycle.end_at)}</TableCell>
-                            </TableRow>
-                        ))}
+                </TableRow>
+                ))}
                         {isAddingCycle && (
                             <TableRow>
                                 <TableCell className="border border-gray-300">
@@ -395,8 +411,8 @@ const Cycles = ({ userId }) => {
                                 </TableCell>
                             </TableRow>
                         )}
-                    </TableBody>
-                </Table>
+            </TableBody>
+        </Table>
                 {isAddingCycle && (
                     <div className="p-3 bg-gray-50 border-t border-gray-200">
                         <div className="flex justify-end space-x-3">
@@ -417,7 +433,7 @@ const Cycles = ({ userId }) => {
                     </div>
                 )}
             </div>
-        </div>
+    </div>
     );
 }
 

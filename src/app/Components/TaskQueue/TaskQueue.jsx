@@ -642,7 +642,7 @@ const TaskQueue = ({ userId }) => {
             >
                 {">"}
             </button>
-        </div>
+    </div>
     </>
 }
 export default TaskQueue;
