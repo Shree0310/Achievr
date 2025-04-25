@@ -282,7 +282,8 @@ const Cycles = ({ userId }) => {
 
                 <div className="relative">
                     <div className="flex text-gray-500 cursor-pointer z-10 mx-8 my-1"
-                        onClick={() => setShowSortDialog((prev) => !prev)}>
+                        onClick={() => setShowSortDialog((prev) => !prev)}
+                        onBlur={() => setShowSortDialog(false)}>
                         <svg
                             className="h-4 w-4"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

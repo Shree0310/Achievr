@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/utils/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, Item } from "@radix-ui/react-dropdown-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
@@ -18,7 +18,6 @@ function generateUUID() {
 }
 
 const TaskQueue = ({ userId }) => {
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [searchInput, setSearchInput] = useState("");
@@ -52,6 +51,21 @@ const TaskQueue = ({ userId }) => {
     const end = start + PAGE_SIZE;
 
     const isDemoMode = userId === "demo-user-id";
+
+    const sortDialogRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (sortDialogRef.current && !sortDialogRef.current.contains(event.target)) {
+                setShowSortDialog(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         const timer = setTimeout(filterTasks(searchInput), 1000);
@@ -329,7 +343,7 @@ const TaskQueue = ({ userId }) => {
                 )}
             </div>
             <div className="relative">
-                <div className="flex text-gray-500 cursor-pointer z-10" onClick={() => setShowSortDialog((prev) => !prev)}>
+                <div className="flex text-gray-500 cursor-pointer z-10" onClick={() => setShowSortDialog(true)}>
                     <svg
                         className="h-4 w-4"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -339,7 +353,7 @@ const TaskQueue = ({ userId }) => {
                 </div>
 
                 {showSortDialog && (
-                    <div className="absolute top-full left-0 mt-2 bg-white h-36 w-[400px] shadow-md rounded-md z-50">
+                    <div ref={sortDialogRef} className="absolute top-full left-0 mt-2 bg-white h-36 w-[400px] shadow-md rounded-md z-50">
                         <h1 className="px-4 font-medium py-4">Sort By</h1>
                         <div className="flex gap-2 p-4">
                             <DropdownMenu>
