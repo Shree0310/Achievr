@@ -54,9 +54,6 @@ const Cycles = ({ userId }) => {
     }, []);
 
     useEffect(() => {
-        console.log('Cycles component mounted/updated with userId:', userId);
-        console.log('Is demo mode:', isDemoMode);
-
         const timer = setTimeout(filterCycles(cycles), 1000);
 
         if (!userId) {
