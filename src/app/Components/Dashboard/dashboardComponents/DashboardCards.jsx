@@ -32,8 +32,6 @@ const DashboardCards = () => {
         }));
 
         setStatusData(formattedData);
-        console.log(formattedData);
-
     }
 
 
