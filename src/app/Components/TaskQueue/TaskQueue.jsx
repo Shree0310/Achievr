@@ -54,6 +54,9 @@ const TaskQueue = ({ userId }) => {
 
     const sortDialogRef = useRef(null);
 
+    const [editingTaskId, setEditingTaskId] = useState(null);
+    const [editTask, setEditTask] = useState({ title: '', status: '', priority: '', efforts: '', cycle_id: '' });
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (sortDialogRef.current && !sortDialogRef.current.contains(event.target)) {
@@ -243,6 +246,77 @@ const TaskQueue = ({ userId }) => {
     const handleNextPage = () => {
         setCurrPage((prev) => prev + 1);
     }
+
+    // Handler to start editing a task
+    const handleEditTask = (task) => {
+        setEditingTaskId(task.id);
+        setEditTask({
+            title: task.title || '',
+            status: task.status || '',
+            priority: task.priority || '',
+            efforts: task.efforts || '',
+            cycle_id: task.cycle_id || '',
+        });
+    };
+
+    // Handler for editing input changes
+    const handleEditTaskInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditTask((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // Handler for editing cycle select
+    const handleEditTaskCycleChange = (value) => {
+        setEditTask((prev) => ({ ...prev, cycle_id: value }));
+    };
+
+    // Handler to save the edited task
+    async function handleSaveEditTask() {
+        if (!editTask.title.trim()) {
+            setError('Please enter a task title');
+            return;
+        }
+        try {
+            if (isDemoMode) {
+                setTasks((prev) => prev.map((task) =>
+                    task.id === editingTaskId
+                        ? { ...task, ...editTask }
+                        : task
+                ));
+            } else {
+                const { data, error } = await supabase
+                    .from('tasks')
+                    .update({
+                        title: editTask.title,
+                        status: editTask.status,
+                        priority: editTask.priority,
+                        efforts: editTask.efforts,
+                        cycle_id: editTask.cycle_id,
+                    })
+                    .eq('id', editingTaskId)
+                    .select();
+                if (error) {
+                    setError(error.message);
+                    return;
+                }
+                setTasks((prev) => prev.map((task) =>
+                    task.id === editingTaskId ? data[0] : task
+                ));
+            }
+            setEditingTaskId(null);
+            setEditTask({ title: '', status: '', priority: '', efforts: '', cycle_id: '' });
+            setError('');
+        } catch (error) {
+            setError(error.message);
+        }
+    }
+
+    // Handler to cancel editing
+    const handleCancelEditTask = () => {
+        setEditingTaskId(null);
+        setEditTask({ title: '', status: '', priority: '', efforts: '', cycle_id: '' });
+        setError('');
+    };
 
     return <>
         {error && (
@@ -499,27 +573,94 @@ const TaskQueue = ({ userId }) => {
                         </TableRow>
                     ) : (
                         filterTasks(tasks).slice(start, end).map((task) => (
-                            <TableRow
-                                key={task.id}
-                                className="text-center">
-                                <TableCell className="border-r border-l border-gray-400">{task.title} </TableCell>
-                                <TableCell className="border-r border-gray-400">{task.status}</TableCell>
-                                {task.priority ? (
-                                    <TableCell className="border-r border-gray-400">{task.priority}</TableCell>
-
-                                ) : (
-                                    <TableCell className="border-r border-gray-400">priority is not set</TableCell>
-                                )}
-                                {task.efforts ? (
-                                    <TableCell className="border-r border-gray-400">{task.efforts}</TableCell>
-                                ) : (
-                                    <TableCell className="border-r border-gray-400">efforts not set</TableCell>
-
-                                )}
-                                <TableCell className="border-r border-gray-400">
-                                    {task.cycles ? task.cycles.title : "cycle not set"}
-                                </TableCell>
-                            </TableRow>
+                            editingTaskId === task.id ? (
+                                <TableRow key={task.id}>
+                                    <TableCell className="border-r border-l border-gray-400">
+                                        <Input
+                                            name="title"
+                                            value={editTask.title}
+                                            onChange={handleEditTaskInputChange}
+                                            placeholder="Task title"
+                                        />
+                                    </TableCell>
+                                    <TableCell className="border-r border-gray-400">
+                                        <Input
+                                            name="status"
+                                            value={editTask.status}
+                                            onChange={handleEditTaskInputChange}
+                                            placeholder="Task status"
+                                        />
+                                    </TableCell>
+                                    <TableCell className="border-r border-gray-400">
+                                        <Input
+                                            name="priority"
+                                            value={editTask.priority}
+                                            onChange={handleEditTaskInputChange}
+                                            placeholder="Task Priority"
+                                        />
+                                    </TableCell>
+                                    <TableCell className="border-r border-gray-400">
+                                        <Input
+                                            name="efforts"
+                                            value={editTask.efforts}
+                                            onChange={handleEditTaskInputChange}
+                                            placeholder="Task Efforts"
+                                        />
+                                    </TableCell>
+                                    <TableCell className="border-r border-gray-400">
+                                        <Select
+                                            value={editTask.cycle_id}
+                                            onValueChange={handleEditTaskCycleChange}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select cycle" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {cycles.map(cycle => (
+                                                    <SelectItem key={cycle.id} value={cycle.id}>{cycle.title}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
+                                    <TableCell colSpan={5} className="border-r border-gray-400 bg-gray-50 p-3">
+                                        <div className="flex justify-end space-x-3">
+                                            <Button
+                                                onClick={handleCancelEditTask}
+                                                variant="outline"
+                                                className="px-4 py-2 border border-gray-300 hover:bg-gray-100 transition-colors">
+                                                Cancel
+                                            </Button>
+                                            <Button
+                                                onClick={handleSaveEditTask}
+                                                className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-colors shadow-sm">
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                <TableRow
+                                    key={task.id}
+                                    className="text-center cursor-pointer hover:bg-primary-100"
+                                    onClick={() => handleEditTask(task)}
+                                >
+                                    <TableCell className="border-r border-l border-gray-400">{task.title} </TableCell>
+                                    <TableCell className="border-r border-gray-400">{task.status}</TableCell>
+                                    {task.priority ? (
+                                        <TableCell className="border-r border-gray-400">{task.priority}</TableCell>
+                                    ) : (
+                                        <TableCell className="border-r border-gray-400">priority is not set</TableCell>
+                                    )}
+                                    {task.efforts ? (
+                                        <TableCell className="border-r border-gray-400">{task.efforts}</TableCell>
+                                    ) : (
+                                        <TableCell className="border-r border-gray-400">efforts not set</TableCell>
+                                    )}
+                                    <TableCell className="border-r border-gray-400">
+                                        {task.cycles ? task.cycles.title : "cycle not set"}
+                                    </TableCell>
+                                </TableRow>
+                            )
                         ))
                     )}
                     {isAddingtask && (
