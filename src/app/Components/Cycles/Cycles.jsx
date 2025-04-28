@@ -34,6 +34,8 @@ const Cycles = ({ userId }) => {
         start_at: null,
         end_at: null
     });
+    const [editingCycleId, setEditingCycleId] = useState(null);
+    const [editCycle, setEditCycle] = useState({ title: '', start_at: null, end_at: null });
 
     const isDemoMode = userId === 'demo-user-id';
 
@@ -257,6 +259,77 @@ const Cycles = ({ userId }) => {
         fetchCycles(searchInput);
     }
 
+    // Handler to start editing a cycle
+    const handleEditCycle = (cycle) => {
+        setEditingCycleId(cycle.id);
+        setEditCycle({
+            title: cycle.title,
+            start_at: cycle.start_at ? new Date(cycle.start_at) : null,
+            end_at: cycle.end_at ? new Date(cycle.end_at) : null,
+        });
+    };
+
+    // Handler for editing input changes
+    const handleEditInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditCycle((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // Handler for editing date changes
+    const handleEditDateChange = (date, field) => {
+        setEditCycle((prev) => ({ ...prev, [field]: date }));
+    };
+
+    // Handler to save the edited cycle
+    async function handleSaveEditCycle() {
+        if (!editCycle.title.trim()) {
+            setError('Please enter a cycle title');
+            return;
+        }
+        if (!editCycle.start_at) {
+            setError('Please select a start date');
+            return;
+        }
+        try {
+            if (isDemoMode) {
+                setCycles((prev) => prev.map((cycle) =>
+                    cycle.id === editingCycleId
+                        ? { ...cycle, ...editCycle, start_at: editCycle.start_at?.toISOString(), end_at: editCycle.end_at?.toISOString() }
+                        : cycle
+                ));
+            } else {
+                const { data, error } = await supabase
+                    .from('cycles')
+                    .update({
+                        title: editCycle.title,
+                        start_at: editCycle.start_at?.toISOString(),
+                        end_at: editCycle.end_at?.toISOString(),
+                    })
+                    .eq('id', editingCycleId)
+                    .select();
+                if (error) {
+                    setError(error.message);
+                    return;
+                }
+                setCycles((prev) => prev.map((cycle) =>
+                    cycle.id === editingCycleId ? data[0] : cycle
+                ));
+            }
+            setEditingCycleId(null);
+            setEditCycle({ title: '', start_at: null, end_at: null });
+            setError('');
+        } catch (error) {
+            setError(error.message);
+        }
+    }
+
+    // Handler to cancel editing
+    const handleCancelEdit = () => {
+        setEditingCycleId(null);
+        setEditCycle({ title: '', start_at: null, end_at: null });
+        setError('');
+    };
+
     return (
         <div className="p-4">
             <div className="flex items-center space-x-4 mb-4">
@@ -370,11 +443,50 @@ const Cycles = ({ userId }) => {
             </TableHeader>
             <TableBody>
                         {filterCycles(cycles).map((cycle) => (
-                    <TableRow key={cycle.id}>
-                                <TableCell className="border border-gray-300">{cycle.title}</TableCell>
-                                <TableCell className="border border-gray-300">{formatDate(cycle.start_at)}</TableCell>
-                                <TableCell className="border border-gray-300">{formatDate(cycle.end_at)}</TableCell>
-                </TableRow>
+                    editingCycleId === cycle.id ? (
+                        <TableRow key={cycle.id}>
+                            <TableCell className="border border-gray-300">
+                                <Input
+                                    name="title"
+                                    value={editCycle.title}
+                                    onChange={handleEditInputChange}
+                                    placeholder="Cycle Title"
+                                    className="w-full"
+                                />
+                            </TableCell>
+                            <TableCell className="border border-gray-300">
+                                <DatePicker
+                                    selected={editCycle.start_at}
+                                    onChange={(date) => handleEditDateChange(date, 'start_at')}
+                                    dateFormat="MMM d, yyyy"
+                                    placeholderText="Start Date"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </TableCell>
+                            <TableCell className="border border-gray-300">
+                                <DatePicker
+                                    selected={editCycle.end_at}
+                                    onChange={(date) => handleEditDateChange(date, 'end_at')}
+                                    dateFormat="MMM d, yyyy"
+                                    placeholderText="End Date"
+                                    minDate={editCycle.start_at}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </TableCell>
+                            <TableCell className="border border-gray-300 bg-gray-50" colSpan={3}>
+                                <div className="flex justify-end space-x-3">
+                                    <Button onClick={handleCancelEdit} variant="outline" className="px-4 py-2">Cancel</Button>
+                                    <Button onClick={handleSaveEditCycle} className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white">Save</Button>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    ) : (
+                        <TableRow key={cycle.id} onClick={() => handleEditCycle(cycle)} className="cursor-pointer hover:bg-primary-100">
+                            <TableCell className="border border-gray-300">{cycle.title}</TableCell>
+                            <TableCell className="border border-gray-300">{formatDate(cycle.start_at)}</TableCell>
+                            <TableCell className="border border-gray-300">{formatDate(cycle.end_at)}</TableCell>
+                        </TableRow>
+                    )
                 ))}
                         {isAddingCycle && (
                             <TableRow>
