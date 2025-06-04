@@ -70,7 +70,7 @@ export default function Home() {
       const origin = window.location.origin;
       
       // Sign in anonymously or create new demo user
-      const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: 'demo@example.com',
         password: 'demo123456'
       });
