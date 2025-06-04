@@ -6,7 +6,6 @@ import Header from "./Components/Header/Header";
 import Navbar from "./Components/Navbar/Navbar";
 import SubHeader from "./Components/SubHeader/SubHeader";
 import Stages from "./Components/Stages/Stages";
-import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
