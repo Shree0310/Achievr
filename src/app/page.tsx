@@ -10,11 +10,21 @@ import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
+import { createBrowserClient } from '@supabase/ssr';
+
+// Extend the Supabase User type
+type ExtendedUser = User & {
+    isDemo?: boolean;
+};
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ExtendedUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -54,31 +64,52 @@ export default function Home() {
 
   const handleDemoLogin = async () => {
     try {
-      // Set demo mode flag in localStorage
-      localStorage.setItem('demoMode', 'true');
+      setLoading(true);
+      setError(null);
       
-      // Create a demo user object with all required properties
-      const demoUser: User = {
+      // Get the current URL origin
+      const origin = window.location.origin;
+      
+      // Sign in anonymously or create new demo user
+      const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
+        email: 'demo@example.com',
+        password: 'demo123456'
+      });
+
+      if (signInError) {
+        // If demo user doesn't exist, create one
+        if (signInError.message.includes('Invalid login credentials')) {
+          const { data: { user: newUser }, error: signUpError } = await supabase.auth.signUp({
+            email: 'demo@example.com',
+            password: 'demo123456',
+            options: {
+              data: {
+                is_demo: true
+              }
+            }
+          });
+
+          if (signUpError) throw signUpError;
+          if (!newUser) throw new Error('Failed to create demo user');
+        } else {
+          throw signInError;
+        }
+      }
+
+      // Set demo user state
+      setUser({
         id: 'demo-user-id',
         email: 'demo@example.com',
-        user_metadata: {
-          name: 'Demo User'
-        },
-        app_metadata: {},
-        aud: 'authenticated',
-        created_at: new Date().toISOString(),
-        role: 'authenticated',
-        updated_at: new Date().toISOString()
-      };
+        isDemo: true
+      } as ExtendedUser);
 
-      // Update the user state with demo user
-      setUser(demoUser);
-
-      // Redirect to the board page
-      router.push('/board');
+      // Redirect to board page using the current origin
+      router.push(`${origin}/board`);
     } catch (error) {
       console.error('Demo login error:', error);
-      setError('Failed to start demo mode. Please try again.');
+      setError('Failed to start demo. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

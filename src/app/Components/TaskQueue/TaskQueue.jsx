@@ -132,7 +132,7 @@ const TaskQueue = ({ userId }) => {
             if (error) {
                 throw error;
             }
-
+            console.log(tasks);
             setTasks(tasks || []);
         } catch (error) {
             setError('Failed to fetch tasks');
