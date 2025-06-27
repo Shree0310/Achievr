@@ -4,12 +4,20 @@ import { useState } from "react";
 import CreateTask from "./CreateTask";
 import { Button } from "@/components/ui/button";
 
-const CreateTaskButton = ({ userId }) => {
+const CreateTaskButton = ({ userId, onTaskUpdate }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleClose = () => {
         setIsOpen(false);
     }
+    
+    const handleTaskUpdate = (action, data) => {
+        if (onTaskUpdate) {
+            onTaskUpdate(action, data);
+        }
+        setIsOpen(false);
+    }
+    
     return (
         <>
             <Button 
@@ -34,6 +42,7 @@ const CreateTaskButton = ({ userId }) => {
                 <CreateTask
                     onClose={handleClose}
                     userId={userId}
+                    onTaskUpdate={handleTaskUpdate}
                 />
             )}
         </>

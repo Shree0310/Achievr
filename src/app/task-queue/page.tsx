@@ -81,7 +81,7 @@ export default function TaskQueuePage() {
             {/* Navbar */}
             <div className="relative w-full md:w-auto md:h-screen">
                 <div className="h-auto md:h-full flex-shrink-0">
-                    <Navbar />
+                    <Navbar userId={user?.id} onTaskUpdate={() => {}} />
                 </div>
             </div>
 

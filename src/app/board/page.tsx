@@ -13,6 +13,13 @@ export default function BoardPage() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
 
+    // Task update handler for global state management
+    const handleTaskUpdate = (action: string, data: any) => {
+        // This will be handled by the Stages component
+        // We can add global state management here if needed
+        console.log('Task update:', action, data);
+    };
+
     useEffect(() => {
         async function getSession() {
             try {
@@ -74,7 +81,7 @@ export default function BoardPage() {
             {/* Navbar */}
             <div className="relative w-full md:w-auto md:h-screen">
                 <div className="h-auto md:h-full flex-shrink-0">
-                    <Navbar />
+                    <Navbar userId={user?.id} onTaskUpdate={handleTaskUpdate} />
                 </div>
             </div>
 

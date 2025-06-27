@@ -116,7 +116,7 @@ export default function CycleListPage(){
         <div className="h-screen w-screen flex overflow-hidden">
             {/* Navbar - fixed on the left */}
             <div className="h-full flex-shrink-0">
-                <Navbar />
+                <Navbar userId={user?.id} onTaskUpdate={() => {}} />
             </div>
 
             {/* Main content area - takes remaining width */}

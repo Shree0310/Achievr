@@ -6,7 +6,7 @@ import DeleteTask from "../DeleteTask/DeleteTask";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const CreateTask = ({ onClose, userId, isEditMode = false, taskToEdit }) => {
+const CreateTask = ({ onClose, userId, isEditMode = false, taskToEdit, onTaskUpdate }) => {
     const [title, setTitle] = useState(taskToEdit?.title || '');
     const [description, setDescription] = useState(taskToEdit?.description || '');
     const [priority, setPriority] = useState(taskToEdit?.priority?.toString() || '');
@@ -94,7 +94,12 @@ const CreateTask = ({ onClose, userId, isEditMode = false, taskToEdit }) => {
                     .eq('id', taskToEdit.id)
                     .select();
                 if (error) throw error;
-                console.log("Task created successfully:", data);
+                console.log("Task updated successfully:", data);
+                
+                // Call the callback to update parent state
+                if (onTaskUpdate && data && data.length > 0) {
+                    onTaskUpdate('update', data[0]);
+                }
             } else {
                 // Insert task into Supabase
                 const { data, error } = await supabase
@@ -112,15 +117,17 @@ const CreateTask = ({ onClose, userId, isEditMode = false, taskToEdit }) => {
                     ])
                     .select();
                 if (error) throw error;
-                console.log("Task update successfully:", data);
+                console.log("Task created successfully:", data);
+                
+                // Call the callback to update parent state
+                if (onTaskUpdate && data && data.length > 0) {
+                    onTaskUpdate('create', data[0]);
+                }
             }
 
             // Reset form and close modal
             resetForm();
             if (onClose) onClose();
-
-            // Refresh the page to show the new task (could be optimized later)
-            window.location.reload();
 
         } catch (error) {
             console.error("Error creating task:", error);
@@ -159,7 +166,7 @@ const CreateTask = ({ onClose, userId, isEditMode = false, taskToEdit }) => {
                                 </svg>
                             </button>
                         )}
-                        {isMenuOpen && <DeleteTask taskToDelete={taskToEdit.id} />}
+                        {isMenuOpen && <DeleteTask taskToDelete={taskToEdit.id} onClose={onClose} onTaskDelete={() => onTaskUpdate && onTaskUpdate('delete', taskToEdit.id)} />}
                     </div>
                 </div>
 

@@ -8,7 +8,7 @@ const { useDraggable } = require("@dnd-kit/core");
 const { CSS } = require("@dnd-kit/utilities");
 const { transform } = require("typescript");
 
-const Task = ({ task, id }) => {
+const Task = ({ task, id, onTaskUpdate }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: id,
@@ -26,6 +26,13 @@ const Task = ({ task, id }) => {
 
     const handleClick = () => {
         setIsEditMode(true);
+    }
+
+    const handleTaskUpdate = (action, data) => {
+        if (onTaskUpdate) {
+            onTaskUpdate(action, data);
+        }
+        setIsEditMode(false);
     }
 
     return (
@@ -75,7 +82,9 @@ const Task = ({ task, id }) => {
                     isEditMode={true}
                     taskToEdit={task}
                     userId={task.user_id}
-                    onClose={() => { setIsEditMode(false) }} />
+                    onClose={() => { setIsEditMode(false) }}
+                    onTaskUpdate={handleTaskUpdate}
+                />
             )}
         </>
     )

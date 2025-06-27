@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/utils/supabase/client";
 import { useState } from "react";
 
-const DeleteTask = ({ taskToDelete, onClose }) => {
+const DeleteTask = ({ taskToDelete, onClose, onTaskDelete }) => {
     const [deleteModal, setDeleteModal] = useState(false);
     const [error, setError] = useState(null);
 
@@ -28,8 +28,14 @@ const DeleteTask = ({ taskToDelete, onClose }) => {
             if (error) throw error;
             setDeleteModal(false);
 
-            // Refresh the page after successful deletion
-            window.location.reload();
+            if(onClose){
+                onClose();
+            }
+
+            if(onTaskDelete){
+                onTaskDelete();
+            }
+
         } catch (error) {
             console.error("Error deleting task:", error);
             setError("Failed to delete task: " + error.message);

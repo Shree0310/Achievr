@@ -7,7 +7,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import CreateTaskButton from "../CreateTask/CreateTaskButton";
 
-const Navbar = () => {
+/**
+ * @param {Object} props
+ * @param {string} [props.userId] - The user ID
+ * @param {Function} [props.onTaskUpdate] - Callback function for task updates
+ */
+const Navbar = ({ userId, onTaskUpdate }) => {
     const [data, setData] = useState(null);
     const pathname = usePathname();
     const router = useRouter();
@@ -59,7 +64,7 @@ const Navbar = () => {
                 </Link>
                 
                 <nav className="space-y-1">
-                    <CreateTaskButton />
+                    <CreateTaskButton userId={userId} onTaskUpdate={onTaskUpdate} />
                     {navItems.map((item) => (
                         <Link
                             key={item.path}
