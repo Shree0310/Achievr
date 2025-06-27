@@ -2,7 +2,37 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Environment Setup
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Update `.env.local` with your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SITE_URL=http://localhost:3000
+   NEXT_PUBLIC_SITE_URL=http://localhost:3000
+   ```
+
+3. Configure Google OAuth in your Supabase project:
+   - Go to Supabase Dashboard → Authentication → Providers → Google
+   - Add your Google OAuth credentials
+   - Set the redirect URL to: `your_supabase_project_url/auth/v1/callback`
+
+### Development
+
 First, run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Features
 
 - Kanban Board
 - With Drag and drop functionality

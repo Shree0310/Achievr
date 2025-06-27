@@ -24,39 +24,35 @@ export default function BoardPage() {
                     localStorage.removeItem('demoMode');
                     setUser(session.user);
                 } else {
-                    // Only set demo mode if there's no session
-                    localStorage.setItem('demoMode', 'true');
-                    const demoUser: User = {
-                        id: 'demo-user-id',
-                        email: 'demo@example.com',
-                        user_metadata: {
-                            name: 'Demo User'
-                        },
-                        app_metadata: {},
-                        aud: 'authenticated',
-                        created_at: new Date().toISOString(),
-                        role: 'authenticated',
-                        updated_at: new Date().toISOString()
-                    };
-                    setUser(demoUser);
+                    // Check if we're in demo mode
+                    const isDemoMode = localStorage.getItem('demoMode') === 'true';
+                    if (isDemoMode) {
+                        // Only set demo mode if there's no session and demo mode is enabled
+                        localStorage.setItem('demoMode', 'true');
+                        const demoUser: User = {
+                            id: 'demo-user-id',
+                            email: 'demo@example.com',
+                            user_metadata: {
+                                name: 'Demo User'
+                            },
+                            app_metadata: {},
+                            aud: 'authenticated',
+                            created_at: new Date().toISOString(),
+                            role: 'authenticated',
+                            updated_at: new Date().toISOString()
+                        };
+                        setUser(demoUser);
+                    } else {
+                        // No session and not in demo mode, redirect to auth
+                        window.location.href = '/auth';
+                        return;
+                    }
                 }
             } catch (error) {
                 console.error('Error getting session:', error);
-                // In case of error, default to demo mode
-                localStorage.setItem('demoMode', 'true');
-                const demoUser: User = {
-                    id: 'demo-user-id',
-                    email: 'demo@example.com',
-                    user_metadata: {
-                        name: 'Demo User'
-                    },
-                    app_metadata: {},
-                    aud: 'authenticated',
-                    created_at: new Date().toISOString(),
-                    role: 'authenticated',
-                    updated_at: new Date().toISOString()
-                };
-                setUser(demoUser);
+                // In case of error, redirect to auth page
+                window.location.href = '/auth';
+                return;
             } finally {
                 setLoading(false);
             }

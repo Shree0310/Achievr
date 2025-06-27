@@ -34,6 +34,14 @@ export default function Home() {
           console.error('Error getting session:', error);
           setError('Failed to check authentication status');
         }
+        
+        if (data.session?.user) {
+          // If user is authenticated, redirect to board
+          console.log('User authenticated, redirecting to board:', data.session.user.email);
+          router.push('/board');
+          return;
+        }
+        
         setUser(data.session?.user || null);
       } catch (error) {
         console.error('Unexpected error getting session:', error);
@@ -45,10 +53,19 @@ export default function Home() {
     
     getSession();
     
-    // Set up auth state listener
+    // Set up auth state listener with immediate check
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
+        
+        if (session?.user) {
+          // If user becomes authenticated, redirect to board immediately
+          console.log('User authenticated via listener, redirecting to board');
+          setUser(session.user);
+          router.push('/board');
+          return;
+        }
+        
         setUser(session?.user || null);
       }
     );
@@ -59,7 +76,7 @@ export default function Home() {
         authListener.subscription.unsubscribe();
       }
     };
-  }, []);
+  }, [router]);
 
   const handleDemoLogin = async () => {
     try {
