@@ -177,6 +177,25 @@ const CreateTask = ({
     }
   };
 
+  const addComment = async () => {
+    if (!newComment.trim()) return;
+    //insert a comment into comments array
+    const { data, error } = await supabase
+      .from("comments")
+      .insert([
+        {
+          content: newComment.trim(),
+          created_at: new Date(),
+          updated_at: new Date(),
+          task_id: taskToEdit.id,
+          user_id: userId,
+        },
+      ])
+      .select();
+    if (error) throw error;
+    console.log(data);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10">
       <div
@@ -356,6 +375,8 @@ const CreateTask = ({
                 <div className="bg-gray-100 overflow-hidden rounded-md shadow-md">
                   <textarea
                     type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
                     placeholder="write an update and start with @ to mention others"
                     className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-none outline-none resize-none"
                   />
@@ -386,7 +407,9 @@ const CreateTask = ({
                       </button>
                     </div>
                     {/* Update button */}
-                    <button className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                    <button
+                      onClick={() => addComment()}
+                      className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
                       Update
                     </button>
                   </div>
