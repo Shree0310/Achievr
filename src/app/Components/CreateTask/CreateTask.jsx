@@ -25,8 +25,13 @@ const CreateTask = ({
   const [selectedCycle, setSelectedCycle] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddCommentsMode, setIsAddCommentsMode] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
+    if (taskToEdit?.id) {
+      loadComments(taskToEdit?.id);
+    }
     if (isEditMode && taskToEdit) {
       setTitle(taskToEdit.title || "");
       setDescription(taskToEdit.description || "");
@@ -156,6 +161,20 @@ const CreateTask = ({
 
   const handleAddComments = () => {
     setIsAddCommentsMode(!isAddCommentsMode);
+  };
+
+  const loadComments = async (taskId) => {
+    const { data, error } = await supabase
+      .from("comments")
+      .select("id, content")
+      .eq("task_id", taskId)
+      .order("created_at", { ascending: false });
+    try {
+      if (data && data.length > 0) setComments(data);
+      console.log(data);
+    } catch {
+      console.log(error);
+    }
   };
 
   return (
@@ -332,44 +351,61 @@ const CreateTask = ({
               </div>
             </div>
           ) : (
-            <div className="p-2 m-2 w-full ">
-              <div className="bg-gray-100 overflow-hidden rounded-md shadow-md">
-                <textarea
-                  type="text"
-                  placeholder="write an update and start with @ to mention others"
-                  className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-none outline-none resize-none"
-                />
-                <div className="flex justify-between space-x-24 p-2">
-                  {/* Footer   */}
-                  <div className="flex items-center space-x-2 text-xs text-gray-500 px-2 bg-gray-100">
-                    {/* Mention button */}
-                    <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
-                      <span>@ Mention</span>
-                    </button>
+            <div>
+              <div className="p-2 m-2 w-full ">
+                <div className="bg-gray-100 overflow-hidden rounded-md shadow-md">
+                  <textarea
+                    type="text"
+                    placeholder="write an update and start with @ to mention others"
+                    className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-none outline-none resize-none"
+                  />
+                  <div className="flex justify-between space-x-24 p-2">
+                    {/* Footer   */}
+                    <div className="flex items-center space-x-2 text-xs text-gray-500 px-2 bg-gray-100">
+                      {/* Mention button */}
+                      <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
+                        <span>@ Mention</span>
+                      </button>
 
-                    {/* Attach button */}
-                    <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none">
-                        <path
-                          d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span>Attach</span>
+                      {/* Attach button */}
+                      <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none">
+                          <path
+                            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>Attach</span>
+                      </button>
+                    </div>
+                    {/* Update button */}
+                    <button className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                      Update
                     </button>
                   </div>
-                  {/* Update button */}
-                  <button className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
-                    Update
-                  </button>
                 </div>
+              </div>
+              <div>
+                {comments && (
+                  <div>
+                    {comments.map((comment) => (
+                      <div key={comment.id} className="p-2 m-2 w-full ">
+                        <div className="bg-gray-100 rounded-md shadow-md ">
+                          <div className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-gray-700 ">
+                            <p>{comment.content}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
