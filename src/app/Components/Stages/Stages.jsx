@@ -53,22 +53,16 @@ const Stages = ({ className = "" }) => {
     };
 
     // Handle task updates, deletions, and creations
-    const handleTaskUpdate = (action, data) => {
+    const handleTaskUpdates = (action, data) => {
         switch (action) {
-            case 'create':
+            case "create":
                 setTasks(prevTasks => [...(prevTasks || []), data]);
                 break;
-            case 'update':
-                setTasks(prevTasks => 
-                    prevTasks.map(task => 
-                        task.id === data.id ? data : task
-                    )
-                );
+            case "update":
+                setTasks(prevTasks => prevTasks.map(task => task.id === data.id ? data : task));
                 break;
-            case 'delete':
-                setTasks(prevTasks => 
-                    prevTasks.filter(task => task.id !== data)
-                );
+            case "delete":
+                setTasks(prevTasks => prevTasks.filter(task => task.id !== data));
                 break;
             default:
                 break;
@@ -250,7 +244,7 @@ const Stages = ({ className = "" }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             notStarted.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdate} />
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} />
                             ))
                         )}
                     </DroppableColumn>
@@ -266,7 +260,7 @@ const Stages = ({ className = "" }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             inProgress.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdate} />
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates}/>
                             ))
                         )}
                     </DroppableColumn>
@@ -282,7 +276,7 @@ const Stages = ({ className = "" }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             underReview.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdate} />
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates}/>
                             ))
                         )}
                     </DroppableColumn>
@@ -298,7 +292,7 @@ const Stages = ({ className = "" }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             completed.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdate} />
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates}/>
                             ))
                         )}
                     </DroppableColumn>
