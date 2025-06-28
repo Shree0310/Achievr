@@ -28,6 +28,7 @@ const CreateTask = ({
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
   const [isCommentAdded, setIsCommentAdded] = useState(false);
+  const [isCommentDeleted, setIsCommentDeleted] = useState(false);
 
   useEffect(() => {
     if (taskToEdit?.id) {
@@ -66,7 +67,7 @@ const CreateTask = ({
     };
 
     fetchCycles();
-  }, [isEditMode, taskToEdit, isCommentAdded]);
+  }, [isEditMode, taskToEdit, isCommentAdded, isCommentDeleted]);
 
   const handleCreateTask = async () => {
     if (!title.trim()) {
@@ -198,6 +199,25 @@ const CreateTask = ({
       setComments((prevComments) => [data[0], ...prevComments]);
       setNewComment("");
       setIsCommentAdded(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteComment = async (commentId) => {
+    console.log("deleting comment");
+    if (!taskToEdit.id) return;
+    setIsCommentDeleted(true);
+
+    try {
+      const { data, error } = await supabase
+        .from("comments")
+        .delete()
+        .eq("id", commentId);
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.id !== commentId)
+      );
+      setIsCommentDeleted(false);
     } catch (error) {
       console.log(error);
     }
@@ -428,7 +448,21 @@ const CreateTask = ({
                     {comments.map((comment) => (
                       <div key={comment.id} className="p-2 m-2 w-full ">
                         <div className="bg-gray-100 rounded-md shadow-md ">
-                          <div className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-gray-700 ">
+                          <div className="relative w-full h-14 p-4 text-gray-600 bg-gray-100 border-gray-700 ">
+                            <button
+                              onClick={() => deleteComment(comment.id)}
+                              className="absolute top-2 right-2">
+                              <svg
+                                className="h-3 w-3 px-w"
+                                viewBox="0 0 24 24"
+                                fill="none">
+                                <path
+                                  d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                />
+                              </svg>
+                            </button>
                             <p key={comment.id}>{comment.content}</p>
                           </div>
                         </div>
