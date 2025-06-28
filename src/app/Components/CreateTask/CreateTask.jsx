@@ -27,6 +27,7 @@ const CreateTask = ({
   const [isAddCommentsMode, setIsAddCommentsMode] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [isCommentAdded, setIsCommentAdded] = useState(false);
 
   useEffect(() => {
     if (taskToEdit?.id) {
@@ -65,7 +66,7 @@ const CreateTask = ({
     };
 
     fetchCycles();
-  }, [isEditMode, taskToEdit]);
+  }, [isEditMode, taskToEdit, isCommentAdded]);
 
   const handleCreateTask = async () => {
     if (!title.trim()) {
@@ -179,21 +180,27 @@ const CreateTask = ({
 
   const addComment = async () => {
     if (!newComment.trim()) return;
+    setIsCommentAdded(true);
     //insert a comment into comments array
-    const { data, error } = await supabase
-      .from("comments")
-      .insert([
-        {
-          content: newComment.trim(),
-          created_at: new Date(),
-          updated_at: new Date(),
-          task_id: taskToEdit.id,
-          user_id: userId,
-        },
-      ])
-      .select();
-    if (error) throw error;
-    console.log(data);
+    try {
+      const { data, error } = await supabase
+        .from("comments")
+        .insert([
+          {
+            content: newComment.trim(),
+            created_at: new Date(),
+            updated_at: new Date(),
+            task_id: taskToEdit.id,
+            user_id: userId,
+          },
+        ])
+        .select();
+      setComments((prevComments) => [data[0], ...prevComments]);
+      setNewComment("");
+      setIsCommentAdded(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -422,7 +429,7 @@ const CreateTask = ({
                       <div key={comment.id} className="p-2 m-2 w-full ">
                         <div className="bg-gray-100 rounded-md shadow-md ">
                           <div className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-gray-700 ">
-                            <p>{comment.content}</p>
+                            <p key={comment.id}>{comment.content}</p>
                           </div>
                         </div>
                       </div>
