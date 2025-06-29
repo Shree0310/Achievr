@@ -244,9 +244,26 @@ const CreateTask = ({
           },
         ])
         .select();
+
+      const parentIndex = comments.findIndex(
+        (comment) => comment.id === commentId
+      );
+      console.log(parentIndex);
+      const newReplyUi = {
+        content: newReply.trim(),
+        created_at: new Date(),
+        updated_at: new Date(),
+        task_id: taskToEdit.id,
+        user_id: userId,
+        parent_comment_id: commentId,
+      };
+      console.log(newReplyUi);
+      setComments((prevComments) => {
+        const newComments = [...prevComments];
+        newComments.splice(parentIndex + 1, 0, newReplyUi);
+        return newComments;
+      });
       comments.map((comment) => console.log(comment));
-      console.log(data[0]);
-      setComments((prevComments) => [data[0], ...prevComments]);
       setNewReply("");
       setIsReplyAdded(false);
     } catch (error) {
@@ -262,7 +279,7 @@ const CreateTask = ({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
-        className={`bg-white rounded-xl shadow-xl w-full max-w-2xl transform transition-all overflow-y-auto ${
+        className={`bg-white rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
           isEditMode ? "h-full" : "h-auto"
         }`}>
         {/* Header */}
@@ -482,8 +499,17 @@ const CreateTask = ({
                 {comments && (
                   <div>
                     {comments.map((comment) => (
-                      <div key={comment.id} className="p-2 m-2 w-full h-auto">
-                        <div className="bg-gray-100 rounded-md shadow-md ">
+                      <div
+                        key={comment.id}
+                        className={`p-2 m-2  h-auto ${
+                          comment.parent_comment_id ? "ml-10" : "ml-0"
+                        }`}>
+                        <div
+                          className={`bg-gray-100 rounded-md shadow-md ${
+                            comment.parent_comment_id
+                              ? "border-l-4 border-blue-300"
+                              : ""
+                          }`}>
                           <div className="relative w-full h-auto p-4 text-gray-600 bg-gray-100 border-gray-700 ">
                             <button
                               onClick={() =>
