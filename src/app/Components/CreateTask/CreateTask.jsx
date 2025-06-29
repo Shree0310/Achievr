@@ -31,6 +31,7 @@ const CreateTask = ({
   const [isCommentDeleted, setIsCommentDeleted] = useState(false);
   const [isReplyAdded, setIsReplyAdded] = useState(false);
   const [newReply, setNewReply] = useState("");
+  const [replyCommentId, setReplyCommentId] = useState(null);
 
   useEffect(() => {
     if (taskToEdit?.id) {
@@ -230,17 +231,22 @@ const CreateTask = ({
     if (!taskToEdit.id) return;
     setIsReplyAdded(true);
     try {
-      const { data, error } = await supabase.from("comments").insert([
-        {
-          content: newReply.trim(),
-          created_at: new Date(),
-          updated_at: new Date(),
-          task_id: taskToEdit.id,
-          user_id: userId,
-          parent_comment_id: commentId,
-        },
-      ]);
-      setComments((prevComments) => [data[0] || [], ...prevComments]);
+      const { data, error } = await supabase
+        .from("comments")
+        .insert([
+          {
+            content: newReply.trim(),
+            created_at: new Date(),
+            updated_at: new Date(),
+            task_id: taskToEdit.id,
+            user_id: userId,
+            parent_comment_id: commentId,
+          },
+        ])
+        .select();
+      comments.map((comment) => console.log(comment));
+      console.log(data[0]);
+      setComments((prevComments) => [data[0], ...prevComments]);
       setNewReply("");
       setIsReplyAdded(false);
     } catch (error) {
@@ -248,10 +254,15 @@ const CreateTask = ({
     }
   };
 
+  const onReplyClicked = (commentId) => {
+    setIsReplyAdded(!isReplyAdded);
+    setReplyCommentId(commentId);
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
-        className={`bg-white rounded-xl shadow-xl w-full max-w-2xl transform transition-all ${
+        className={`bg-white rounded-xl shadow-xl w-full max-w-2xl transform transition-all overflow-y-auto ${
           isEditMode ? "h-full" : "h-auto"
         }`}>
         {/* Header */}
@@ -462,7 +473,7 @@ const CreateTask = ({
                     <button
                       onClick={() => addComment()}
                       className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
-                      Update
+                      Add Comment
                     </button>
                   </div>
                 </div>
@@ -478,7 +489,7 @@ const CreateTask = ({
                               onClick={() =>
                                 deleteComment(
                                   comment.id,
-                                  comment.parent_comment.id
+                                  comment.parent_comment_id
                                 )
                               }
                               className="absolute top-2 right-2">
@@ -499,7 +510,7 @@ const CreateTask = ({
                             <hr className="w-full"></hr>
                             <div className=" bg-gray-100 overflow-hidden pt-2">
                               <button
-                                onClick={() => setIsReplyAdded(!isReplyAdded)}
+                                onClick={() => onReplyClicked(comment.id)}
                                 className="flex items-center space-x-2 text-xs text-gray-500 px-2">
                                 <svg
                                   className="h-4 w-4"
@@ -526,7 +537,7 @@ const CreateTask = ({
                           </div>
                         </div>
                         <div>
-                          {isReplyAdded && (
+                          {isReplyAdded && replyCommentId === comment.id && (
                             <div className="p-2 m-2 w-full ">
                               <div className="bg-gray-100 overflow-hidden rounded-md shadow-md">
                                 <textarea
@@ -566,7 +577,7 @@ const CreateTask = ({
                                   <button
                                     onClick={() => addReplyComment(comment.id)}
                                     className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
-                                    Update
+                                    Add Reply
                                   </button>
                                 </div>
                               </div>
