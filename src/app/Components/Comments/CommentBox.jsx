@@ -1,13 +1,18 @@
 "use-client";
 
 import { useEffect, useState } from "react";
+import { supabase } from "@/utils/supabase/client";
 
-const CommentBox = () => {
+const CommentBox = ({ taskToEdit, userId }) => {
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
   const [isCommentAdded, setIsCommentAdded] = useState(false);
+  const [isCommentDeleted, setIsCommentDeleted] = useState(false);
+  const [isReplyAdded, setIsReplyAdded] = useState(false);
+  const [newReply, setNewReply] = useState("");
+  const [replyCommentId, setReplyCommentId] = useState(null);
 
-  useEffect(() => {}, [isCommentAdded]);
+  useEffect(() => {}, [isCommentAdded, isCommentDeleted]);
 
   const addComment = async () => {
     if (!newComment.trim()) return;
@@ -30,6 +35,25 @@ const CommentBox = () => {
       setComments((prevComments) => [data[0], ...prevComments]);
       setNewComment("");
       setIsCommentAdded(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteComment = async (commentId) => {
+    console.log("deleting comment");
+    if (!taskToEdit.id) return;
+    setIsCommentDeleted(true);
+
+    try {
+      const { data, error } = await supabase
+        .from("comments")
+        .delete()
+        .eq("id", commentId);
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.id !== commentId)
+      );
+      setIsCommentDeleted(false);
     } catch (error) {
       console.log(error);
     }
@@ -79,6 +103,11 @@ const CommentBox = () => {
     }
   };
 
+  const onReplyClicked = (commentId) => {
+    setIsReplyAdded(!isReplyAdded);
+    setReplyCommentId(commentId);
+  };
+
   return (
     <>
       <div>
@@ -124,7 +153,7 @@ const CommentBox = () => {
         </div>
         <div>
           {comments && (
-            <div>
+            <>
               {comments.map((comment) => (
                 <div
                   key={comment.id}
@@ -239,7 +268,7 @@ const CommentBox = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </>
           )}
         </div>
       </div>

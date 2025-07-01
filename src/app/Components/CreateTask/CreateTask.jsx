@@ -26,10 +26,6 @@ const CreateTask = ({
   const [selectedCycle, setSelectedCycle] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddCommentsMode, setIsAddCommentsMode] = useState(false);
-  const [isCommentDeleted, setIsCommentDeleted] = useState(false);
-  const [isReplyAdded, setIsReplyAdded] = useState(false);
-  const [newReply, setNewReply] = useState("");
-  const [replyCommentId, setReplyCommentId] = useState(null);
 
   useEffect(() => {
     if (taskToEdit?.id) {
@@ -68,7 +64,7 @@ const CreateTask = ({
     };
 
     fetchCycles();
-  }, [isEditMode, taskToEdit, isCommentDeleted]);
+  }, [isEditMode, taskToEdit]);
 
   const handleCreateTask = async () => {
     if (!title.trim()) {
@@ -178,30 +174,6 @@ const CreateTask = ({
     } catch {
       console.log(error);
     }
-  };
-
-  const deleteComment = async (commentId) => {
-    console.log("deleting comment");
-    if (!taskToEdit.id) return;
-    setIsCommentDeleted(true);
-
-    try {
-      const { data, error } = await supabase
-        .from("comments")
-        .delete()
-        .eq("id", commentId);
-      setComments((prevComments) =>
-        prevComments.filter((comment) => comment.id !== commentId)
-      );
-      setIsCommentDeleted(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const onReplyClicked = (commentId) => {
-    setIsReplyAdded(!isReplyAdded);
-    setReplyCommentId(commentId);
   };
 
   return (
@@ -360,7 +332,7 @@ const CreateTask = ({
               </div>
             </div>
           ) : (
-            <CommentBox />
+            <CommentBox taskToEdit={taskToEdit} userId={userId} />
           )}
           {/* Footer Actions */}
           <div className="mt-[100px] py-4 rounded-b-xl flex justify-end space-x-3 ">
