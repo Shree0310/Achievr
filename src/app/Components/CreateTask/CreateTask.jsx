@@ -157,6 +157,12 @@ const CreateTask = ({
 
   const handleAddComments = () => {
     setIsAddCommentsMode(!isAddCommentsMode);
+    isEditMode = false;
+  };
+
+  const handleEditTaskTab = () => {
+    isEditMode = true;
+    setIsAddCommentsMode(!isAddCommentsMode);
   };
 
   return (
@@ -174,7 +180,11 @@ const CreateTask = ({
           ) : (
             <div>
               <ul className="flex justify-between space-x-2">
-                <li className="mx-2">Edit task</li>
+                <li
+                  className="mx-2 cursor-pointer"
+                  onClick={() => handleEditTaskTab()}>
+                  Edit task
+                </li>
                 <span> | </span>
                 <li
                   onClick={() => handleAddComments()}
