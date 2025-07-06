@@ -28,9 +28,6 @@ const CreateTask = ({
   const [isAddCommentsMode, setIsAddCommentsMode] = useState(false);
 
   useEffect(() => {
-    if (taskToEdit?.id) {
-      loadComments(taskToEdit?.id);
-    }
     if (isEditMode && taskToEdit) {
       setTitle(taskToEdit.title || "");
       setDescription(taskToEdit.description || "");
@@ -160,20 +157,6 @@ const CreateTask = ({
 
   const handleAddComments = () => {
     setIsAddCommentsMode(!isAddCommentsMode);
-  };
-
-  const loadComments = async (taskId) => {
-    const { data, error } = await supabase
-      .from("comments")
-      .select("id, content")
-      .eq("task_id", taskId)
-      .order("created_at", { ascending: false });
-    try {
-      if (data && data.length > 0) setComments(data);
-      console.log(data);
-    } catch {
-      console.log(error);
-    }
   };
 
   return (

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
+import { comment } from "postcss";
 
 const CommentBox = ({ taskToEdit, userId }) => {
   const [newComment, setNewComment] = useState("");
@@ -11,30 +12,77 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const [isReplyAdded, setIsReplyAdded] = useState(false);
   const [newReply, setNewReply] = useState("");
   const [replyCommentId, setReplyCommentId] = useState(null);
+  const [nestedCommentBoxKey, setNestedCommentBoxKey] = useState(0);
 
-  useEffect(() => {}, [isCommentAdded, isCommentDeleted]);
+  useEffect(() => {
+    if (taskToEdit?.id) {
+      loadComments(taskToEdit?.id);
+    }
+  }, [isCommentAdded, isCommentDeleted]);
 
-  const addComment = async () => {
+  const loadComments = async (taskId) => {
+    const { data, error } = await supabase
+      .from("comments")
+      .select("id, content, parent_comment_id, created_at, user_id")
+      .eq("task_id", taskId)
+      .order("created_at", { ascending: true });
+    try {
+      if (data && data.length > 0) setComments(data);
+      console.log(data);
+    } catch {
+      console.log(error);
+    }
+  };
+
+  const onReplyClicked = (comment) => {
+    setIsReplyAdded(!isReplyAdded);
+    if (comment.parent_comment_id) {
+      setReplyCommentId(comment.parent_comment_id);
+    } else {
+      setReplyCommentId(comment.id);
+    }
+  };
+
+  const addComment = async (commentId) => {
     if (!newComment.trim()) return;
     setIsCommentAdded(true);
+    const commentObj = {
+      content: newComment.trim(),
+      created_at: new Date(),
+      updated_at: new Date(),
+      task_id: taskToEdit.id,
+      user_id: userId,
+      parent_comment_id: null,
+    };
+
+    const replyObj = {
+      content: newReply.trim(),
+      created_at: new Date(),
+      updated_at: new Date(),
+      task_id: taskToEdit.id,
+      user_id: userId,
+      parent_comment_id: commentId,
+    };
     //insert a comment into comments array
     try {
-      const { data, error } = await supabase
-        .from("comments")
-        .insert([
-          {
-            content: newComment.trim(),
-            created_at: new Date(),
-            updated_at: new Date(),
-            task_id: taskToEdit.id,
-            user_id: userId,
-            parent_comment_id: null,
-          },
-        ])
-        .select();
-      setComments((prevComments) => [data[0], ...prevComments]);
-      setNewComment("");
-      setIsCommentAdded(false);
+      if (replyCommentId) {
+        const { data, error } = await supabase
+          .from("comments")
+          .insert([replyObj])
+          .select();
+        setComments((prevComments) => [data[0], ...prevComments]);
+        setNewComment("");
+        setIsCommentAdded(false);
+        setReplyCommentId(null);
+      } else {
+        const { data, error } = await supabase
+          .from("comments")
+          .insert([commentObj])
+          .select();
+        setComments((prevComments) => [data[0], ...prevComments]);
+        setNewComment("");
+        setIsCommentAdded(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -80,7 +128,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
       const parentIndex = comments.findIndex(
         (comment) => comment.id === commentId
       );
-      console.log(parentIndex);
       const newReplyUi = {
         content: newReply.trim(),
         created_at: new Date(),
@@ -89,23 +136,16 @@ const CommentBox = ({ taskToEdit, userId }) => {
         user_id: userId,
         parent_comment_id: commentId,
       };
-      console.log(newReplyUi);
       setComments((prevComments) => {
         const newComments = [...prevComments];
         newComments.splice(parentIndex + 1, 0, newReplyUi);
         return newComments;
       });
-      comments.map((comment) => console.log(comment));
       setNewReply("");
       setIsReplyAdded(false);
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const onReplyClicked = (commentId) => {
-    setIsReplyAdded(!isReplyAdded);
-    setReplyCommentId(commentId);
   };
 
   return (
@@ -144,7 +184,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
               </div>
               {/* Update button */}
               <button
-                onClick={() => addComment()}
+                onClick={() => addComment(comment.id)}
                 className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
                 Add Comment
               </button>
@@ -189,7 +229,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
                       <hr className="w-full"></hr>
                       <div className=" bg-gray-100 overflow-hidden pt-2">
                         <button
-                          onClick={() => onReplyClicked(comment.id)}
+                          onClick={() => onReplyClicked(comment)}
                           className="flex items-center space-x-2 text-xs text-gray-500 px-2">
                           <svg
                             className="h-4 w-4"
@@ -218,26 +258,21 @@ const CommentBox = ({ taskToEdit, userId }) => {
                   <div>
                     {isReplyAdded && replyCommentId === comment.id && (
                       <div
-                        className={`p-2 m-2  h-auto ${
+                        className={`p-2 m-2 h-auto ${
                           comment.parent_comment_id ? "ml-10" : "ml-0"
                         }`}>
                         <div className="bg-gray-100 overflow-hidden rounded-md shadow-md">
                           <textarea
-                            type="text"
                             value={newReply}
                             onChange={(e) => setNewReply(e.target.value)}
-                            placeholder="write an update and start with @ to mention others"
+                            placeholder="write a reply..."
                             className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-none outline-none resize-none"
                           />
                           <div className="flex justify-between space-x-24 p-2">
-                            {/* Footer   */}
                             <div className="flex items-center space-x-2 text-xs text-gray-500 px-2 bg-gray-100">
-                              {/* Mention button */}
                               <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
                                 <span>@ Mention</span>
                               </button>
-
-                              {/* Attach button */}
                               <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
                                 <svg
                                   width="16"
@@ -255,12 +290,22 @@ const CommentBox = ({ taskToEdit, userId }) => {
                                 <span>Attach</span>
                               </button>
                             </div>
-                            {/* Update button */}
-                            <button
-                              onClick={() => addReplyComment(comment.id)}
-                              className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
-                              Add Reply
-                            </button>
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => {
+                                  setIsReplyAdded(false);
+                                  setReplyCommentId(null);
+                                  setNewReply("");
+                                }}
+                                className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition-colors">
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => addReplyComment(comment.id)}
+                                className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                                Add Reply
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
