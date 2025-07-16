@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { useNotifications } from '@/app/contexts/NotificationContext';
-import { comment } from "postcss";
 
 const CommentBox = ({ taskToEdit, userId }) => {
   const [newComment, setNewComment] = useState("");
@@ -14,7 +12,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const [newReply, setNewReply] = useState("");
   const [replyCommentId, setReplyCommentId] = useState(null);
   const [parentCommentId, setParentCommentId] = useState(null);
-  const { addNotification } = useNotifications();
 
   useEffect(() => {
     if (taskToEdit?.id) {
@@ -77,13 +74,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
         setNewComment("");
         setIsCommentAdded(false);
         setReplyCommentId(null);
-        
-        // Add notification for reply
-        addNotification({
-          type: 'info',
-          title: 'New Reply Added',
-          message: `A new reply was added to a comment on task "${taskToEdit.title}"`
-        });
       } else {
         const { data, error } = await supabase
           .from("comments")
@@ -92,13 +82,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
         setComments((prevComments) => [data[0], ...prevComments]);
         setNewComment("");
         setIsCommentAdded(false);
-        
-        // Add notification for new comment
-        addNotification({
-          type: 'info',
-          title: 'New Comment Added',
-          message: `A new comment was added on task "${taskToEdit.title}"`
-        });
       }
     } catch (error) {
       console.log(error);
@@ -150,13 +133,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
       setIsReplyAdded(false);
       setReplyCommentId(null);
       setParentCommentId(null);
-      
-      // Add notification for reply
-      addNotification({
-        type: 'info',
-        title: 'New Reply Added',
-        message: `A new reply was added to a comment on task "${taskToEdit.title}"`
-      });
     } catch (error) {
       console.log(error);
     }
