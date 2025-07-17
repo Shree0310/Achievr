@@ -35,33 +35,32 @@ const CreateTask = ({
       setEfforts(taskToEdit.efforts?.toString() || "");
       setSelectedCycle(taskToEdit.cycle_id || "");
     }
-
-    const fetchCycles = async () => {
-      const { data, error } = await supabase
-        .from("cycles")
-        .select("id, title")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.log("Error in fetching cycles", error);
-      }
-      try {
-        if (data && data.length > 0) {
-          setCycles(data);
-
-          if (isEditMode && taskToEdit?.cycle_id) {
-            setSelectedCycle(taskToEdit?.cycle_id);
-          } else if (!selectedCycle) {
-            setSelectedCycle(data[0].id);
-          }
-        }
-      } catch (error) {
-        console.log("cycle id not found");
-      }
-    };
-
     fetchCycles();
   }, [isEditMode, taskToEdit]);
+
+  const fetchCycles = async () => {
+    const { data, error } = await supabase
+      .from("cycles")
+      .select("id, title")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.log("Error in fetching cycles", error);
+    }
+    try {
+      if (data && data.length > 0) {
+        setCycles(data);
+
+        if (isEditMode && taskToEdit?.cycle_id) {
+          setSelectedCycle(taskToEdit?.cycle_id);
+        } else if (!selectedCycle) {
+          setSelectedCycle(data[0].id);
+        }
+      }
+    } catch (error) {
+      console.log("cycle id not found");
+    }
+  };
 
   const handleCreateTask = async () => {
     if (!title.trim()) {
@@ -127,6 +126,18 @@ const CreateTask = ({
           .select();
         if (error) throw error;
         console.log("Task created successfully:", data);
+        if (data) {
+          const { data, error } = await supabase
+            .from("notifications")
+            .insert({
+              event_type: "task added",
+              user_id: userId,
+              event_time: new Date(),
+              title: "New task Added",
+              description: "",
+            })
+            .select();
+        }
 
         // Call the callback to update parent state
         if (onTaskUpdate && data && data.length > 0) {

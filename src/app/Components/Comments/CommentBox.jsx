@@ -82,6 +82,18 @@ const CommentBox = ({ taskToEdit, userId }) => {
         setComments((prevComments) => [data[0], ...prevComments]);
         setNewComment("");
         setIsCommentAdded(false);
+        if ([commentObj]) {
+          const { data, error } = await supabase
+            .from("notifications")
+            .insert({
+              event_type: "comment added",
+              user_id: userId,
+              event_time: new Date(),
+              title: "New Comment Added",
+              description: "",
+            })
+            .select();
+        }
       }
     } catch (error) {
       console.log(error);
