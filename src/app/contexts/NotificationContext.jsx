@@ -35,7 +35,7 @@ export const NotificationProvider = ({ children }) => {
 
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
-  });
+  }, []);
 
   const value = {
     notifications,

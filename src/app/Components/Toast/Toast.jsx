@@ -6,27 +6,6 @@ import { useEffect, useState } from "react";
 const Toast = () => {
   const [notifications, setNotifications] = useState([]);
   useEffect(() => {
-    const subscription = supabase
-      .channel("notifications")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          //Triggering the notification display
-          addNotification({
-            type: "info",
-            title: payload.new.title,
-            description: `A new comment was added on task ${taskName}`,
-          });
-        }
-      )
-      .subscribe();
-
     fetchNotifications();
   }, []);
 

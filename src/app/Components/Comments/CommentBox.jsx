@@ -90,7 +90,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
               user_id: userId,
               event_time: new Date(),
               title: "New Comment Added",
-              description: "",
+              description: `A new comment was added on task "${taskToEdit.title}"`,
             })
             .select();
         }
