@@ -1,4 +1,4 @@
-"use-client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
@@ -92,23 +92,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
         setNewComment("");
         setIsCommentAdded(false);
 
-        // Manual test - insert notification directly to see if it works
-        // const testNotification = await supabase
-        //   .from("notifications")
-        //   .insert({
-        //     event_type: "comment_added",
-        //     user_id: userId,
-        //     event_time: new Date(),
-        //     title: "New Comment Added",
-        //     description: `A new comment was added on task "${taskToEdit.title}"`
-        //   })
-        //   .select();
-
-        console.log(
-          "CommentBox - Manual notification test result:",
-          testNotification
-        );
-
         // Directly trigger notification display
         addNotification({
           type: "info",
@@ -143,19 +126,25 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const addReplyComment = async () => {
     if (!taskToEdit.id || !parentCommentId) return;
     setIsReplyAdded(true);
+
+    console.log("CommentBox - Adding reply via addReplyComment method");
+    console.log("CommentBox - parentCommentId:", parentCommentId);
+
     try {
+      const replyData = {
+        content: newReply.trim(),
+        created_at: new Date(),
+        updated_at: new Date(),
+        task_id: taskToEdit.id,
+        user_id: userId,
+        parent_comment_id: parentCommentId,
+      };
+
+      console.log("CommentBox - Reply data to insert:", replyData);
+
       const { data, error } = await supabase
         .from("comments")
-        .insert([
-          {
-            content: newReply.trim(),
-            created_at: new Date(),
-            updated_at: new Date(),
-            task_id: taskToEdit.id,
-            user_id: userId,
-            parent_comment_id: parentCommentId,
-          },
-        ])
+        .insert([replyData])
         .select();
 
       if (error) throw error;

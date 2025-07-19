@@ -8,9 +8,7 @@ const NotificationSubscription = () => {
   const [userId, setUserId] = useState(null);
   const { addNotification } = useNotifications();
 
-  useEffect(() => {}, [addNotification]);
-
-  // Get current user (for future use if needed)
+  // Get current user
   useEffect(() => {
     const getCurrentUser = async () => {
       const {
@@ -38,6 +36,43 @@ const NotificationSubscription = () => {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Set up real-time subscription for notifications
+  useEffect(() => {
+    if (!userId) return;
+
+    console.log("NotificationSubscription - Setting up subscription for user:", userId);
+
+    const subscription = supabase
+      .channel("notifications")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          console.log("NotificationSubscription - Received notification:", payload);
+          
+          // Trigger the notification display
+          addNotification({
+            type: "info",
+            title: payload.new.title || "New Notification",
+            message: payload.new.description || "You have a new notification",
+          });
+        }
+      )
+      .subscribe((status) => {
+        console.log("NotificationSubscription - Subscription status:", status);
+      });
+
+    return () => {
+      console.log("NotificationSubscription - Cleaning up subscription");
+      subscription.unsubscribe();
+    };
+  }, [userId, addNotification]);
 
   return null;
 };
