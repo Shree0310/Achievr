@@ -8,7 +8,7 @@ import Stages from "../Components/Stages/Stages";
 import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
-import Toast from "../Components/Toast/Toast";
+import NotificationContainer from "../Components/Notifications/NotificationContainer";
 
 export default function BoardPage() {
   const [loading, setLoading] = useState(true);
@@ -91,7 +91,7 @@ export default function BoardPage() {
         {/* Fixed header area */}
         <div className="flex-shrink-0">
           {/* Toast Notification */}
-          <Toast />
+          <NotificationContainer />
           <Header user={user} />
           <SubHeader />
           <Board />

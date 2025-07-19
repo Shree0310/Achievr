@@ -1,12 +1,41 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { useNotifications } from "../app/contexts/NotificationContext";
+import { useNotifications } from "@/app/contexts/NotificationContext";
 
 const NotificationSubscription = () => {
   const [userId, setUserId] = useState(null);
   const { addNotification } = useNotifications();
+
+  console.log("NotificationSubscription - userId:", userId);
+
+  // Test function to manually trigger notification
+  const testNotification = () => {
+    console.log("NotificationSubscription - Testing manual notification");
+    addNotification({
+      type: "info",
+      title: "Test Notification",
+      message: "This is a test notification",
+    });
+  };
+
+  // Add test button to the page
   useEffect(() => {
-    //Get current user
+    const testButton = document.createElement("button");
+    testButton.textContent = "Test Notification";
+    testButton.style.cssText =
+      "position: fixed; top: 10px; left: 10px; z-index: 9999; padding: 10px; background: red; color: white;";
+    testButton.onclick = testNotification;
+    document.body.appendChild(testButton);
+
+    return () => {
+      document.body.removeChild(testButton);
+    };
+  }, [addNotification]);
+
+  // Get current user (for future use if needed)
+  useEffect(() => {
     const getCurrentUser = async () => {
       const {
         data: { session },
@@ -14,6 +43,7 @@ const NotificationSubscription = () => {
 
       if (session?.user) {
         setUserId(session.user.id);
+        console.log("NotificationSubscription - set userId:", session.user.id);
       }
     };
 
@@ -33,33 +63,6 @@ const NotificationSubscription = () => {
       subscription.unsubscribe();
     };
   }, []);
-
-  useEffect(() => {
-    const subscription = supabase
-      .channel("notifications")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          //Triggering the notification display
-          addNotification({
-            type: "info",
-            title: payload.new.title,
-            message:
-              payload.new.description ||
-              `A new comment was added on task "${
-                payload.new.task_title || "Unknown tasks"
-              }"`,
-          });
-        }
-      )
-      .subscribe();
-  }, [userId, addNotification]);
 
   return null;
 };

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Board from "./Components/Board/Board";
+import NotificationContainer from "./Components/Notifications/NotificationContainer";
 import Header from "./Components/Header/Header";
 import Navbar from "./Components/Navbar/Navbar";
 import SubHeader from "./Components/SubHeader/SubHeader";
@@ -225,6 +226,8 @@ export default function Home() {
       <div className="flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
         {/* Fixed header area */}
         <div className="flex-shrink-0">
+          {/* Notification Toast */}
+          <NotificationContainer />
           <Header user={user} />
           <SubHeader />
           <Board />

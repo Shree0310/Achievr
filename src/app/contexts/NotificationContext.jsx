@@ -1,4 +1,6 @@
-const { createContext, useContext, useState, useCallback } = require("react");
+"use client";
+
+import { createContext, useContext, useState, useCallback } from "react";
 
 const NotificationContext = createContext();
 
@@ -15,25 +17,34 @@ export const useNotifications = () => {
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
+  const removeNotification = useCallback((id) => {
+    console.log("NotificationContext - removing notification:", id);
+    setNotifications((prev) => prev.filter((notif) => notif.id != id));
+  }, []);
+
   const addNotification = useCallback((notification) => {
+    console.log("NotificationContext - addNotification called with:", notification);
     const id = Date.now() + Math.random();
     const newNotification = {
       id,
       ...notification,
       timestamp: new Date(),
     };
-    setNotifications((prev) => [...prev, newNotification]);
+    console.log("NotificationContext - created new notification:", newNotification);
+    setNotifications((prev) => {
+      const updated = [...prev, newNotification];
+      console.log("NotificationContext - updated notifications array:", updated);
+      return updated;
+    });
 
     setTimeout(() => {
+      console.log("NotificationContext - auto-removing notification:", id);
       removeNotification(id);
     }, 5000);
-  }, []);
-
-  const removeNotification = useCallback((id) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id != id));
-  }, []);
+  }, [removeNotification]);
 
   const clearAllNotifications = useCallback(() => {
+    console.log("NotificationContext - clearing all notifications");
     setNotifications([]);
   }, []);
 
@@ -43,6 +54,8 @@ export const NotificationProvider = ({ children }) => {
     removeNotification,
     clearAllNotifications,
   };
+
+  console.log("NotificationContext - current notifications:", notifications);
 
   return (
     <NotificationContext.Provider value={value}>
