@@ -76,12 +76,12 @@ const CommentBox = ({ taskToEdit, userId }) => {
         setNewComment("");
         setIsCommentAdded(false);
         setReplyCommentId(null);
-        
+
         // Directly trigger notification for reply
         addNotification({
           type: "info",
           title: "New Reply Added",
-          message: `A new reply was added to a comment on task "${taskToEdit.title}"`
+          message: `A new reply was added to a comment on task "${taskToEdit.title}"`,
         });
       } else {
         const { data, error } = await supabase
@@ -91,26 +91,29 @@ const CommentBox = ({ taskToEdit, userId }) => {
         setComments((prevComments) => [data[0], ...prevComments]);
         setNewComment("");
         setIsCommentAdded(false);
-        
+
         // Manual test - insert notification directly to see if it works
-        const testNotification = await supabase
-          .from("notifications")
-          .insert({
-            event_type: "comment_added",
-            user_id: userId,
-            event_time: new Date(),
-            title: "New Comment Added",
-            description: `A new comment was added on task "${taskToEdit.title}"`
-          })
-          .select();
-        
-        console.log("CommentBox - Manual notification test result:", testNotification);
-        
+        // const testNotification = await supabase
+        //   .from("notifications")
+        //   .insert({
+        //     event_type: "comment_added",
+        //     user_id: userId,
+        //     event_time: new Date(),
+        //     title: "New Comment Added",
+        //     description: `A new comment was added on task "${taskToEdit.title}"`
+        //   })
+        //   .select();
+
+        console.log(
+          "CommentBox - Manual notification test result:",
+          testNotification
+        );
+
         // Directly trigger notification display
         addNotification({
           type: "info",
           title: "New Comment Added",
-          message: `A new comment was added on task "${taskToEdit.title}"`
+          message: `A new comment was added on task "${taskToEdit.title}"`,
         });
       }
     } catch (error) {
@@ -163,12 +166,12 @@ const CommentBox = ({ taskToEdit, userId }) => {
       setIsReplyAdded(false);
       setReplyCommentId(null);
       setParentCommentId(null);
-      
+
       // Directly trigger notification for reply
       addNotification({
         type: "info",
         title: "New Reply Added",
-        message: `A new reply was added to a comment on task "${taskToEdit.title}"`
+        message: `A new reply was added to a comment on task "${taskToEdit.title}"`,
       });
     } catch (error) {
       console.log(error);
