@@ -72,7 +72,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
           .from("comments")
           .insert([replyObj])
           .select();
-        setComments((prevComments) => [data[0], ...prevComments]);
+        setComments((prevComments) => [...prevComments, data[0]]);
         setNewComment("");
         setIsCommentAdded(false);
         setReplyCommentId(null);

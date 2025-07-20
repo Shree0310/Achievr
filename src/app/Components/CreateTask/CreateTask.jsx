@@ -28,6 +28,7 @@ const CreateTask = ({
   const [selectedCycle, setSelectedCycle] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddCommentsMode, setIsAddCommentsMode] = useState(false);
+  const [tasks, setTasks] = useState([]);
   const { addNotification } = useNotifications();
 
   useEffect(() => {
@@ -39,7 +40,28 @@ const CreateTask = ({
       setSelectedCycle(taskToEdit.cycle_id || "");
     }
     fetchCycles();
-  }, [isEditMode, taskToEdit]);
+    if (userId) {
+      fetchTasks(userId);
+    }
+  }, [isEditMode, taskToEdit, userId]);
+
+  const fetchTasks = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from("tasks")
+        .select("id, created_at, user_id, status, cycle_id, title, description,")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: true });
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setTasks(data);
+      }
+    } catch (error) {
+      console.log("error fetching tasks", error);
+    }
+  };
 
   const fetchCycles = async () => {
     const { data, error } = await supabase
@@ -129,8 +151,10 @@ const CreateTask = ({
           .select();
         if (error) throw error;
         console.log("Task created successfully:", data);
-        if (data) {
-          const { data, error } = await supabase
+        
+        if (data && data.length > 0) {
+          // Add notification
+          const { data: notificationData, error: notificationError } = await supabase
             .from("notifications")
             .insert({
               event_type: "task added",
@@ -140,16 +164,17 @@ const CreateTask = ({
               description: "",
             })
             .select();
-        }
-        addNotification({
-          type: "info",
-          title: "New Task Added",
-          message: `A new task was created "${title}"`,
-        });
+            
+          addNotification({
+            type: "info",
+            title: "New Task Added",
+            message: `A new task was created "${title}"`,
+          });
 
-        // Call the callback to update parent state
-        if (onTaskUpdate && data && data.length > 0) {
-          onTaskUpdate("create", data[0]);
+          // Call the callback to update parent state
+          if (onTaskUpdate) {
+            onTaskUpdate("create", data[0]);
+          }
         }
       }
 

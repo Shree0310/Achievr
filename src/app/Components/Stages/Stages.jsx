@@ -7,7 +7,7 @@ import Task from '../Task/Task';
 import DroppableColumn from '../DroppableColumn/DroppableColumn';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const Stages = ({ className = "" }) => {
+const Stages = ({ className = "", onTaskUpdate }) => {
     const [tasks, setTasks] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -68,6 +68,13 @@ const Stages = ({ className = "" }) => {
                 break;
         }
     };
+
+    // Expose the handleTaskUpdates function to parent components
+    useEffect(() => {
+        if (onTaskUpdate) {
+            onTaskUpdate(handleTaskUpdates);
+        }
+    }, [onTaskUpdate]);
 
     // Filter tasks by status - wrapped in useMemo to prevent recalculation
     const filteredTasks = useMemo(() => {

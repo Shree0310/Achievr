@@ -5,68 +5,63 @@ import Header from "../Components/Header/Header";
 import Navbar from "../Components/Navbar/Navbar";
 import SubHeader from "../Components/SubHeader/SubHeader";
 import Stages from "../Components/Stages/Stages";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import NotificationContainer from "../Components/Notifications/NotificationContainer";
 
+type TaskUpdateHandler = (action: string, data: any) => void;
+
 export default function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [stagesTaskHandler, setStagesTaskHandler] = useState<TaskUpdateHandler | null>(null);
 
   // Task update handler for global state management
-  // const handleTaskUpdate = (action: string, data: any) => {
-  //   // This will be handled by the Stages component
-  //   // We can add global state management here if needed
-  //   console.log("Task update:", action, data);
-  // };
+  const handleTaskUpdate = useCallback((action: string, data: any) => {
+    // Forward the task update to the Stages component
+    if (stagesTaskHandler) {
+      stagesTaskHandler(action, data);
+    }
+  }, [stagesTaskHandler]);
+
+  // Store the Stages task handler function
+  const handleStagesTaskHandler = useCallback((handler: TaskUpdateHandler) => {
+    setStagesTaskHandler(() => handler);
+  }, []);
 
   useEffect(() => {
     async function getSession() {
       try {
-        const { data } = await supabase.auth.getSession();
-        const session = data.session;
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error getting session:", error);
+        }
 
-        if (session?.user) {
-          // If we have a real user session, clear demo mode
-          localStorage.removeItem("demoMode");
-          setUser(session.user);
-        } else {
-          // Check if we're in demo mode
-          const isDemoMode = localStorage.getItem("demoMode") === "true";
-          if (isDemoMode) {
-            // Only set demo mode if there's no session and demo mode is enabled
-            localStorage.setItem("demoMode", "true");
-            const demoUser: User = {
-              id: "demo-user-id",
-              email: "demo@example.com",
-              user_metadata: {
-                name: "Demo User",
-              },
-              app_metadata: {},
-              aud: "authenticated",
-              created_at: new Date().toISOString(),
-              role: "authenticated",
-              updated_at: new Date().toISOString(),
-            };
-            setUser(demoUser);
-          } else {
-            // No session and not in demo mode, redirect to auth
-            window.location.href = "/auth";
-            return;
-          }
+        if (data.session?.user) {
+          setUser(data.session.user);
         }
       } catch (error) {
-        console.error("Error getting session:", error);
-        // In case of error, redirect to auth page
-        window.location.href = "/auth";
-        return;
+        console.error("Unexpected error getting session:", error);
       } finally {
         setLoading(false);
       }
     }
 
     getSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.email);
+        setUser(session?.user || null);
+      }
+    );
+
+    return () => {
+      if (authListener && authListener.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
   }, []);
 
   if (loading) {
@@ -82,7 +77,7 @@ export default function BoardPage() {
       {/* Navbar */}
       <div className="relative w-full md:w-auto md:h-screen">
         <div className="h-auto md:h-full flex-shrink-0">
-          <Navbar userId={user?.id} />
+          <Navbar userId={user?.id} onTaskUpdate={handleTaskUpdate} />
         </div>
       </div>
 
@@ -99,7 +94,7 @@ export default function BoardPage() {
 
         {/* Stages component - explicitly take all remaining space */}
         <div className="flex-1 overflow-hidden">
-          <Stages />
+          <Stages onTaskUpdate={handleStagesTaskHandler} />
         </div>
       </div>
     </div>
