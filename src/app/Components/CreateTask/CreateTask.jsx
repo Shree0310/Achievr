@@ -6,6 +6,7 @@ import DeleteTask from "../DeleteTask/DeleteTask";
 import CommentBox from "../Comments/CommentBox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useNotifications } from "@/app/contexts/NotificationContext";
 
 const CreateTask = ({
   onClose,
@@ -13,6 +14,7 @@ const CreateTask = ({
   isEditMode = false,
   taskToEdit,
   onTaskUpdate,
+  isCreateMode = true,
 }) => {
   const [title, setTitle] = useState(taskToEdit?.title || "");
   const [description, setDescription] = useState(taskToEdit?.description || "");
@@ -26,6 +28,7 @@ const CreateTask = ({
   const [selectedCycle, setSelectedCycle] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddCommentsMode, setIsAddCommentsMode] = useState(false);
+  const { addNotification } = useNotifications();
 
   useEffect(() => {
     if (isEditMode && taskToEdit) {
@@ -124,11 +127,6 @@ const CreateTask = ({
             },
           ])
           .select();
-        addNotification({
-          type: "info",
-          title: "New Reply Added",
-          message: `A new reply was added to a comment on task "${taskToEdit.title}"`,
-        });
         if (error) throw error;
         console.log("Task created successfully:", data);
         if (data) {
@@ -143,6 +141,11 @@ const CreateTask = ({
             })
             .select();
         }
+        addNotification({
+          type: "info",
+          title: "New Task Added",
+          message: `A new task was created "${title}"`,
+        });
 
         // Call the callback to update parent state
         if (onTaskUpdate && data && data.length > 0) {
@@ -189,7 +192,7 @@ const CreateTask = ({
         }`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-3 border-b border-gray-200">
-          {!isEditMode ? (
+          {!isEditMode && isCreateMode ? (
             <h2 className="text-xl font-semibold text-gray-800">
               Create New Task
             </h2>
@@ -268,7 +271,7 @@ const CreateTask = ({
               <p>{error}</p>
             </div>
           )}
-          {isEditMode && !isAddCommentsMode ? (
+          {(isCreateMode || isEditMode) && !isAddCommentsMode ? (
             <div className="space-y-4">
               {/* Title Input */}
               <div>
@@ -367,16 +370,16 @@ const CreateTask = ({
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
               Cancel
             </button>
-            {isEditMode && !isAddCommentsMode && (
+            {(isCreateMode || isEditMode) && !isAddCommentsMode && (
               <button
                 onClick={handleCreateTask}
                 disabled={isLoading}
                 className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
                 {isLoading
                   ? "Processing..."
-                  : isEditMode
-                  ? "Update Task"
-                  : "Create Task"}
+                  : !isEditMode && isCreateMode
+                  ? "Create Task"
+                  : "Update Task"}
               </button>
             )}
           </div>

@@ -22,26 +22,38 @@ export const NotificationProvider = ({ children }) => {
     setNotifications((prev) => prev.filter((notif) => notif.id != id));
   }, []);
 
-  const addNotification = useCallback((notification) => {
-    console.log("NotificationContext - addNotification called with:", notification);
-    const id = Date.now() + Math.random();
-    const newNotification = {
-      id,
-      ...notification,
-      timestamp: new Date(),
-    };
-    console.log("NotificationContext - created new notification:", newNotification);
-    setNotifications((prev) => {
-      const updated = [...prev, newNotification];
-      console.log("NotificationContext - updated notifications array:", updated);
-      return updated;
-    });
+  const addNotification = useCallback(
+    (notification) => {
+      console.log(
+        "NotificationContext - addNotification called with:",
+        notification
+      );
+      const id = Date.now() + Math.random();
+      const newNotification = {
+        id,
+        ...notification,
+        timestamp: new Date(),
+      };
+      console.log(
+        "NotificationContext - created new notification:",
+        newNotification
+      );
+      setNotifications((prev) => {
+        const updated = [...prev, newNotification];
+        console.log(
+          "NotificationContext - updated notifications array:",
+          updated
+        );
+        return updated;
+      });
 
-    setTimeout(() => {
-      console.log("NotificationContext - auto-removing notification:", id);
-      removeNotification(id);
-    }, 5000);
-  }, [removeNotification]);
+      setTimeout(() => {
+        console.log("NotificationContext - auto-removing notification:", id);
+        removeNotification(id);
+      }, 10000);
+    },
+    [removeNotification]
+  );
 
   const clearAllNotifications = useCallback(() => {
     console.log("NotificationContext - clearing all notifications");
