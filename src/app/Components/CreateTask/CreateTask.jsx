@@ -124,6 +124,11 @@ const CreateTask = ({
             },
           ])
           .select();
+        addNotification({
+          type: "info",
+          title: "New Reply Added",
+          message: `A new reply was added to a comment on task "${taskToEdit.title}"`,
+        });
         if (error) throw error;
         console.log("Task created successfully:", data);
         if (data) {
