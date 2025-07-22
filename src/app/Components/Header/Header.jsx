@@ -4,10 +4,13 @@ import UserName from "../UserName/UserName";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
+import NotificationBell from "@/app/Components/Notifications/NotificationBell";
 
 const Header = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationDropdown, setNotificationDropdown] = useState(false);
   const router = useRouter();
   const monthNames = [
     "January",
@@ -73,6 +76,14 @@ const Header = ({ user }) => {
     }
   };
 
+  const handleUnreadCountChange = (count) => {
+    setUnreadCount(count);
+  };
+
+  const toggleNotificationsDropdown = () => {
+    setNotificationDropdown(prev => !prev);
+  };
+
   return (
     <div className="flex-shrink-0">
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -82,6 +93,32 @@ const Header = ({ user }) => {
           </h1>
         </div>
         <div className="flex items-center space-x-4">
+          <div className="relative">
+            <button
+              className="relative"
+              onClick={toggleNotificationsDropdown}>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full px-2 py-1 text-xs font-bold min-w-[20px] h-5 flex items-center justify-center">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </button>
+            {notificationDropdown && (
+              <NotificationBell onUnreadCountChange={handleUnreadCountChange} />
+            )}
+          </div>
           {!isDemoMode && (
             <button
               onClick={handleLogout}

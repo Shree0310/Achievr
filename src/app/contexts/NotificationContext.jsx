@@ -47,10 +47,10 @@ export const NotificationProvider = ({ children }) => {
         return updated;
       });
 
-      setTimeout(() => {
-        console.log("NotificationContext - auto-removing notification:", id);
-        removeNotification(id);
-      }, 10000);
+      // setTimeout(() => {
+      //   console.log("NotificationContext - auto-removing notification:", id);
+      //   removeNotification(id);
+      // }, 10000);
     },
     [removeNotification]
   );

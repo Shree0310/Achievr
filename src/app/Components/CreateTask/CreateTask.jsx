@@ -201,11 +201,9 @@ const CreateTask = ({
 
   const handleAddComments = () => {
     setIsAddCommentsMode(!isAddCommentsMode);
-    isEditMode = false;
   };
 
   const handleEditTaskTab = () => {
-    isEditMode = true;
     setIsAddCommentsMode(!isAddCommentsMode);
   };
 
