@@ -10,7 +10,21 @@ import { supabase } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import NotificationContainer from "../Components/Notifications/NotificationContainer";
 
-type TaskUpdateHandler = (action: string, data: any) => void;
+// Define proper types for task data
+interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: string;
+  priority?: string;
+  efforts?: string;
+  user_id: string;
+  cycle_id?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+type TaskUpdateHandler = (action: string, data: Task | string) => void;
 
 export default function BoardPage() {
   const [loading, setLoading] = useState(true);
@@ -18,7 +32,7 @@ export default function BoardPage() {
   const [stagesTaskHandler, setStagesTaskHandler] = useState<TaskUpdateHandler | null>(null);
 
   // Task update handler for global state management
-  const handleTaskUpdate = useCallback((action: string, data: any) => {
+  const handleTaskUpdate = useCallback((action: string, data: Task | string) => {
     // Forward the task update to the Stages component
     if (stagesTaskHandler) {
       stagesTaskHandler(action, data);
