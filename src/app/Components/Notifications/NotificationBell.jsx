@@ -2,37 +2,32 @@
 import { useNotifications } from "@/app/contexts/NotificationContext";
 import { useState, useEffect } from "react";
 
-const NotificationBell = ({ onUnreadCountChange, onShowNotifications }) => {
+const NotificationBell = ({ onCountChange }) => {
   const { notifications } = useNotifications();
-  const [unreadCount, setUnreadCount] = useState(1);
   const [notificationsList, setNotificationsList] = useState([]);
-  const [notificationDropdown, setNotificationDropdown] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotificationDropdown, setShowNotificationDropdown] =
+    useState(false);
 
   useEffect(() => {
     const count = notifications.length;
     setUnreadCount(count);
-    if (onUnreadCountChange) {
-      onUnreadCountChange(count);
-    }
 
-    if (onShowNotifications) {
-      onShowNotifications(notificationDropdown);
+    if (onCountChange) {
+      onCountChange(count);
     }
-    notifications.map((notification) => {
-      console.log(notification);
-    });
   });
 
   return (
     <>
-      <div className="top-6 right-0 w-60 max-h-56 bg-gray-400 border border-l-2 border-blue-500">
+      <div className="fixed top-16 right-6 w-80 max-h-56 bg-white rounded-lg shadow-lg">
         {notifications.map((notification) => {
           return (
             <div
               key={notification.id}
-              className="text-lg font-semibold border border-b-2 border-black flex">
+              className="text-sm border border-b-0 border-neutral-300 flex p-2 shadow-sm cursor-pointer">
               {notification.message}
-              <button>✔️</button>
+              <button className="mx-2 p-1">✔️</button>
               <button>❌</button>
             </div>
           );

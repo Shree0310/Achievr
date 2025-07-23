@@ -10,7 +10,9 @@ const Header = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [notificationDropdown, setNotificationDropdown] = useState(false);
+  const [showNotificationDropdown, setShowNotificationDropdown] =
+    useState(false);
+
   const router = useRouter();
   const monthNames = [
     "January",
@@ -76,12 +78,12 @@ const Header = ({ user }) => {
     }
   };
 
-  const handleUnreadCountChange = (count) => {
+  const OnNotificationCountChange = (count) => {
     setUnreadCount(count);
   };
 
-  const toggleNotificationsDropdown = () => {
-    setNotificationDropdown(prev => !prev);
+  const isNotificationDropdownVisible = () => {
+    setShowNotificationDropdown((prev) => !prev);
   };
 
   return (
@@ -96,7 +98,7 @@ const Header = ({ user }) => {
           <div className="relative">
             <button
               className="relative"
-              onClick={toggleNotificationsDropdown}>
+              onClick={isNotificationDropdownVisible}>
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -115,8 +117,8 @@ const Header = ({ user }) => {
                 </span>
               )}
             </button>
-            {notificationDropdown && (
-              <NotificationBell onUnreadCountChange={handleUnreadCountChange} />
+            {showNotificationDropdown && (
+              <NotificationBell onCountChange={OnNotificationCountChange} />
             )}
           </div>
           {!isDemoMode && (
