@@ -3,32 +3,20 @@ import { useNotifications } from "@/app/contexts/NotificationContext";
 import { useState, useEffect } from "react";
 
 const NotificationBell = ({ onCountChange }) => {
-  const { notifications, markAsRead, clearAllNotifications, loading } = useNotifications();
+  const { notifications, removeNotification } = useNotifications();
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsList, setNotificationsList] = useState([]);
 
   // Calculate unread count whenever notifications change
   useEffect(() => {
-    const count = notifications.filter(n => !n.isRead).length;
+    const count = notifications.filter((n) => !n.isRead).length;
     setUnreadCount(count);
-    
+
     // Notify parent component of the unread count
     if (onCountChange) {
       onCountChange(count);
     }
   }, [notifications, onCountChange]);
-
-  const handleMarkAsRead = async (notification) => {
-    await markAsRead(notification);
-  };
-
-  const handleMarkAllAsRead = async () => {
-    for (const notification of notifications) {
-      if (!notification.isRead) {
-        await markAsRead(notification);
-      }
-    }
-  };
 
   return (
     <div className="absolute top-10 right-0 w-80 max-h-96 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
@@ -37,57 +25,81 @@ const NotificationBell = ({ onCountChange }) => {
         <p className="text-sm text-gray-600">{unreadCount} unread</p>
       </div>
       <div className="max-h-80 overflow-y-auto">
-        {loading ? (
+        {notifications.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-3"></div>
-            <p className="text-sm">Loading notifications...</p>
-          </div>
-        ) : notifications.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">
-            <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            <svg
+              className="w-12 h-12 mx-auto mb-3 text-gray-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
             </svg>
             <p className="text-sm">No notifications yet</p>
           </div>
         ) : (
           notifications.map((notification) => (
-            <div key={notification.id} className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${!notification.isRead ? 'bg-blue-50' : ''}`}>
+            <div
+              key={notification.id}
+              className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h4 className="text-sm font-medium text-gray-900 mb-1">
                     {notification.title || "Notification"}
                   </h4>
                   <p className="text-sm text-gray-600 mb-2">
-                    {notification.message || notification.description || "You have a new notification"}
+                    {notification.message ||
+                      notification.description ||
+                      "You have a new notification"}
                   </p>
                   <p className="text-xs text-gray-400">
                     {new Date(notification.timestamp).toLocaleTimeString()}
                   </p>
                 </div>
                 <div className="flex space-x-1 ml-2">
-                  {!notification.isRead && (
-                    <button 
-                      onClick={() => handleMarkAsRead(notification)}
-                      className="p-1 text-green-600 hover:text-green-700 transition-colors"
-                      title="Mark as read"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </button>
-                  )}
+                  <button
+                    className="p-1 text-green-600 hover:text-green-700 transition-colors"
+                    onClick={removeNotification}>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </button>
+                  <button className="p-1 text-red-600 hover:text-red-700 transition-colors">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
           ))
         )}
       </div>
-      {notifications.length > 0 && unreadCount > 0 && (
+      {notifications.length > 0 && (
         <div className="p-3 border-t border-gray-200 bg-gray-50">
-          <button 
-            onClick={handleMarkAllAsRead}
-            className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
+          <button className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium">
             Mark all as read
           </button>
         </div>

@@ -143,27 +143,6 @@ export const NotificationProvider = ({ children }) => {
 
   const clearAllNotifications = useCallback(async () => {
     console.log("NotificationContext - clearing all notifications");
-
-    // Clear from database
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { error } = await supabase
-          .from("notifications")
-          .delete()
-          .eq("user_id", session.user.id);
-
-        if (error) {
-          console.error("Error clearing notifications:", error);
-        }
-      }
-    } catch (error) {
-      console.error("Error clearing notifications:", error);
-    }
-
-    // Clear local state
     setNotifications([]);
   }, []);
 
