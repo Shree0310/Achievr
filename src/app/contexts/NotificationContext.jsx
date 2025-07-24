@@ -8,6 +8,7 @@ import {
   useEffect,
 } from "react";
 import { supabase } from "@/utils/supabase/client";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 const NotificationContext = createContext();
 
@@ -24,6 +25,7 @@ export const useNotifications = () => {
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showPushNotification } = usePushNotifications();
 
   // Load existing notifications from database
   const loadNotifications = useCallback(async () => {
@@ -124,8 +126,8 @@ export const NotificationProvider = ({ children }) => {
           console.log("error marking all as read", error);
         } else {
           // Update local state to mark all as read
-          setNotifications(prev => 
-            prev.map(notification => ({ ...notification, isRead: true }))
+          setNotifications((prev) =>
+            prev.map((notification) => ({ ...notification, isRead: true }))
           );
         }
       }
@@ -157,13 +159,25 @@ export const NotificationProvider = ({ children }) => {
           "NotificationContext - updated notifications array:",
           updated
         );
+
         return updated;
       });
+      const isTabHidden = document.hidden || !document.hasFocus();
+      // if (isTabHidden) {
+      showPushNotification(notification.title || "New Notification", {
+        message: notification.message,
+        taskId: notification.taskId,
+        commentId: notification.commentId,
+        icon: "/favicon.ico",
+        tag: `notification-${id}`,
+      });
+      // }
 
-      // setTimeout(() => {
-      //   console.log("NotificationContext - auto-removing notification:", id);
-      //   removeNotification(id);
-      // }, 10000);
+      setTimeout(() => {
+        console.log("NotificationContext - auto-removing notification:", id);
+        removeNotification(id);
+      }, 10000);
+      return newNotification;
     },
     [removeNotification, markAsRead]
   );

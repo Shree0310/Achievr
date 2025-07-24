@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NotificationProvider } from "../app/contexts/NotificationContext";
 import NotificationSubscription from "../app/Components/Notifications/NotificationSubscription";
+import PushNotificationManager from "../app/Components/Notifications/PushNotificationManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}>
         <NotificationProvider>
           <NotificationSubscription />
+          <PushNotificationManager />
           {children}
         </NotificationProvider>
       </body>
