@@ -2,22 +2,13 @@
 import { useNotifications } from "@/app/contexts/NotificationContext";
 import { useState, useEffect } from "react";
 
-const NotificationBell = ({ onCountChange }) => {
+const NotificationBell = () => {
   const { notifications, removeNotification, markAsRead, markAllAsRead } =
     useNotifications();
-  const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsList, setNotificationsList] = useState([]);
 
-  // Calculate unread count whenever notifications change
-  useEffect(() => {
-    const count = notifications.filter((n) => !n.isRead).length;
-    setUnreadCount(count);
-
-    // Notify parent component of the unread count
-    if (onCountChange) {
-      onCountChange(count);
-    }
-  }, [notifications, onCountChange]);
+  // Calculate unread count for display in the dropdown header
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const handleMarkAsRead = (notification) => {
     markAsRead(notification);

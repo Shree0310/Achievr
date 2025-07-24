@@ -5,15 +5,19 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import NotificationBell from "@/app/Components/Notifications/NotificationBell";
+import { useNotifications } from "@/app/contexts/NotificationContext";
 
 const Header = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [showNotificationDropdown, setShowNotificationDropdown] =
     useState(false);
-
+  const { notifications } = useNotifications();
   const router = useRouter();
+
+  // Calculate unread count directly from notifications
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   const monthNames = [
     "January",
     "February",
@@ -78,10 +82,6 @@ const Header = ({ user }) => {
     }
   };
 
-  const OnNotificationCountChange = (count) => {
-    setUnreadCount(count);
-  };
-
   const isNotificationDropdownVisible = () => {
     setShowNotificationDropdown((prev) => !prev);
   };
@@ -117,9 +117,7 @@ const Header = ({ user }) => {
                 </span>
               )}
             </button>
-            {showNotificationDropdown && (
-              <NotificationBell onCountChange={OnNotificationCountChange} />
-            )}
+            {showNotificationDropdown && <NotificationBell />}
           </div>
           {!isDemoMode && (
             <button
