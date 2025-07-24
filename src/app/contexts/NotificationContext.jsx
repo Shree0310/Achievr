@@ -109,6 +109,31 @@ export const NotificationProvider = ({ children }) => {
     setNotifications((prev) => [...prev]); // Trigger re-render
   }, []);
 
+  const markAllAsRead = useCallback(async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { error } = await supabase
+          .from("notifications")
+          .update({ is_read: true })
+          .eq("user_id", session.user.id);
+
+        if (error) {
+          console.log("error marking all as read", error);
+        } else {
+          // Update local state to mark all as read
+          setNotifications(prev => 
+            prev.map(notification => ({ ...notification, isRead: true }))
+          );
+        }
+      }
+    } catch (error) {
+      console.log("error marking all as read", error);
+    }
+  }, []);
+
   const addNotification = useCallback(
     (notification) => {
       console.log(
@@ -154,6 +179,7 @@ export const NotificationProvider = ({ children }) => {
     removeNotification,
     clearAllNotifications,
     markAsRead,
+    markAllAsRead,
     loading,
   };
 

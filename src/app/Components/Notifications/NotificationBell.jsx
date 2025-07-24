@@ -3,7 +3,8 @@ import { useNotifications } from "@/app/contexts/NotificationContext";
 import { useState, useEffect } from "react";
 
 const NotificationBell = ({ onCountChange }) => {
-  const { notifications, removeNotification, markAsRead } = useNotifications();
+  const { notifications, removeNotification, markAsRead, markAllAsRead } =
+    useNotifications();
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsList, setNotificationsList] = useState([]);
 
@@ -47,40 +48,39 @@ const NotificationBell = ({ onCountChange }) => {
           </div>
         ) : (
           notifications.map((notification) => (
-            <div
-              key={notification.id}
-              className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+            <div key={notification.id} className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+              notification.isRead 
+                ? 'bg-gray-50 text-gray-500' 
+                : 'bg-blue-50 border-l-4 border-l-blue-400'
+            }`}>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="text-sm font-medium text-gray-900 mb-1">
+                  <h4 className={`text-sm font-medium mb-1 ${
+                    notification.isRead ? 'text-gray-500' : 'text-gray-900'
+                  }`}>
                     {notification.title || "Notification"}
                   </h4>
-                  <p className="text-sm text-gray-600 mb-2">
-                    {notification.message ||
-                      notification.description ||
-                      "You have a new notification"}
+                  <p className={`text-sm mb-2 ${
+                    notification.isRead ? 'text-gray-400' : 'text-gray-600'
+                  }`}>
+                    {notification.message || notification.description || "You have a new notification"}
                   </p>
                   <p className="text-xs text-gray-400">
                     {new Date(notification.timestamp).toLocaleTimeString()}
                   </p>
                 </div>
                 <div className="flex space-x-1 ml-2">
-                  <button
-                    className="p-1 text-green-600 hover:text-green-700 transition-colors"
-                    onClick={() => handleMarkAsRead(notification)}>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </button>
+                  {!notification.isRead && (
+                    <button 
+                      onClick={() => handleMarkAsRead(notification)}
+                      className="p-1 text-green-600 hover:text-green-700 transition-colors"
+                      title="Mark as read"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </button>
+                  )}
                   <button
                     className="p-1 text-red-600 hover:text-red-700 transition-colors"
                     onClick={() => removeNotification(notification.id)}>
@@ -105,7 +105,9 @@ const NotificationBell = ({ onCountChange }) => {
       </div>
       {/* {notifications.length > 0 && ( */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">
-        <button className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium">
+        <button
+          className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium"
+          onClick={() => markAllAsRead()}>
           Mark all as read
         </button>
       </div>
