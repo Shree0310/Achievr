@@ -25,42 +25,44 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Load existing notifications from database on mount
-  useEffect(() => {
-    const loadNotifications = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        if (session?.user) {
-          const { data, error } = await supabase
-            .from("notifications")
-            .select("*")
-            .eq("user_id", session.user.id)
-            .order("event_time", { ascending: false });
+  // Load existing notifications from database
+  const loadNotifications = useCallback(async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user) {
+        //Add into database
+        const { data, error } = await supabase
+          .from("notifications")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .order("event_time", { ascending: false });
 
-          if (error) {
-            console.error("Error loading notifications:", error);
-          } else {
-            // Transform database notifications to match our format
-            const transformedNotifications = data.map((notification) => ({
-              id: notification.id,
-              title: notification.title,
-              message: notification.description,
-              type: notification.event_type === "task added" ? "info" : "info",
-              timestamp: new Date(notification.event_time),
-              isRead: notification.is_read || false,
-            }));
-            setNotifications(transformedNotifications);
-          }
+        if (error) {
+          console.log("error while fetching notifications", error);
+        } else {
+          const transformNotifications = data.map((notification) => ({
+            id: notification.id,
+            type: "info",
+            message: notification.description,
+            title: notification.title,
+            timestamp: notification.event_time,
+            isRead: notification.is_read,
+          }));
+          //Add into local state
+          setNotifications(transformNotifications);
         }
-      } catch (error) {
-        console.error("Error loading notifications:", error);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  // Load notifications on mount
+  useEffect(() => {
     loadNotifications();
   }, []);
 

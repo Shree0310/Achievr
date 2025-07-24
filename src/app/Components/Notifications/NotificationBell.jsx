@@ -3,7 +3,7 @@ import { useNotifications } from "@/app/contexts/NotificationContext";
 import { useState, useEffect } from "react";
 
 const NotificationBell = ({ onCountChange }) => {
-  const { notifications, removeNotification } = useNotifications();
+  const { notifications, removeNotification, markAsRead } = useNotifications();
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsList, setNotificationsList] = useState([]);
 
@@ -18,8 +18,12 @@ const NotificationBell = ({ onCountChange }) => {
     }
   }, [notifications, onCountChange]);
 
+  const handleMarkAsRead = (notification) => {
+    markAsRead(notification);
+  };
+
   return (
-    <div className="absolute top-10 right-0 w-80 max-h-96 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+    <div className="absolute top-10 right-0 w-96 max-h-96 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
       <div className="p-4 border-b border-gray-200 bg-gray-50">
         <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
         <p className="text-sm text-gray-600">{unreadCount} unread</p>
@@ -63,7 +67,7 @@ const NotificationBell = ({ onCountChange }) => {
                 <div className="flex space-x-1 ml-2">
                   <button
                     className="p-1 text-green-600 hover:text-green-700 transition-colors"
-                    onClick={removeNotification}>
+                    onClick={() => handleMarkAsRead(notification)}>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -77,7 +81,9 @@ const NotificationBell = ({ onCountChange }) => {
                       />
                     </svg>
                   </button>
-                  <button className="p-1 text-red-600 hover:text-red-700 transition-colors">
+                  <button
+                    className="p-1 text-red-600 hover:text-red-700 transition-colors"
+                    onClick={() => removeNotification(notification.id)}>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -97,13 +103,13 @@ const NotificationBell = ({ onCountChange }) => {
           ))
         )}
       </div>
-      {notifications.length > 0 && (
-        <div className="p-3 border-t border-gray-200 bg-gray-50">
-          <button className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium">
-            Mark all as read
-          </button>
-        </div>
-      )}
+      {/* {notifications.length > 0 && ( */}
+      <div className="p-3 border-t border-gray-200 bg-gray-50">
+        <button className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium">
+          Mark all as read
+        </button>
+      </div>
+      {/* )} */}
     </div>
   );
 };
