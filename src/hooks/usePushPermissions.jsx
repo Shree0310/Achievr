@@ -7,12 +7,15 @@ export const usePushPermissions = () => {
   const [isRequesting, setIsRequesting] = useState(false);
 
   useEffect(() => {
-    setIsSupported(pushManager.isNotificationsSupported);
-    setPermisssion(pushManager.getCurrentPermissionStatus);
+    // Only run on client side
+    if (typeof window !== 'undefined' && pushManager) {
+      setIsSupported(pushManager.isNotificationsSupported());
+      setPermisssion(pushManager.getCurrentPermissionStatus());
+    }
   }, []);
 
   const requestPermission = useCallback(async () => {
-    if (!isSupported) {
+    if (!isSupported || !pushManager) {
       throw new Error("Push Notifications are not supported in this Browser");
     }
 

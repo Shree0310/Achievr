@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import NotificationContainer from "../Components/Notifications/NotificationContainer";
+import NotificationManager from "../Components/CustomNotification/NotificationManager";
 
 // Define proper types for task data
 interface Task {
@@ -111,6 +112,9 @@ export default function BoardPage() {
           <Stages onTaskUpdate={handleStagesTaskHandler} />
         </div>
       </div>
+
+      {/* Custom Notification Manager - Fixed at bottom-right */}
+      <NotificationManager />
     </div>
   );
 }

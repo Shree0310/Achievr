@@ -1,17 +1,17 @@
 import { useCallback } from "react";
 import { usePushPermissions } from "./usePushPermissions";
+import { pushManager } from "../utils/pushNotifications";
 
 export const usePushNotifications = () => {
   const { permission, isGranted } = usePushPermissions();
 
-  const showPushNotifications = useCallback(async () => {
-    if (!isGranted) {
-      console.warn("Cannot show push notification: Permission not granted");
+  const showPushNotifications = useCallback(async (title, options = {}) => {
+    if (!isGranted || !pushManager) {
+      console.warn("Cannot show push notification: Permission not granted or push manager not available");
       return null;
     }
 
-    const enhancedOptions = {};
-    return PushManager.showPushNotifications(title, enhancedOptions);
+    return pushManager.showNotification(title, options);
   }, [isGranted]);
 
   return {

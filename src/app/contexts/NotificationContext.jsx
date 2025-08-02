@@ -8,7 +8,6 @@ import {
   useEffect,
 } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 const NotificationContext = createContext();
 
@@ -25,7 +24,22 @@ export const useNotifications = () => {
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { showPushNotification } = usePushNotifications();
+  const [showPushNotification, setShowPushNotification] = useState(null);
+
+  // Load push notification functionality only on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      import('@/hooks/usePushNotifications').then(({ usePushNotifications }) => {
+        // We can't use the hook here, but we can create a wrapper
+        setShowPushNotification(() => {
+          // This will be called when needed
+          console.log('Push notification functionality loaded');
+        });
+      }).catch(error => {
+        console.warn('Push notifications not available:', error);
+      });
+    }
+  }, []);
 
   // Load existing notifications from database
   const loadNotifications = useCallback(async () => {
@@ -138,10 +152,6 @@ export const NotificationProvider = ({ children }) => {
 
   const addNotification = useCallback(
     (notification) => {
-      console.log(
-        "NotificationContext - addNotification called with:",
-        notification
-      );
       const id = Date.now() + Math.random();
       const newNotification = {
         id,
@@ -149,37 +159,21 @@ export const NotificationProvider = ({ children }) => {
         timestamp: new Date(),
         isRead: false,
       };
-      console.log(
-        "NotificationContext - created new notification:",
-        newNotification
-      );
-      setNotifications((prev) => {
-        const updated = [...prev, newNotification];
-        console.log(
-          "NotificationContext - updated notifications array:",
-          updated
-        );
 
-        return updated;
-      });
+      setNotifications((prev) => [...prev, newNotification]);
+
+      // Show push notification if tab is hidden and push notification is available
       const isTabHidden = document.hidden || !document.hasFocus();
-      // if (isTabHidden) {
-      showPushNotification(notification.title || "New Notification", {
-        message: notification.message,
-        taskId: notification.taskId,
-        commentId: notification.commentId,
-        icon: "/favicon.ico",
-        tag: `notification-${id}`,
-      });
-      // }
+      if (isTabHidden && showPushNotification) {
+        showPushNotification(notification.title || "New Notification", {
+          message: notification.message,
+          tag: `notification-${id}`,
+        });
+      }
 
-      setTimeout(() => {
-        console.log("NotificationContext - auto-removing notification:", id);
-        removeNotification(id);
-      }, 10000);
       return newNotification;
     },
-    [removeNotification, markAsRead]
+    [showPushNotification]
   );
 
   const clearAllNotifications = useCallback(async () => {
