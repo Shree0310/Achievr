@@ -35,14 +35,166 @@ const CommentBox = ({ taskToEdit, userId }) => {
     }
   };
 
+  // Build nested comment tree structure
+  const buildCommentTree = (comments) => {
+    const commentMap = new Map();
+    const rootComments = [];
+
+    // First pass: create a map of all comments
+    comments.forEach(comment => {
+      commentMap.set(comment.id, { ...comment, children: [] });
+    });
+
+    // Second pass: build the tree structure
+    comments.forEach(comment => {
+      if (comment.parent_comment_id) {
+        const parent = commentMap.get(comment.parent_comment_id);
+        if (parent) {
+          parent.children.push(commentMap.get(comment.id));
+        }
+      } else {
+        rootComments.push(commentMap.get(comment.id));
+      }
+    });
+
+    return rootComments;
+  };
+
+  // Recursive function to render comments with proper nesting
+  const renderCommentTree = (comment, depth = 0) => {
+    const indentLevel = depth * 40; // 40px per nesting level
+
+    return (
+      <div key={`${comment.id}-${comment.created_at}`}>
+        <div
+          className="p-2 m-2 h-auto"
+          style={{ marginLeft: `${indentLevel}px` }}>
+          <div
+            className={`bg-gray-100 rounded-md shadow-md ${
+              comment.parent_comment_id
+                ? "border-l-4 border-blue-300"
+                : ""
+            }`}>
+            <div className="relative w-full h-auto p-4 text-gray-600 bg-gray-100 border-gray-700 ">
+              <button
+                onClick={() => deleteComment(comment.id)}
+                className="absolute top-2 right-2">
+                <svg
+                  className="h-3 w-3"
+                  viewBox="0 0 24 24"
+                  fill="none">
+                  <path
+                    d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                </svg>
+              </button>
+              <p className="py-2">{comment.content}</p>
+              <hr className="w-full"></hr>
+              <div className=" bg-gray-100 overflow-hidden pt-2">
+                <button
+                  onClick={() => onReplyClicked(comment)}
+                  className="flex items-center space-x-2 text-xs text-gray-500 px-2">
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none">
+                    <path
+                      d="M3 10h10a8 8 0 0 1 8 8v2"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M7 6L3 10l4 4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>Reply</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reply textarea - positioned right after the comment that was replied to */}
+        {isReplyAdded && replyCommentId === comment.id && (
+          <div
+            className="p-2 m-2 h-auto"
+            style={{ marginLeft: `${indentLevel}px` }}>
+            <div className="bg-gray-50 overflow-hidden rounded-md shadow-md border-l-4 border-green-300">
+              <textarea
+                value={newReply}
+                onChange={(e) => setNewReply(e.target.value)}
+                placeholder="write a reply..."
+                className="w-full h-14 p-4 text-gray-600 bg-gray-50 border-none outline-none resize-none"
+              />
+              <div className="flex justify-between space-x-24 p-2">
+                <div className="flex items-center space-x-2 text-xs text-gray-500 px-2 bg-gray-50">
+                  <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
+                    <span>@ Mention</span>
+                  </button>
+                  <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none">
+                      <path
+                        d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span>Attach</span>
+                  </button>
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => {
+                      setIsReplyAdded(false);
+                      setReplyCommentId(null);
+                      setParentCommentId(null);
+                      setNewReply("");
+                    }}
+                    className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition-colors">
+                    Cancel
+                  </button>
+                  <button
+                    onClick={addReplyComment}
+                    className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                    Add Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Recursively render child comments */}
+        {comment.children && comment.children.length > 0 && (
+          <div>
+            {comment.children.map(childComment => 
+              renderCommentTree(childComment, depth + 1)
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const onReplyClicked = (comment) => {
     setIsReplyAdded(!isReplyAdded);
     setReplyCommentId(comment.id);
-    if (comment.parent_comment_id) {
-      setParentCommentId(comment.parent_comment_id);
-    } else {
-      setParentCommentId(comment.id);
-    }
+    // Always set the parent to the current comment being replied to
+    setParentCommentId(comment.id);
   };
 
   const addComment = async (commentId) => {
@@ -127,9 +279,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
     if (!taskToEdit.id || !parentCommentId) return;
     setIsReplyAdded(true);
 
-    console.log("CommentBox - Adding reply via addReplyComment method");
-    console.log("CommentBox - parentCommentId:", parentCommentId);
-
     try {
       const replyData = {
         content: newReply.trim(),
@@ -139,8 +288,6 @@ const CommentBox = ({ taskToEdit, userId }) => {
         user_id: userId,
         parent_comment_id: parentCommentId,
       };
-
-      console.log("CommentBox - Reply data to insert:", replyData);
 
       const { data, error } = await supabase
         .from("comments")
@@ -166,6 +313,9 @@ const CommentBox = ({ taskToEdit, userId }) => {
       console.log(error);
     }
   };
+
+  // Build the comment tree for rendering
+  const commentTree = buildCommentTree(comments);
 
   return (
     <>
@@ -211,125 +361,9 @@ const CommentBox = ({ taskToEdit, userId }) => {
           </div>
         </div>
         <div>
-          {comments && (
+          {commentTree && commentTree.length > 0 && (
             <>
-              {comments.map((comment) => (
-                <div key={`${comment.id}-${comment.created_at}`}>
-                  <div
-                    className={`p-2 m-2 h-auto ${
-                      comment.parent_comment_id ? "ml-10" : "ml-0"
-                    }`}>
-                    <div
-                      className={`bg-gray-100 rounded-md shadow-md ${
-                        comment.parent_comment_id
-                          ? "border-l-4 border-blue-300"
-                          : ""
-                      }`}>
-                      <div className="relative w-full h-auto p-4 text-gray-600 bg-gray-100 border-gray-700 ">
-                        <button
-                          onClick={() => deleteComment(comment.id)}
-                          className="absolute top-2 right-2">
-                          <svg
-                            className="h-3 w-3"
-                            viewBox="0 0 24 24"
-                            fill="none">
-                            <path
-                              d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                          </svg>
-                        </button>
-                        <p className="py-2">{comment.content}</p>
-                        <hr className="w-full"></hr>
-                        <div className=" bg-gray-100 overflow-hidden pt-2">
-                          <button
-                            onClick={() => onReplyClicked(comment)}
-                            className="flex items-center space-x-2 text-xs text-gray-500 px-2">
-                            <svg
-                              className="h-4 w-4"
-                              viewBox="0 0 24 24"
-                              fill="none">
-                              <path
-                                d="M3 10h10a8 8 0 0 1 8 8v2"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M7 6L3 10l4 4"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            <span>Reply</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Reply textarea - positioned right after the comment that was replied to */}
-                  {isReplyAdded && replyCommentId === comment.id && (
-                    <div
-                      className={`p-2 m-2 h-auto ${
-                        comment.parent_comment_id ? "ml-10" : "ml-0"
-                      }`}>
-                      <div className="bg-gray-50 overflow-hidden rounded-md shadow-md border-l-4 border-green-300">
-                        <textarea
-                          value={newReply}
-                          onChange={(e) => setNewReply(e.target.value)}
-                          placeholder="write a reply..."
-                          className="w-full h-14 p-4 text-gray-600 bg-gray-50 border-none outline-none resize-none"
-                        />
-                        <div className="flex justify-between space-x-24 p-2">
-                          <div className="flex items-center space-x-2 text-xs text-gray-500 px-2 bg-gray-50">
-                            <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
-                              <span>@ Mention</span>
-                            </button>
-                            <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none">
-                                <path
-                                  d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                              <span>Attach</span>
-                            </button>
-                          </div>
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => {
-                                setIsReplyAdded(false);
-                                setReplyCommentId(null);
-                                setParentCommentId(null);
-                                setNewReply("");
-                              }}
-                              className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition-colors">
-                              Cancel
-                            </button>
-                            <button
-                              onClick={addReplyComment}
-                              className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
-                              Add Reply
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+              {commentTree.map((comment) => renderCommentTree(comment))}
             </>
           )}
         </div>
