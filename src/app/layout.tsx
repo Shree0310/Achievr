@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NotificationProvider } from "../app/contexts/NotificationContext";
+import { ThemeProvider } from "../app/contexts/ThemeContext";
 import NotificationSubscription from "../app/Components/Notifications/NotificationSubscription";
 import PushNotificationManager from "../app/Components/Notifications/PushNotificationManager";
 
@@ -43,11 +44,13 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}>
-        <NotificationProvider>
-          <NotificationSubscription />
-          <PushNotificationManager />
-          {children}
-        </NotificationProvider>
+        <ThemeProvider>
+          <NotificationProvider>
+            <NotificationSubscription />
+            <PushNotificationManager />
+            {children}
+          </NotificationProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
