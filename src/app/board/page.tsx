@@ -67,7 +67,7 @@ export default function BoardPage() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("Auth state changed:", event, session?.user?.email);
+        //console.log("Auth state changed:", event, session?.user?.email);
         setUser(session?.user || null);
       }
     );

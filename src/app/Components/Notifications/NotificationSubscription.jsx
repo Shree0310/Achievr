@@ -41,8 +41,6 @@ const NotificationSubscription = () => {
   useEffect(() => {
     if (!userId) return;
 
-    console.log("NotificationSubscription - Setting up subscription for user:", userId);
-
     const subscription = supabase
       .channel("notifications")
       .on(
@@ -54,7 +52,6 @@ const NotificationSubscription = () => {
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          console.log("NotificationSubscription - Received notification:", payload);
           
           // Trigger the notification display
           addNotification({
@@ -65,11 +62,9 @@ const NotificationSubscription = () => {
         }
       )
       .subscribe((status) => {
-        console.log("NotificationSubscription - Subscription status:", status);
       });
 
     return () => {
-      console.log("NotificationSubscription - Cleaning up subscription");
       subscription.unsubscribe();
     };
   }, [userId, addNotification]);

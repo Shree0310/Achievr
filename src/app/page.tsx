@@ -60,7 +60,7 @@ export default function Home() {
     // Set up auth state listener with immediate check
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("Auth state changed:", event, session?.user?.email);
+        //console.log("Auth state changed:", event, session?.user?.email);
 
         if (session?.user) {
           // If user becomes authenticated, redirect to board immediately

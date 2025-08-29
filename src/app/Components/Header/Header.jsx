@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import NotificationBell from "@/app/Components/Notifications/NotificationBell";
+import ToggleTheme from "@/app/Components/Theme/ToggleTheme";
 import { useNotifications } from "@/app/contexts/NotificationContext";
 
 const Header = ({ user }) => {
@@ -95,6 +96,9 @@ const Header = ({ user }) => {
           </h1>
         </div>
         <div className="flex items-center space-x-4">
+          <div className="relative">
+            <ToggleTheme/>
+          </div>
           <div className="relative">
             <button
               className="relative"

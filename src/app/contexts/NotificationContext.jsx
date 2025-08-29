@@ -104,8 +104,6 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
   const markAsRead = useCallback(async (notification) => {
-    console.log("marked as read", notification.isRead);
-
     // Update in database
     try {
       const { error } = await supabase
@@ -177,7 +175,6 @@ export const NotificationProvider = ({ children }) => {
   );
 
   const clearAllNotifications = useCallback(async () => {
-    console.log("NotificationContext - clearing all notifications");
     setNotifications([]);
   }, []);
 
@@ -190,8 +187,6 @@ export const NotificationProvider = ({ children }) => {
     markAllAsRead,
     loading,
   };
-
-  console.log("NotificationContext - current notifications:", notifications);
 
   return (
     <NotificationContext.Provider value={value}>

@@ -73,7 +73,7 @@ export default function CycleListPage(){
 
         // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            console.log('Auth state changed:', _event, session);
+            //console.log('Auth state changed:', _event, session);
             if (session?.user) {
                 localStorage.removeItem('demoMode');
                 console.log('Auth state: Setting regular user:', session.user.id);
