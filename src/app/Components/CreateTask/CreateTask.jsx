@@ -210,7 +210,7 @@ const CreateTask = ({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
-        className={`bg-white rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
+        className={`bg-white dark:bg-gray-800 dark:border dark:border-blue-700 rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
           isEditMode ? "h-full" : "h-auto"
         }`}>
         {/* Header */}
@@ -298,7 +298,7 @@ const CreateTask = ({
             <div className="space-y-4">
               {/* Title Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
                   Title
                 </label>
                 <Input
@@ -306,13 +306,13 @@ const CreateTask = ({
                   placeholder="Enter task title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:border-blue-700 dark:bg-gray-700"
                 />
               </div>
 
               {/* Description Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
                   Description
                 </label>
                 <textarea
@@ -320,20 +320,20 @@ const CreateTask = ({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 dark:focus:border-blue-700 focus:ring-primary-500 focus:border-primary-500 resize-none dark:bg-gray-700"
                 />
               </div>
 
               {/* Priority and Effort Selection */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
                     Priority
                   </label>
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:focus:border-blue-700">
                     <option value="" disabled>
                       Select Priority
                     </option>
@@ -344,13 +344,13 @@ const CreateTask = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
                     Story Points
                   </label>
                   <select
                     value={efforts}
                     onChange={(e) => setEfforts(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white dark:focus:border-blue-700">
                     <option value=" " disabled>
                       Select Points
                     </option>
@@ -365,13 +365,13 @@ const CreateTask = ({
 
               {/* Cycle Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
                   Cycle
                 </label>
                 <select
                   value={selectedCycle}
                   onChange={(e) => setSelectedCycle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:focus:border-blue-700">
                   <option value="" disabled>
                     Select Cycle
                   </option>

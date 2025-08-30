@@ -190,30 +190,30 @@ const Stages = ({ className = "", onTaskUpdate }) => {
 
     // TaskCard for the drag overlay
     const TaskCard = ({ task }) => (
-        <Card className='bg-white/90 dark:bg-gray-900 backdrop-blur-sm rounded-lg p-4 border border-primary-200 shadow-lg cursor-grabbing min-w-[200px]'>
-            <div className="flex justify-between items-start mb-3 dark:bg-gray-900">
-                <div className="flex-1 dark:bg-gray-900">
-                    <h3 className="font-medium text-gray-900">
+        <Card className='bg-white/90 dark:bg-gray-800 backdrop-blur-sm rounded-lg p-4 border border-primary-200 dark:border-blue-500 shadow-lg dark:shadow-gray-900/30 cursor-grabbing min-w-[200px]'>
+            <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 dark:text-white">
                         {task.title || 'Untitled Task'}
                     </h3>
                 </div>
                 {task.priority && (
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium
-                        ${task.priority === '1' ? 'bg-red-100 text-red-700' :
-                        task.priority === '2' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-green-100 text-green-700'}`}>
+                        ${task.priority === '1' ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
+                        task.priority === '2' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400' :
+                        'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'}`}>
                         P{task.priority}
                     </span>
                 )}
             </div>
             
-            <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
+            <p className='text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2'>
                 {task.description || 'No Description'}
             </p>
             
             <div className="flex items-center space-x-3 text-sm">
                 {task.efforts && (
-                    <div className="flex items-center text-gray-500">
+                    <div className="flex items-center text-gray-500 dark:text-gray-400">
                         <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>

@@ -70,9 +70,9 @@ const CommentBox = ({ taskToEdit, userId }) => {
           className="p-2 m-2 h-auto"
           style={{ marginLeft: `${indentLevel}px` }}>
           <div
-            className={`bg-gray-100 dark:bg-gray-800 rounded-md shadow-md dark:shadow-gray-900/20 ${
+            className={`bg-gray-100 dark:bg-gray-800 rounded-md shadow-md dark:shadow-gray-900/20 dark:border-blue-300 ${
               comment.parent_comment_id
-                ? "border-l-4 border-blue-300 dark:border-blue-500"
+                ? "border-l-4"
                 : ""
             }`}>
             <div className="relative w-full h-auto p-4 text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border-gray-700 dark:border-gray-600 ">
@@ -321,7 +321,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
     <>
       <div>
         <div className="p-2 m-2 w-full ">
-          <div className="bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-md shadow-md dark:shadow-gray-900/20">
+          <div className="bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-md shadow-md dark:border-blue-400">
             <textarea
               type="text"
               value={newComment}

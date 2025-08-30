@@ -21,7 +21,7 @@ const NotificationToast = ({ notification, onRemove }) => {
       case "success":
         return (
           <svg
-            className="w-5 h-5 text-green-500"
+            className="w-5 h-5 text-green-500 dark:text-green-400"
             fill="currentColor"
             viewBox="0 0 20 20">
             <path
@@ -34,7 +34,7 @@ const NotificationToast = ({ notification, onRemove }) => {
       case "error":
         return (
           <svg
-            className="w-5 h-5 text-red-500"
+            className="w-5 h-5 text-red-500 dark:text-red-400"
             fill="currentColor"
             viewBox="0 0 20 20">
             <path
@@ -47,7 +47,7 @@ const NotificationToast = ({ notification, onRemove }) => {
       case "warning":
         return (
           <svg
-            className="w-5 h-5 text-yellow-500"
+            className="w-5 h-5 text-yellow-500 dark:text-yellow-400"
             fill="currentColor"
             viewBox="0 0 20 20">
             <path
@@ -60,7 +60,7 @@ const NotificationToast = ({ notification, onRemove }) => {
       default:
         return (
           <svg
-            className="w-5 h-5 text-blue-500"
+            className="w-5 h-5 text-blue-500 dark:text-blue-400"
             fill="currentColor"
             viewBox="0 0 20 20">
             <path
@@ -76,13 +76,13 @@ const NotificationToast = ({ notification, onRemove }) => {
   const getBackgroundColor = (type) => {
     switch (type) {
       case "success":
-        return "bg-green-50 border-green-200";
+        return "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700";
       case "error":
-        return "bg-red-50 border-red-200";
+        return "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700";
       case "warning":
-        return "bg-yellow-50 border-yellow-200";
+        return "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700";
       default:
-        return "bg-blue-50 border-blue-200";
+        return "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700";
     }
   };
 
@@ -94,22 +94,22 @@ const NotificationToast = ({ notification, onRemove }) => {
           isVisible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }
         ${getBackgroundColor(notification.type)}
-        border rounded-lg shadow-lg p-4 max-w-sm w-full
+        border rounded-lg shadow-lg dark:shadow-gray-900/30 p-4 max-w-sm w-full
       `}>
       <div className="flex items-start space-x-3">
         <div className="flex-shrink-0">{getIcon(notification.type)}</div>
         <div className="flex-1 min-w-0">
           {notification.title && (
-            <p className="text-sm font-medium text-gray-900 mb-1">
+            <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
               {notification.title}
             </p>
           )}
-          <p className="text-sm text-gray-700">{notification.message}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">{notification.message}</p>
         </div>
         <div className="flex-shrink-0">
           <button
             onClick={handleRemove}
-            className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors">
+            className="inline-flex text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:text-gray-600 dark:focus:text-gray-300 transition-colors">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
