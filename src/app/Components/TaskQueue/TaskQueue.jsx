@@ -479,13 +479,13 @@ const TaskQueue = ({ userId }) => {
             </div>
         </div>
 
-        <div className="rounded-md border m-4">
-            <Table className="border border-gray-400">
+        <div className="rounded-md border border-gray-400 dark:border-gray-600 m-4 bg-white dark:bg-gray-800">
+            <Table className="border border-gray-400 dark:border-gray-600">
                 <TableHeader className="">
-                    <TableRow className="bg-primary-300">
+                    <TableRow className="bg-primary-300 dark:bg-primary-700">
                         <TableHead 
                             onClick={sortTask("title")} 
-                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors group"
+                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors group"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Title</span>
@@ -503,7 +503,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("status")} 
-                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors"
+                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Status</span>
@@ -521,7 +521,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("priority")} 
-                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors"
+                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Priority</span>
@@ -539,7 +539,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("efforts")} 
-                            className="border border-gray-400 text-black text-center cursor-pointer hover:bg-primary-400 transition-colors"
+                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Efforts</span>
@@ -555,10 +555,10 @@ const TaskQueue = ({ userId }) => {
                                 )}
                             </div>
                         </TableHead>
-                        <TableHead className="border border-gray-400 text-black text-center">Cycle</TableHead>
+                        <TableHead className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center">Cycle</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody className="bg-primary-50">
+                <TableBody className="bg-primary-50 dark:bg-gray-900">
                     {loading ? (
                         <TableRow>
                             <TableCell colSpan={5} className="text-center py-4">

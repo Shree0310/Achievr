@@ -88,17 +88,15 @@ const Header = ({ user }) => {
   };
 
   return (
-    <div className="flex-shrink-0">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+    <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-semibold text-gray-800">
+          <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
             {currentMonth} {currentYear}
           </h1>
+          <ToggleTheme />
         </div>
         <div className="flex items-center space-x-4">
-          <div className="relative">
-            <ToggleTheme/>
-          </div>
           <div className="relative">
             <button
               className="relative"
@@ -127,7 +125,7 @@ const Header = ({ user }) => {
             <button
               onClick={handleLogout}
               disabled={isLoading}
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors">
               {isLoading ? (
                 <svg
                   className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700"
@@ -166,7 +164,7 @@ const Header = ({ user }) => {
           )}
           {isDemoMode ? (
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Demo Mode</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Demo Mode</span>
               <UserName user={user} position="right" />
             </div>
           ) : (

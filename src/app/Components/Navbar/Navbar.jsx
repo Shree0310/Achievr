@@ -46,7 +46,7 @@ const Navbar = ({ userId, onTaskUpdate }) => {
     }, [router]);
 
     return (
-        <div className="w-full md:w-64 bg-white h-16 md:h-screen border-r border-gray-200">
+        <div className="w-full md:w-64 bg-white h-16 md:h-screen border-r border-gray-200 dark:bg-gradient-to-r from-gray-900 to-gray-700">
             <div className="p-6">
                 <Link href="/" prefetch={true} className="flex items-center space-x-3 mb-8 group">
                     <div className="relative h-8 w-8 transition-transform group-hover:scale-105">
@@ -58,12 +58,12 @@ const Navbar = ({ userId, onTaskUpdate }) => {
                             className="h-8 w-8"
                         />
                     </div>
-                    <span className="text-xl font-bold text-gray-800 group-hover:text-primary-600 transition-colors">
+                    <span className="text-xl font-bold text-gray-800 group-hover:text-primary-600 transition-colors dark:text-white">
                         Achievr
                     </span>
                 </Link>
                 
-                <nav className="space-y-1">
+                <nav className="space-y-1 dark:text-white">
                     <CreateTaskButton userId={userId} onTaskUpdate={onTaskUpdate} />
                     {navItems.map((item) => (
                         <Link
@@ -72,13 +72,13 @@ const Navbar = ({ userId, onTaskUpdate }) => {
                             prefetch={true}
                             className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                                 pathname === item.path
-                                    ? 'bg-primary-50 text-primary-600'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    ? 'bg-primary-50 text-primary-600 '
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-900'
                             }`}
                         >
                             <svg
                                 className={`mr-3 h-5 w-5 ${
-                                    pathname === item.path ? 'text-primary-500' : 'text-gray-400'
+                                    pathname === item.path ? 'text-primary-500 ' : 'text-gray-400 dark:text-white'
                                 }`}
                                 fill="none"
                                 strokeLinecap="round"

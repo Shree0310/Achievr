@@ -15,7 +15,7 @@ const DroppableColumn = ({ id, title, children, }) => {
       className={`column-gradient h-full rounded-lg overflow-hidden flex flex-col shadow 
         ${isOver ? 'ring-4 ring-primary-300 ring-opacity-70 bg-primary-300' : ''}`}
     >
-      <p className="py-3 text-center text-gray-800 text-base md:text-lg font-medium border-b border-gray-200">
+      <p className="py-3 text-center text-gray-800 dark:text-gray-200 text-base md:text-lg font-medium border-b border-gray-200 dark:border-gray-700">
         {title}
       </p>
       {/* When we nest one component inside another component we use children, a prop */}

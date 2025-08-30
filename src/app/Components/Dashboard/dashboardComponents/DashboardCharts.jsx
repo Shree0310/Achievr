@@ -146,9 +146,9 @@ const DashBoardCharts = () => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Status Chart */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-800">Tasks by Status</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Tasks by Status</h3>
                 </div>
                 <div className="p-4" style={{ height: '300px' }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -156,16 +156,18 @@ const DashBoardCharts = () => {
                             data={statusData}
                             margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
                         >
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-600" />
                             <XAxis
                                 dataKey="status"
                                 angle={-45}
                                 textAnchor="end"
                                 height={60}
                                 tick={{ fill: '#666', fontSize: 12 }}
+                                className="dark:text-white"
                             />
                             <YAxis
                                 tick={{ fill: '#666', fontSize: 12 }}
+                                className="dark:text-white"
                             />
                             <Tooltip
                                 contentStyle={{

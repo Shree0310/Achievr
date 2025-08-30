@@ -70,15 +70,15 @@ const CommentBox = ({ taskToEdit, userId }) => {
           className="p-2 m-2 h-auto"
           style={{ marginLeft: `${indentLevel}px` }}>
           <div
-            className={`bg-gray-100 rounded-md shadow-md ${
+            className={`bg-gray-100 dark:bg-gray-800 rounded-md shadow-md dark:shadow-gray-900/20 ${
               comment.parent_comment_id
-                ? "border-l-4 border-blue-300"
+                ? "border-l-4 border-blue-300 dark:border-blue-500"
                 : ""
             }`}>
-            <div className="relative w-full h-auto p-4 text-gray-600 bg-gray-100 border-gray-700 ">
+            <div className="relative w-full h-auto p-4 text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border-gray-700 dark:border-gray-600 ">
               <button
                 onClick={() => deleteComment(comment.id)}
-                className="absolute top-2 right-2">
+                className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                 <svg
                   className="h-3 w-3"
                   viewBox="0 0 24 24"
@@ -91,11 +91,11 @@ const CommentBox = ({ taskToEdit, userId }) => {
                 </svg>
               </button>
               <p className="py-2">{comment.content}</p>
-              <hr className="w-full"></hr>
-              <div className=" bg-gray-100 overflow-hidden pt-2">
+              <hr className="w-full border-gray-300 dark:border-gray-600"></hr>
+              <div className=" bg-gray-100 dark:bg-gray-800 overflow-hidden pt-2">
                 <button
                   onClick={() => onReplyClicked(comment)}
-                  className="flex items-center space-x-2 text-xs text-gray-500 px-2">
+                  className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 px-2 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                   <svg
                     className="h-4 w-4"
                     viewBox="0 0 24 24"
@@ -127,54 +127,54 @@ const CommentBox = ({ taskToEdit, userId }) => {
           <div
             className="p-2 m-2 h-auto"
             style={{ marginLeft: `${indentLevel}px` }}>
-            <div className="bg-gray-50 overflow-hidden rounded-md shadow-md border-l-4 border-green-300">
-              <textarea
-                value={newReply}
-                onChange={(e) => setNewReply(e.target.value)}
-                placeholder="write a reply..."
-                className="w-full h-14 p-4 text-gray-600 bg-gray-50 border-none outline-none resize-none"
-              />
-              <div className="flex justify-between space-x-24 p-2">
-                <div className="flex items-center space-x-2 text-xs text-gray-500 px-2 bg-gray-50">
-                  <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
-                    <span>@ Mention</span>
-                  </button>
-                  <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none">
-                      <path
-                        d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span>Attach</span>
-                  </button>
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => {
-                      setIsReplyAdded(false);
-                      setReplyCommentId(null);
-                      setParentCommentId(null);
-                      setNewReply("");
-                    }}
-                    className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition-colors">
-                    Cancel
-                  </button>
-                  <button
-                    onClick={addReplyComment}
-                    className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
-                    Add Reply
-                  </button>
-                </div>
-              </div>
-            </div>
+                                  <div className="bg-gray-50 dark:bg-gray-700 overflow-hidden rounded-md shadow-md dark:shadow-gray-900/20 border-l-4 border-green-300 dark:border-green-500">
+                        <textarea
+                          value={newReply}
+                          onChange={(e) => setNewReply(e.target.value)}
+                          placeholder="write a reply..."
+                          className="w-full h-14 p-4 text-gray-600 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 border-none outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400"
+                        />
+                        <div className="flex justify-between space-x-24 p-2">
+                          <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 px-2 bg-gray-50 dark:bg-gray-700">
+                            <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                              <span>@ Mention</span>
+                            </button>
+                            <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none">
+                                <path
+                                  d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              <span>Attach</span>
+                            </button>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                setIsReplyAdded(false);
+                                setReplyCommentId(null);
+                                setParentCommentId(null);
+                                setNewReply("");
+                              }}
+                              className="px-3 py-1 bg-gray-500 dark:bg-gray-600 text-white text-sm rounded hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors">
+                              Cancel
+                            </button>
+                            <button
+                              onClick={addReplyComment}
+                              className="px-3 py-1 bg-blue-500 dark:bg-blue-600 text-white text-sm rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
+                              Add Reply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
           </div>
         )}
 
@@ -321,24 +321,24 @@ const CommentBox = ({ taskToEdit, userId }) => {
     <>
       <div>
         <div className="p-2 m-2 w-full ">
-          <div className="bg-gray-100 overflow-hidden rounded-md shadow-md">
+          <div className="bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-md shadow-md dark:shadow-gray-900/20">
             <textarea
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="write an update and start with @ to mention others"
-              className="w-full h-14 p-4 text-gray-600 bg-gray-100 border-none outline-none resize-none"
+              className="w-full h-14 p-4 text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border-none outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400"
             />
             <div className="flex justify-between space-x-24 p-2">
               {/* Footer   */}
-              <div className="flex items-center space-x-2 text-xs text-gray-500 px-2 bg-gray-100">
+              <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 px-2 bg-gray-100 dark:bg-gray-800">
                 {/* Mention button */}
-                <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
+                <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                   <span>@ Mention</span>
                 </button>
 
                 {/* Attach button */}
-                <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors">
+                <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path
                       d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
@@ -354,7 +354,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
               {/* Update button */}
               <button
                 onClick={addComment} // Fixed: removed the comment.id parameter
-                className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                className="px-3 py-1 bg-blue-500 dark:bg-blue-600 text-white text-sm rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
                 Add Comment
               </button>
             </div>

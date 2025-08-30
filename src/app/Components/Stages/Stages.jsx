@@ -190,9 +190,9 @@ const Stages = ({ className = "", onTaskUpdate }) => {
 
     // TaskCard for the drag overlay
     const TaskCard = ({ task }) => (
-        <Card className='bg-white/90 backdrop-blur-sm rounded-lg p-4 border border-primary-200 shadow-lg cursor-grabbing min-w-[200px]'>
-            <div className="flex justify-between items-start mb-3">
-                <div className="flex-1">
+        <Card className='bg-white/90 dark:bg-gray-900 backdrop-blur-sm rounded-lg p-4 border border-primary-200 shadow-lg cursor-grabbing min-w-[200px]'>
+            <div className="flex justify-between items-start mb-3 dark:bg-gray-900">
+                <div className="flex-1 dark:bg-gray-900">
                     <h3 className="font-medium text-gray-900">
                         {task.title || 'Untitled Task'}
                     </h3>
