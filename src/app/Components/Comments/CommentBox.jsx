@@ -17,6 +17,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [updateCommentMode, setUpdateCommentMode] = useState(null);
   const [newUpdatedComment, setNewUpdatedComment] = useState("");
+  const [isCommentUpdated, setIsCommentUpdated] = useState(null);
   const { addNotification } = useNotifications();
   const dialogRef = useRef(null);
 
@@ -43,7 +44,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const loadComments = async (taskId) => {
     const { data, error } = await supabase
       .from("comments")
-      .select("id, content, parent_comment_id, created_at, user_id")
+      .select("id, content, parent_comment_id, created_at, updated_at, user_id")
       .eq("task_id", taskId)
       .order("created_at", { ascending: true });
     try {
@@ -139,45 +140,8 @@ const CommentBox = ({ taskToEdit, userId }) => {
             }`}>
             <div className="relative w-full h-auto p-4 text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border-gray-700 dark:border-gray-600 ">
               <div className="flex justify-end gap-4 absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
-                {updateCommentMode === comment.id ? 
-                  (<div className="absolute top-2 w-[800px] bg-white dark:bg-gray-700 rounded-md shadow-xl border border-gray-200 dark:border-gray-600 p-4 z-50">
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Edit Comment
-                      </label>
-                      <textarea
-                        value={newUpdatedComment}
-                        onChange={(e) => setNewUpdatedComment(e.target.value)}
-                        placeholder={comment.content}
-                        className="w-full h-20 p-3 text-gray-600 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                      />
-                      <div className="flex justify-between items-center mt-1">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {newUpdatedComment.length} characters
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {newUpdatedComment.trim() === comment.content ? 'No changes' : 'Modified'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <button
-                        onClick={() => {
-                          setUpdateCommentMode(null);
-                          setNewUpdatedComment("");
-                        }}
-                        className="px-3 py-1.5 bg-gray-500 dark:bg-gray-600 text-white text-sm rounded hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors">
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => updateComment(comment)} 
-                        disabled={!newUpdatedComment.trim() || newUpdatedComment.trim() === comment.content}
-                        className="px-3 py-1.5 bg-blue-500 dark:bg-blue-600 text-white text-sm rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        Update Comment
-                      </button>
-                    </div>
-                  </div>):
-               ( <div className="flex items-center gap-2">
+                {updateCommentMode !== comment.id && (
+                  <div className="flex items-center gap-2">
                 <p className="text-xs">{formatDateTime(comment.created_at)}</p>
                 <button
                   onClick={() => setOpenMenuId(openMenuId === comment.id ? null: comment.id)}
@@ -206,34 +170,54 @@ const CommentBox = ({ taskToEdit, userId }) => {
                                    } else {
                                      setUpdateCommentMode(comment.id);
                                      setNewUpdatedComment(comment.content);
+                                     setOpenMenuId(null); // Close the menu when entering edit mode
                                    }
                                  }}/>}
-                
-                
-                {/* <button
-                  onClick={() => deleteComment(comment.id)}>
-                  <svg
-                    className="h-3 w-3"
-                    viewBox="0 0 24 24"
-                    fill="none">
-                    <path
-                      d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                  </svg>
-                </button> */}
-              </div>
-              <div className="py-2">
-                <p>{comment.content}</p>
-                {comment.updated_at && comment.updated_at !== comment.created_at && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
-                    (edited)
-                  </p>
-                )}
-              </div>
+            </div>
+              {updateCommentMode === comment.id ? (
+                <div className="py-2">
+                  <textarea
+                    value={newUpdatedComment}
+                    onChange={(e) => setNewUpdatedComment(e.target.value)}
+                    placeholder={comment.content}
+                    className="w-full h-20 p-3 text-gray-600 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  />
+                  <div className="flex justify-between items-center mt-2">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <span>{newUpdatedComment.length} characters</span>
+                      <span>•</span>
+                      <span>{newUpdatedComment.trim() === comment.content ? 'No changes' : 'Modified'}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setUpdateCommentMode(null);
+                          setNewUpdatedComment("");
+                        }}
+                        className="px-3 py-1.5 bg-gray-500 dark:bg-gray-600 text-white text-sm rounded hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors">
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {updateComment(comment); setIsCommentUpdated(isCommentUpdated === comment.id ? null: comment.id )}} 
+                        disabled={!newUpdatedComment.trim() || newUpdatedComment.trim() === comment.content}
+                        className="px-3 py-1.5 bg-blue-500 dark:bg-blue-600 text-white text-sm rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Update Comment
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-2">
+                  <p>{comment.content}</p>
+                  {comment.updated_at && comment.updated_at !== comment.created_at && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
+                      (edited)
+                    </p>
+                  )}
+                </div>
+              )}
               <hr className="w-full border-gray-300 dark:border-gray-600"></hr>
-              <div className=" bg-gray-100 dark:bg-gray-800 overflow-hidden pt-2">
+              <div className="flex bg-gray-100 dark:bg-gray-800 pt-2">
                 <button
                   onClick={() => onReplyClicked(comment)}
                   className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 px-2 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
@@ -258,6 +242,12 @@ const CommentBox = ({ taskToEdit, userId }) => {
                   </svg>
                   <span>Reply</span>
                 </button>
+                {comment.updated_at && comment.updated_at !== comment.created_at && (
+                  <p className="text-xs text-gray-500 dark:text-gray-200 px-4">
+                    Updated: {formatDateTime(comment.updated_at)}
+                  </p>
+                )}
+                <button className="text-xs text-gray-500 dark:text-gray-200 hover:text-blue-400">Show History</button>
               </div>
             </div>
           </div>
