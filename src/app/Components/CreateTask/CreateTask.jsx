@@ -214,23 +214,23 @@ const CreateTask = ({
           isEditMode ? "h-full" : "h-auto"
         }`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-3 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 pt-3 border-b border-gray-200 dark:border-gray-700">
           {!isEditMode && isCreateMode ? (
-            <h2 className="text-xl font-semibold text-gray-800">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
               Create New Task
             </h2>
           ) : (
             <div>
               <ul className="flex justify-between space-x-2">
                 <li
-                  className="mx-2 cursor-pointer"
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-white"
                   onClick={() => handleEditTaskTab()}>
                   Edit task
                 </li>
-                <span> | </span>
+                <span className="text-gray-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleAddComments()}
-                  className="mx-2 cursor-pointer">
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-white">
                   Updates
                 </li>
               </ul>
@@ -242,9 +242,9 @@ const CreateTask = ({
               <div>
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
                   <svg
-                    className="w-5 h-5 text-gray-500"
+                    className="w-5 h-5 text-gray-500 dark:text-white"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -258,9 +258,9 @@ const CreateTask = ({
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
                   <svg
-                    className="w-5 h-5 text-gray-500"
+                    className="w-5 h-5 text-gray-500 dark:text-white"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg">

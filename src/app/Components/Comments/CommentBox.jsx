@@ -60,6 +60,20 @@ const CommentBox = ({ taskToEdit, userId }) => {
     return rootComments;
   };
 
+  //Format Date and Time
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+
   // Recursive function to render comments with proper nesting
   const renderCommentTree = (comment, depth = 0) => {
     const indentLevel = depth * 40; // 40px per nesting level
@@ -76,20 +90,22 @@ const CommentBox = ({ taskToEdit, userId }) => {
                 : ""
             }`}>
             <div className="relative w-full h-auto p-4 text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border-gray-700 dark:border-gray-600 ">
-              <button
-                onClick={() => deleteComment(comment.id)}
-                className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
-                <svg
-                  className="h-3 w-3"
-                  viewBox="0 0 24 24"
-                  fill="none">
-                  <path
-                    d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </button>
+              <div className="flex justify-end gap-4 absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                <p className="text-xs">{formatDateTime(comment.created_at)}</p>
+                <button
+                  onClick={() => deleteComment(comment.id)}>
+                  <svg
+                    className="h-3 w-3"
+                    viewBox="0 0 24 24"
+                    fill="none">
+                    <path
+                      d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                </button>
+              </div>
               <p className="py-2">{comment.content}</p>
               <hr className="w-full border-gray-300 dark:border-gray-600"></hr>
               <div className=" bg-gray-100 dark:bg-gray-800 overflow-hidden pt-2">

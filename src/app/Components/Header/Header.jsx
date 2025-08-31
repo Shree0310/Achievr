@@ -102,7 +102,7 @@ const Header = ({ user }) => {
               className="relative"
               onClick={isNotificationDropdownVisible}>
               <svg
-                className="w-6 h-6"
+                className="w-6 h-6 text-gray-600 dark:text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ const Header = ({ user }) => {
               className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors">
               {isLoading ? (
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700 dark:text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24">
@@ -146,7 +146,7 @@ const Header = ({ user }) => {
                 </svg>
               ) : (
                 <svg
-                  className="w-4 h-4 mr-2"
+                  className="w-4 h-4 mr-2 text-gray-700 dark:text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

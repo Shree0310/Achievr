@@ -70,15 +70,15 @@ const Navbar = ({ userId, onTaskUpdate }) => {
                             key={item.path}
                             href={item.path}
                             prefetch={true}
-                            className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                            className={`group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                                 pathname === item.path
                                     ? 'bg-primary-50 text-primary-600 '
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-900'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-900 dark:hover:bg-gray-700'
                             }`}
                         >
                             <svg
-                                className={`mr-3 h-5 w-5 ${
-                                    pathname === item.path ? 'text-primary-500 ' : 'text-gray-400 dark:text-white'
+                                className={`mr-3 h-5 w-5 transition-colors ${
+                                    pathname === item.path ? 'text-primary-500 ' : 'text-gray-400 dark:text-white group-hover:text-gray-900 dark:group-hover:text-gray-900'
                                 }`}
                                 fill="none"
                                 strokeLinecap="round"
