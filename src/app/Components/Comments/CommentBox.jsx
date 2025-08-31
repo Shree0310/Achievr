@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useNotifications } from "@/app/contexts/NotificationContext";
 import CommentDialog from "@/app/Components/Comments/CommentDialog"
+import CommentHistoryDialog from "@/app/Components/Comments/CommentHistoryDialog"
 
 const CommentBox = ({ taskToEdit, userId }) => {
   const [newComment, setNewComment] = useState("");
@@ -18,6 +19,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const [updateCommentMode, setUpdateCommentMode] = useState(null);
   const [newUpdatedComment, setNewUpdatedComment] = useState("");
   const [isCommentUpdated, setIsCommentUpdated] = useState(null);
+  const [openCommentHistory, setOpenCommentHistory] = useState(null);
   const { addNotification } = useNotifications();
   const dialogRef = useRef(null);
 
@@ -247,11 +249,13 @@ const CommentBox = ({ taskToEdit, userId }) => {
                     Updated: {formatDateTime(comment.updated_at)}
                   </p>
                 )}
-                <button className="text-xs text-gray-500 dark:text-gray-200 hover:text-blue-400">Show History</button>
+                <button className="text-xs text-gray-500 dark:text-gray-200 hover:text-blue-400"
+                        onClick={() => setOpenCommentHistory(openCommentHistory === comment.id ? null : comment.id )}>Show History</button>
               </div>
             </div>
           </div>
         </div>
+        {openCommentHistory && openCommentHistory === comment.id && <CommentHistoryDialog />}
 
         {/* Reply textarea - positioned right after the comment that was replied to */}
         {isReplyAdded && replyCommentId === comment.id && (
@@ -311,7 +315,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
 
         {/* Recursively render child comments */}
         {comment.children && comment.children.length > 0 && (
-          <div>
+          <div className="">
             {comment.children.map(childComment => 
               renderCommentTree(childComment, depth + 1)
             )}
