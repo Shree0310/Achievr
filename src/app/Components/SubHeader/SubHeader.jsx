@@ -11,7 +11,7 @@ const SubHeader = () => {
     const navItems = [
         { name: 'Overview', path: '/' },
         { name: 'Board', path: '/board' },
-        { name: 'Dashboard', path: '/dashboard' },
+        { name: 'Dashboard', path: '/statChart' },
         { name: 'This Week', path: '/week' },
         { name: 'This Cycle', path: '/cycle' }
     ];

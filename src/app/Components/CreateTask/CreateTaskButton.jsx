@@ -27,7 +27,7 @@ const CreateTaskButton = ({ userId, onTaskUpdate }) => {
   return (
     <>
       <Button
-        className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors bg-primary-50 text-primary-600 hover:bg-primary-100"
+        className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors bg-primary-50 dark:bg-gray-900 dark:border dark:border-blue-300 text-gray-800 hover:text-primary-600 dark:text-white hover:bg-primary-100"
         onClick={() => handleCreateTask()}>
         <svg
           className="mr-3 h-5 w-5 text-primary-500"
