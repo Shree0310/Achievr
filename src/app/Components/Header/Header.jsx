@@ -164,7 +164,7 @@ const Header = ({ user }) => {
           )}
           {isDemoMode ? (
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Demo Mode</span>
+              <span className="text-sm text-gray-600 dark:text-white">Demo Mode</span>
               <UserName user={user} position="right" />
             </div>
           ) : (

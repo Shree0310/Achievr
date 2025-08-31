@@ -70,7 +70,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
           className="p-2 m-2 h-auto"
           style={{ marginLeft: `${indentLevel}px` }}>
           <div
-            className={`bg-gray-100 dark:bg-gray-800 rounded-md shadow-md dark:shadow-gray-900/20 dark:border-blue-300 ${
+            className={`bg-gray-100 dark:bg-gray-800 rounded-md shadow-md dark:shadow-gray-900/20 border border-transparent dark:border-blue-300/60 ${
               comment.parent_comment_id
                 ? "border-l-4"
                 : ""
@@ -127,7 +127,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
           <div
             className="p-2 m-2 h-auto"
             style={{ marginLeft: `${indentLevel}px` }}>
-                                  <div className="bg-gray-50 dark:bg-gray-700 overflow-hidden rounded-md shadow-md dark:shadow-gray-900/20 border-l-4 border-green-300 dark:border-green-500">
+                                  <div className="bg-gray-50 dark:bg-gray-700 overflow-hidden rounded-md shadow-md dark:shadow-gray-900/20 border border-transparent dark:border-blue-300/60 border-l-4 border-l-green-300 dark:border-l-green-500">
                         <textarea
                           value={newReply}
                           onChange={(e) => setNewReply(e.target.value)}
@@ -321,7 +321,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
     <>
       <div>
         <div className="p-2 m-2 w-full ">
-          <div className="bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-md shadow-md dark:border-blue-400">
+          <div className="bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-md shadow-md border border-transparent dark:border-blue-300/60">
             <textarea
               type="text"
               value={newComment}
