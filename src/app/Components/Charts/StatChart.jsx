@@ -64,44 +64,90 @@ const StatChart = () => {
 
     return <div>
         {statusChartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={statusChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-600" />
-                <XAxis 
-                  dataKey="status" 
-                  tick={{ fontSize: 12, fill: '#6B7280' }}
-                  className="dark:text-white"
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
-                />
-                <YAxis 
-                  label={{ value: 'Number of Tasks', angle: -90, position: 'insideLeft' }}
-                  tick={{ fontSize: 12, fill: '#6B7280' }}
-                  className="dark:text-white"
-                />
-                <Tooltip 
-                  formatter={(value) => [value, 'Tasks']}
-                  labelStyle={{ color: '#374151' }}
-                  contentStyle={{ 
-                    backgroundColor: '#F9FAFB', 
-                    border: '1px solid #E5E7EB',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Bar 
-                  dataKey="count" 
-                  radius={[4, 4, 0, 0]}
-                  fill="#3B82F6"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="flex items-center justify-center h-40 text-gray-500 dark:text-gray-400">
-              No task data available
-            </div>
-          )}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-10">
+                {/* Bar Chart */}
+                <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">Tasks by Status (Bar)</h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={statusChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-600" />
+                            <XAxis 
+                                dataKey="status" 
+                                tick={{ fontSize: 12, fill: '#6B7280' }}
+                                className="dark:text-white"
+                                angle={-45}
+                                textAnchor="end"
+                                height={80}
+                            />
+                            <YAxis 
+                                label={{ value: 'Number of Tasks', angle: -90, position: 'insideLeft' }}
+                                tick={{ fontSize: 12, fill: '#6B7280' }}
+                                className="dark:text-white"
+                            />
+                            <Tooltip 
+                                formatter={(value) => [value, 'Tasks']}
+                                labelStyle={{ color: '#374151' }}
+                                contentStyle={{ 
+                                    backgroundColor: '#F9FAFB', 
+                                    border: '1px solid #E5E7EB',
+                                    borderRadius: '8px'
+                                }}
+                            />
+                            <Bar 
+                                dataKey="count" 
+                                radius={[4, 4, 0, 0]}
+                                fill="#3B82F6"
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
 
+                {/* Line Chart */}
+                <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">Tasks by Status (Line)</h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <LineChart data={statusChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-600" />
+                            <XAxis 
+                                dataKey="status" 
+                                tick={{ fontSize: 12, fill: '#6B7280' }}
+                                className="dark:text-white"
+                                angle={-45}
+                                textAnchor="end"
+                                height={80}
+                            />
+                            <YAxis
+                                label={{ value: 'Number of Tasks', angle: -90, position: 'insideLeft' }}
+                                tick={{ fontSize: 12, fill: '#6B7280' }}
+                                className="dark:text-white" 
+                            />
+                            <Tooltip
+                                formatter={(value) => [value, 'Tasks']}
+                                labelStyle={{ color: '#374151' }}
+                                contentStyle={{ 
+                                    backgroundColor: '#F9FAFB', 
+                                    border: '1px solid #E5E7EB',
+                                    borderRadius: '8px'
+                                }} 
+                            />
+                            <Legend />
+                            <Line 
+                                type="monotone" 
+                                dataKey="count" 
+                                stroke="#3B82F6" 
+                                strokeWidth={3}
+                                dot={{ fill: '#3B82F6', strokeWidth: 2, r: 6 }}
+                                activeDot={{ r: 8, stroke: '#3B82F6', strokeWidth: 2, fill: '#fff' }}
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+        ) : (
+            <div className="flex items-center justify-center h-40 text-gray-500 dark:text-gray-400">
+                No task data available
+            </div>
+        )}
     </div>
 }
 export default StatChart;
