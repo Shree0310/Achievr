@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useNotifications } from "@/app/contexts/NotificationContext";
+import CommentDialog from "@/app/Components/Comments/CommentDialog"
 
 const CommentBox = ({ taskToEdit, userId }) => {
   const [newComment, setNewComment] = useState("");
@@ -13,13 +14,28 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const [newReply, setNewReply] = useState("");
   const [replyCommentId, setReplyCommentId] = useState(null);
   const [parentCommentId, setParentCommentId] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { addNotification } = useNotifications();
+  const dialogRef = useRef(null);
 
   useEffect(() => {
     if (taskToEdit?.id) {
       loadComments(taskToEdit?.id);
     }
-  }, [isCommentAdded, isCommentDeleted]);
+    const handleClickOutside = (event) => {
+      if(dialogRef.current && !dialogRef.current.contains(event.target)){
+        setIsMenuOpen(false);
+      }
+    }
+    if(isMenuOpen){
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    //Cleanup
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isCommentAdded, isCommentDeleted, isMenuOpen]);
 
   const loadComments = async (taskId) => {
     const { data, error } = await supabase
@@ -93,6 +109,23 @@ const CommentBox = ({ taskToEdit, userId }) => {
               <div className="flex justify-end gap-4 absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                 <p className="text-xs">{formatDateTime(comment.created_at)}</p>
                 <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className=" hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                  <svg
+                    className="w-3 h-3 text-gray-500 dark:text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                    />
+                  </svg>
+                </button>
+                {isMenuOpen && <CommentDialog deleteComment={() => deleteComment(comment.id)}/>}
+                {/* <button
                   onClick={() => deleteComment(comment.id)}>
                   <svg
                     className="h-3 w-3"
@@ -104,7 +137,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
                       strokeWidth="2"
                     />
                   </svg>
-                </button>
+                </button> */}
               </div>
               <p className="py-2">{comment.content}</p>
               <hr className="w-full border-gray-300 dark:border-gray-600"></hr>
