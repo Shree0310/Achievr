@@ -1,7 +1,7 @@
 "use client"
-const CommentDialog = ({deleteComment}) => {
+const CommentDialog = ({deleteComment, updateCommentMode}) => {
     return <div>
-         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg dark:shadow-gray-900/50 z-10 border border-gray-200 dark:border-gray-700">
+         <div className="absolute right-0 mt-6 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg dark:shadow-gray-900/50 z-10 border border-gray-200 dark:border-gray-700">
                 <ul className="py-1">
                     <li 
                         onClick={deleteComment}
@@ -9,7 +9,9 @@ const CommentDialog = ({deleteComment}) => {
                     >
                         Delete Comment
                     </li>
-                    <li className="block px-4 py-2 text-sm text-gray-800 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                    <li 
+                        onClick={updateCommentMode}
+                        className="block px-4 py-2 text-sm text-gray-800 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
 >
                         Update Comment
                     </li>

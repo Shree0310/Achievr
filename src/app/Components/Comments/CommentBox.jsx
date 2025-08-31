@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useNotifications } from "@/app/contexts/NotificationContext";
 import CommentDialog from "@/app/Components/Comments/CommentDialog"
@@ -14,7 +14,9 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const [newReply, setNewReply] = useState("");
   const [replyCommentId, setReplyCommentId] = useState(null);
   const [parentCommentId, setParentCommentId] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const [updateCommentMode, setUpdateCommentMode] = useState(null);
+  const [newUpdatedComment, setNewUpdatedComment] = useState("");
   const { addNotification } = useNotifications();
   const dialogRef = useRef(null);
 
@@ -22,20 +24,21 @@ const CommentBox = ({ taskToEdit, userId }) => {
     if (taskToEdit?.id) {
       loadComments(taskToEdit?.id);
     }
-    const handleClickOutside = (event) => {
-      if(dialogRef.current && !dialogRef.current.contains(event.target)){
-        setIsMenuOpen(false);
-      }
-    }
-    if(isMenuOpen){
+    if(openMenuId){
       document.addEventListener('mousedown', handleClickOutside);
     }
-
+    
     //Cleanup
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isCommentAdded, isCommentDeleted, isMenuOpen]);
+  }, [isCommentAdded, isCommentDeleted]);
+
+  const handleClickOutside = useCallback((event) => {
+      if(dialogRef.current && !dialogRef.current.contains(event.target)){
+        setOpenMenuId(false);
+      }
+    },[])
 
   const loadComments = async (taskId) => {
     const { data, error } = await supabase
@@ -50,6 +53,34 @@ const CommentBox = ({ taskToEdit, userId }) => {
       console.log(error);
     }
   };
+
+  const updateComment =  async(comment) =>{
+    try{
+      const { error} = await supabase
+      .from('comments')
+      .update([
+        {
+          content: newUpdatedComment, 
+          updated_at: new Date().toISOString(),
+          user_id: comment.user_id
+        }
+      ])
+      .eq('id', comment.id)
+      .select();
+    
+      await loadComments(taskToEdit.id)
+      setUpdateCommentMode(null);
+      setNewUpdatedComment("");
+      addNotification('Comment updated successfully', 'success');
+      if(error){
+        throw error;
+      }
+    } catch(error) {
+      console.error('Error while updating comment ', error);
+    }
+    
+
+  }
 
   // Build nested comment tree structure
   const buildCommentTree = (comments) => {
@@ -109,7 +140,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
               <div className="flex justify-end gap-4 absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                 <p className="text-xs">{formatDateTime(comment.created_at)}</p>
                 <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  onClick={() => setOpenMenuId(openMenuId === comment.id ? null: comment.id)}
                   className=" hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
                   <svg
                     className="w-3 h-3 text-gray-500 dark:text-white"
@@ -124,7 +155,34 @@ const CommentBox = ({ taskToEdit, userId }) => {
                     />
                   </svg>
                 </button>
-                {isMenuOpen && <CommentDialog deleteComment={() => deleteComment(comment.id)}/>}
+                {openMenuId === comment.id && 
+                  <CommentDialog ref={dialogRef} 
+                                 deleteComment={() => deleteComment(comment.id)}
+                                 updateCommentMode={() => setUpdateCommentMode(updateCommentMode === comment.id ? null: comment.id)}/>}
+                
+                {updateCommentMode === comment.id && 
+                  <div>
+                    <textarea
+                      value={newUpdatedComment}
+                      onChange={(e) => setNewUpdatedComment(e.target.value)}
+                      placeholder={comment.content}
+                      className="w-full h-14 p-4 text-gray-600 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 border-none outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400"
+                        />
+                  {/* Update button */}
+                  <button
+                    onClick={() => updateComment(comment)} 
+                    className="px-3 py-1 bg-blue-500 dark:bg-blue-600 text-white text-sm rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
+                    Update Comment
+                  </button>
+                  <button
+                      onClick={() => {
+                          setUpdateCommentMode(null);
+                          setNewUpdatedComment("");
+                      }}
+                      className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition-colors">
+                      Cancel
+                  </button>
+                  </div>}
                 {/* <button
                   onClick={() => deleteComment(comment.id)}>
                   <svg
