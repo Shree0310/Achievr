@@ -27,10 +27,15 @@ export async function createClient() {
 export async function signInWithGoogle() {
   try {
     const supabase = await createClient();
+    
+    // Get the current site URL dynamically
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+                   (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+    
     return await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/callback`,
+        redirectTo: `${siteUrl}/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',

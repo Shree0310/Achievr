@@ -67,10 +67,14 @@ const Login = () => {
             setIsLoading(true);
             setError('');
             
+            // Get the current site URL dynamically
+            const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+                           (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+            
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: process.env.NEXT_PUBLIC_SUPABASE_URL + '/auth/v1/callback'
+                    redirectTo: `${siteUrl}/auth/callback`
                 }
             });
 
