@@ -2,6 +2,7 @@
 
 import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import DiffChecker from "@/app/Components/DiffChecker/DiffChecker";
 
 const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
   if (!isOpen) return null;
@@ -79,10 +80,32 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
               </div>
             ) : (
               <div className="space-y-2">
-                {commentHistoryData.map((commentHistory) => (
+                {commentHistoryData.map((commentHistory, index) => (
                   <div key={commentHistory.id} className="p-3 border border-gray-200 dark:border-gray-600 rounded-md">
-                    <p className="text-gray-800 dark:text-gray-200 mb-1">{commentHistory.content}</p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{formatDateTime(commentHistory.created_at)}</span>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        Version {commentHistoryData.length - index}
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {formatDateTime(commentHistory.created_at)}
+                      </span>
+                    </div>
+                    
+                    {/* Show diff if there's a previous version */}
+                    {index < commentHistoryData.length - 1 ? (
+                      <div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Changes from previous version:</p>
+                        <DiffChecker
+                          oldText={commentHistoryData[index + 1].content}
+                          newText={commentHistory.content}
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Current version:</p>
+                        <p className="text-gray-800 dark:text-gray-200">{commentHistory.content}</p>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -90,6 +113,7 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };
