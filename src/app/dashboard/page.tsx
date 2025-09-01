@@ -3,6 +3,9 @@ import Navbar from "../Components/Navbar/Navbar";
 import Header from "../Components/Header/Header";
 import SubHeader from "../Components/SubHeader/SubHeader";
 
+// Force dynamic rendering to avoid ThemeProvider context issues during build
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
     return (
         <div className="h-screen w-screen flex overflow-hidden">

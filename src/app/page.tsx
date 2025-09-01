@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Board from "./Components/Board/Board";
 import NotificationContainer from "./Components/Notifications/NotificationContainer";
 import Header from "./Components/Header/Header";
@@ -21,16 +21,20 @@ export default function Home() {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
   const router = useRouter();
 
+  // Memoize the supabase client
+  const supabase = useCallback(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  ), []);
+
   useEffect(() => {
+    const supabaseClient = supabase();
+    
     async function getSession() {
       try {
-        const { data, error } = await supabase.auth.getSession();
+        const { data, error } = await supabaseClient.auth.getSession();
         if (error) {
           console.error("Error getting session:", error);
           setError("Failed to check authentication status");
@@ -58,7 +62,7 @@ export default function Home() {
     getSession();
 
     // Set up auth state listener with immediate check
-    const { data: authListener } = supabase.auth.onAuthStateChange(
+    const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       (event, session) => {
         //console.log("Auth state changed:", event, session?.user?.email);
 
@@ -80,18 +84,20 @@ export default function Home() {
         authListener.subscription.unsubscribe();
       }
     };
-  }, [router]);
+  }, [router, supabase]);
 
   const handleDemoLogin = async () => {
     try {
       setLoading(true);
       setError(null);
 
+      const supabaseClient = supabase();
+
       // Get the current URL origin
       const origin = window.location.origin;
 
       // Sign in anonymously or create new demo user
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabaseClient.auth.signInWithPassword({
         email: "demo@example.com",
         password: "demo123456",
       });
@@ -102,7 +108,7 @@ export default function Home() {
           const {
             data: { user: newUser },
             error: signUpError,
-          } = await supabase.auth.signUp({
+          } = await supabaseClient.auth.signUp({
             email: "demo@example.com",
             password: "demo123456",
             options: {

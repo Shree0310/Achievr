@@ -7,14 +7,25 @@ const vapidKeys = {
   privateKey: process.env.VAPID_PRIVATE_KEY,
 };
 
-webpush.setVapidDetails(
-  'mailto:your-email@example.com', // Replace with your email
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+// Only set VAPID details if keys are available
+if (vapidKeys.publicKey && vapidKeys.privateKey) {
+  webpush.setVapidDetails(
+    'mailto:your-email@example.com', // Replace with your email
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
+  );
+}
 
 export async function POST(request) {
   try {
+    // Check if VAPID keys are configured
+    if (!vapidKeys.publicKey || !vapidKeys.privateKey) {
+      return NextResponse.json({ 
+        error: 'Push notifications not configured. Missing VAPID keys.',
+        details: 'Please set NEXT_PUBLIC_VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables.'
+      }, { status: 500 });
+    }
+
     const { subscription, title, message } = await request.json();
 
     const payload = JSON.stringify({

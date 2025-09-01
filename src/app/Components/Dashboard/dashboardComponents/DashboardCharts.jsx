@@ -15,20 +15,20 @@ import {
   } from 'recharts';
 import { PieChart, Pie, Sector } from 'recharts';
 
-
 const DashBoardCharts = () => {
     const [tasks, setTasks] = useState([]);
     const [statusData, setStatusData] = useState([]);
     const [priorityData, setPriorityData] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
 
-
+    // Subtle color palette
     const COLORS = [
-        'var(--primary-400)',
-        'var(--accent-400)',
-        'var(--gray-500)',
-        'var(--warning-500)',
-        'var(--primary-700)'
+        '#64748b', // slate-500
+        '#f59e0b', // amber-500
+        '#10b981', // emerald-500
+        '#8b5cf6', // violet-500
+        '#06b6d4', // cyan-500
+        '#f97316'  // orange-500
     ];
 
     useEffect(() => {
@@ -83,7 +83,6 @@ const DashBoardCharts = () => {
 
             setPriorityData(priorityChartData);
 
-
         } catch (err) {
             console.error("Error fetching tasks:", err);
             setStatusData([]);
@@ -110,7 +109,7 @@ const DashBoardCharts = () => {
 
         return (
             <g>
-                <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+                <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} className="text-sm font-medium">
                     {`Priority: ${payload.name}`}
                 </text>
                 <Sector
@@ -131,53 +130,68 @@ const DashBoardCharts = () => {
                     outerRadius={outerRadius + 10}
                     fill={fill}
                 />
-                <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
-                <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">
+                <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" strokeWidth={2} />
+                <circle cx={ex} cy={ey} r={3} fill={fill} stroke="none" />
+                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#64748b" className="text-sm font-medium">
                     {`${value} ${value === 1 ? 'task' : 'tasks'}`}
                 </text>
-                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
+                <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#94a3b8" className="text-xs">
                     {`(${(percent * 100).toFixed(0)}%)`}
                 </text>
             </g>
         );
     }
 
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Status Chart */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Tasks by Status</h3>
+    // Custom tooltip for better styling
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border border-slate-200 dark:border-slate-600 rounded-lg shadow-lg p-3">
+                    <p className="text-slate-800 dark:text-slate-200 font-medium mb-1">{label}</p>
+                    <p className="text-slate-600 dark:text-slate-300 text-sm">
+                        Tasks: <span className="font-semibold text-slate-800 dark:text-slate-100">{payload[0].value}</span>
+                    </p>
                 </div>
-                <div className="p-4" style={{ height: '300px' }}>
-        <ResponsiveContainer width="100%" height="100%">
-        <BarChart
+            );
+        }
+        return null;
+    };
+
+    return (
+        <div className="space-y-6">
+            {/* Status Chart */}
+            <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-lg dark:shadow-slate-900/30 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
+                <div className="p-6 border-b border-slate-200/60 dark:border-slate-600/60">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-6 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full"></div>
+                        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Tasks by Status</h3>
+                    </div>
+                </div>
+                <div className="p-6" style={{ height: '350px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
                             data={statusData}
-                            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+                            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                         >
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-600" />
+                            <CartesianGrid 
+                                strokeDasharray="3 3" 
+                                stroke="#e2e8f0" 
+                                className="dark:stroke-slate-600" 
+                            />
                             <XAxis
                                 dataKey="status"
                                 angle={-45}
                                 textAnchor="end"
-                                height={60}
-                                tick={{ fill: '#666', fontSize: 12 }}
-                                className="dark:text-white"
+                                height={80}
+                                tick={{ fill: '#64748b', fontSize: 12 }}
+                                className="dark:text-slate-300"
                             />
                             <YAxis
-                                tick={{ fill: '#666', fontSize: 12 }}
-                                className="dark:text-white"
+                                tick={{ fill: '#64748b', fontSize: 12 }}
+                                className="dark:text-slate-300"
                             />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'rgba(255, 255, 255, 0.96)',
-                                    border: '1px solid #f0f0f0',
-                                    borderRadius: '6px',
-                                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-                                }}
-                            />
-                            <Bar dataKey="count" name="Tasks">
+                            <Tooltip content={<CustomTooltip />} />
+                            <Bar dataKey="count" name="Tasks" radius={[4, 4, 0, 0]}>
                                 {statusData.map((entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
@@ -185,17 +199,20 @@ const DashBoardCharts = () => {
                                     />
                                 ))}
                             </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-        </div>
-   </div> 
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
 
             {/* Priority Chart */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-800">Tasks by Priority</h3>
+            <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-lg dark:shadow-slate-900/30 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
+                <div className="p-6 border-b border-slate-200/60 dark:border-slate-600/60">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-6 bg-gradient-to-b from-violet-500 to-purple-600 rounded-full"></div>
+                        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Tasks by Priority</h3>
+                    </div>
                 </div>
-                <div className="p-4" style={{ height: '300px' }}>
+                <div className="p-6" style={{ height: '350px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
@@ -204,11 +221,12 @@ const DashBoardCharts = () => {
                                 activeShape={renderActiveShape}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={60}
-                                outerRadius={80}
+                                innerRadius={70}
+                                outerRadius={90}
                                 fill="#8884d8"
                                 dataKey="value"
                                 onMouseEnter={onPieEnter}
+                                paddingAngle={2}
                             >
                                 {priorityData.map((entry, index) => (
                                     <Cell
@@ -220,8 +238,8 @@ const DashBoardCharts = () => {
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
-   </div>   
-</div>
+            </div>
+        </div>
     );
 }
 

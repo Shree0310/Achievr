@@ -7,9 +7,7 @@ import Navbar from '../Components/Navbar/Navbar';
 import Header from '../Components/Header/Header';
 import SubHeader from '../Components/SubHeader/SubHeader';
 
-
-export default function statChartPage() {
-    const [userId, setUserId] = useState<string | undefined>(undefined);
+export default function StatChartPage() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
 
@@ -22,12 +20,10 @@ export default function statChartPage() {
                 if (session?.user) {
                     // If we have a real user session, clear demo mode
                     localStorage.removeItem('demoMode');
-                    setUserId(session.user.id);
                     setUser(session.user);
                 } else {
                     // Only set demo mode if there's no session
                     localStorage.setItem('demoMode', 'true');
-                    setUserId('demo-user-id');
                     const demoUser: User = {
                         id: 'demo-user-id',
                         email: 'demo@example.com',
@@ -46,7 +42,6 @@ export default function statChartPage() {
                 console.error('Error getting session:', error);
                 // In case of error, default to demo mode
                 localStorage.setItem('demoMode', 'true');
-                setUserId('demo-user-id');
                 const demoUser: User = {
                     id: 'demo-user-id',
                     email: 'demo@example.com',
@@ -77,7 +72,6 @@ export default function statChartPage() {
     }
 
     return (
-        
         <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
             {/* Navbar */}
             <div className="relative w-full md:w-auto md:h-screen">
@@ -100,6 +94,5 @@ export default function statChartPage() {
                 </div>
             </div>
         </div>
-    )
-   
+    );
 }

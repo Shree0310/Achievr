@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 
 export async function POST(request) {
   try {
+    const supabase = await createClient();
     const { subscription, userId } = await request.json();
 
     // Store subscription in database
