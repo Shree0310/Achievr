@@ -18,28 +18,40 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
   }, [isOpen])
 
   const fetchCommentHistory = async() => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const { data, error } = await supabase
-        .from('comment_history')
-        .select('*')
-        .eq('comment_id', comment.id)  // Filter by specific comment
-        .order('created_at', { ascending: false });  // Most recent first
-      
-      if (error) {
-        throw error;
-      }
-      
-      setCommentHistoryData(data || []);
-    } catch (error) {
-      console.error('Error while fetching the comment history', error);
-      setError('Failed to load comment history');
-    } finally {
-      setIsLoading(false);
-    }
+  try {
+    setIsLoading(true);
+    setError(null);
+    
+    // First, verify the comment still exists
+    // const { data: commentExists, error: commentError } = await supabase
+    //   .from('comments')
+    //   .select('id')
+    //   .eq('id', comment.id)
+    //   .single();
+    
+    // if (commentError || !commentExists) {
+    //   setError('Comment no longer exists');
+    //   setCommentHistoryData([]);
+    //   return;
+    // }
+    
+    // Then fetch the history
+    const { data, error } = await supabase
+      .from('comment_history')
+      .select('*')
+      .eq('comment_id', comment.id)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    setCommentHistoryData(data || []);
+  } catch (error) {
+    console.error('Error while fetching the comment history', error);
+    setError('Failed to load comment history');
+  } finally {
+    setIsLoading(false);
   }
+};
 
   return (
     <div className="absolute -top-2 -left-2 -right-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-blue-600 p-4 z-50 shadow-2xl">
@@ -80,14 +92,28 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
               </div>
             ) : (
               <div className="space-y-2">
+                {/* Current Comment Version (not in history yet) */}
+                <div className="p-3 border-2 border-blue-200 dark:border-blue-600 rounded-md bg-blue-50 dark:bg-blue-900/20">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                      Current Version
+                    </span>
+                    <span className="text-xs text-blue-600 dark:text-blue-400">
+                      {formatDateTime(new Date())}
+                    </span>
+                  </div>
+                  <p className="text-gray-800 dark:text-gray-200">{comment.content}</p>
+                </div>
+                
+                {/* Historical Versions */}
                 {commentHistoryData.map((commentHistory, index) => (
                   <div key={commentHistory.id} className="p-3 border border-gray-200 dark:border-gray-600 rounded-md">
                     <div className="flex justify-between items-start mb-2">
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Version {commentHistoryData.length - index}
+                        Version {commentHistory.version_no}
                       </span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatDateTime(commentHistory.created_at)}
+                        {formatDateTime(commentHistory.changed_at)}
                       </span>
                     </div>
                     
@@ -102,7 +128,7 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
                       </div>
                     ) : (
                       <div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Current version:</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Version content:</p>
                         <p className="text-gray-800 dark:text-gray-200">{commentHistory.content}</p>
                       </div>
                     )}

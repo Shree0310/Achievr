@@ -383,19 +383,39 @@ const CommentBox = ({ taskToEdit, userId }) => {
           .from("comments")
           .insert([commentObj])
           .select();
-        setComments((prevComments) => [data[0], ...prevComments]);
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setComments((prevComments) => [data[0], ...prevComments]);
+          
+          // Directly trigger notification display
+          addNotification({
+            type: "info",
+            title: "New Comment Added",
+            message: `A new comment was added on task "${taskToEdit.title}"`,
+          });
+        } else {
+          // If no data returned, reload comments to ensure consistency
+          await loadComments(taskToEdit.id);
+          
+          addNotification({
+            type: "warning",
+            title: "Comment Added",
+            message: "Comment was added but there was an issue retrieving it. Comments have been refreshed.",
+          });
+        }
+        
         setNewComment("");
         setIsCommentAdded(false);
-
-        // Directly trigger notification display
-        addNotification({
-          type: "info",
-          title: "New Comment Added",
-          message: `A new comment was added on task "${taskToEdit.title}"`,
-        });
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error adding comment:', error);
+      addNotification({
+        type: "error",
+        title: "Error",
+        message: "Failed to add comment. Please try again.",
+      });
     }
   };
 
@@ -413,8 +433,19 @@ const CommentBox = ({ taskToEdit, userId }) => {
         prevComments.filter((comment) => comment.id !== commentId)
       );
       setIsCommentDeleted(false);
+      
+      addNotification({
+        type: "success",
+        title: "Comment Deleted",
+        message: "Comment was successfully deleted.",
+      });
     } catch (error) {
-      console.log(error);
+      console.error('Error deleting comment:', error);
+      addNotification({
+        type: "error",
+        title: "Error",
+        message: "Failed to delete comment. Please try again.",
+      });
     }
   };
 
@@ -440,7 +471,12 @@ const CommentBox = ({ taskToEdit, userId }) => {
       if (error) throw error;
 
       // Add the new reply to the comments array
-      setComments((prevComments) => [...prevComments, data[0]]);
+      if (data && data.length > 0) {
+        setComments((prevComments) => [...prevComments, data[0]]);
+      } else {
+        // If no data returned, reload comments to ensure consistency
+        await loadComments(taskToEdit.id);
+      }
       setNewReply("");
       setIsReplyAdded(false);
       setReplyCommentId(null);
@@ -453,7 +489,12 @@ const CommentBox = ({ taskToEdit, userId }) => {
         message: `A new reply was added to a comment on task "${taskToEdit.title}"`,
       });
     } catch (error) {
-      console.log(error);
+      console.error('Error adding reply:', error);
+      addNotification({
+        type: "error",
+        title: "Error",
+        message: "Failed to add reply. Please try again.",
+      });
     }
   };
 
