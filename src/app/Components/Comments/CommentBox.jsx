@@ -18,7 +18,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [updateCommentMode, setUpdateCommentMode] = useState(null);
   const [newUpdatedComment, setNewUpdatedComment] = useState("");
-  const [isCommentUpdated, setIsCommentUpdated] = useState(null);
+
   const [openCommentHistory, setOpenCommentHistory] = useState(null);
   const { addNotification } = useNotifications();
   const dialogRef = useRef(null);
@@ -200,7 +200,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
                         Cancel
                       </button>
                       <button
-                        onClick={() => {updateComment(comment); setIsCommentUpdated(isCommentUpdated === comment.id ? null: comment.id )}} 
+                        onClick={() => updateComment(comment)} 
                         disabled={!newUpdatedComment.trim() || newUpdatedComment.trim() === comment.content}
                         className="px-3 py-1.5 bg-blue-500 dark:bg-blue-600 text-white text-sm rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         Update Comment
@@ -252,10 +252,18 @@ const CommentBox = ({ taskToEdit, userId }) => {
                 <button className="text-xs text-gray-500 dark:text-gray-200 hover:text-blue-400"
                         onClick={() => setOpenCommentHistory(openCommentHistory === comment.id ? null : comment.id )}>Show History</button>
               </div>
+              
+              {/* CommentHistoryDialog - controlled component */}
+              <CommentHistoryDialog
+                comment={comment}
+                isOpen={openCommentHistory === comment.id}
+                onClose={() => setOpenCommentHistory(null)}
+                formatDateTime={formatDateTime}
+              />
             </div>
           </div>
         </div>
-        {openCommentHistory && openCommentHistory === comment.id && <CommentHistoryDialog />}
+
 
         {/* Reply textarea - positioned right after the comment that was replied to */}
         {isReplyAdded && replyCommentId === comment.id && (
