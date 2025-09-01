@@ -22,19 +22,6 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
     setIsLoading(true);
     setError(null);
     
-    // First, verify the comment still exists
-    // const { data: commentExists, error: commentError } = await supabase
-    //   .from('comments')
-    //   .select('id')
-    //   .eq('id', comment.id)
-    //   .single();
-    
-    // if (commentError || !commentExists) {
-    //   setError('Comment no longer exists');
-    //   setCommentHistoryData([]);
-    //   return;
-    // }
-    
     // Then fetch the history
     const { data, error } = await supabase
       .from('comment_history')
