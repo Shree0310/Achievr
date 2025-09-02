@@ -7,6 +7,7 @@ import CommentBox from "../Comments/CommentBox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNotifications } from "@/app/contexts/NotificationContext";
+import SubtasksTab from "@/app/Components/Subtasks/SubtasksTab";
 
 const CreateTask = ({
   onClose,
@@ -15,7 +16,9 @@ const CreateTask = ({
   taskToEdit,
   onTaskUpdate,
   isCreateMode = true,
-  commentCount
+  commentCount,
+  subTasksCount,
+  subTasks
 }) => {
   const [title, setTitle] = useState(taskToEdit?.title || "");
   const [description, setDescription] = useState(taskToEdit?.description || "");
@@ -31,6 +34,7 @@ const CreateTask = ({
   const [isAddCommentsMode, setIsAddCommentsMode] = useState(false);
   const [tasks, setTasks] = useState([]);
   const { addNotification } = useNotifications();
+  const [isSubtasksMode, setIsSubtasksMode] = useState(false);
 
   useEffect(() => {
     if (isEditMode && taskToEdit) {
@@ -208,6 +212,10 @@ const CreateTask = ({
     setIsAddCommentsMode(!isAddCommentsMode);
   };
 
+  const handleSubtasksTab = () => {
+    setIsSubtasksMode(!isSubtasksMode);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
@@ -234,6 +242,12 @@ const CreateTask = ({
                   className="mx-2 cursor-pointer text-gray-800 dark:text-white">
                   Updates 
                   <span className="px-2">({commentCount})</span>
+                </li>
+                <li
+                  onClick={() => handleSubtasksTab()}
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-white">
+                    Subtasks 
+                    <span className="px-2">({subTasksCount})</span>
                 </li>
               </ul>
             </div>
@@ -406,6 +420,9 @@ const CreateTask = ({
                   ? "Create Task"
                   : "Update Task"}
               </button>
+            )}
+            {isSubtasksMode && (
+              <SubtasksTab subTasks={subTasks}/>
             )}
           </div>
         </div>

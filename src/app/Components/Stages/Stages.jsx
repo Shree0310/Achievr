@@ -337,6 +337,7 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         onToggleSubtasks={() => toggleSubtasks(task.id)}
                                         showSubtasks={subTaskId === task.id}
                                         subTasksCount={subTasksCount[task.id] || 0}
+                                        subTasks={subTasks}
                                     />
                                     {subTasks && subTaskId === task.id && (
                                         <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
