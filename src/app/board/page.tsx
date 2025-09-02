@@ -109,7 +109,7 @@ export default function BoardPage() {
 
         {/* Stages component - explicitly take all remaining space */}
         <div className="flex-1 overflow-hidden">
-          <Stages onTaskUpdate={handleStagesTaskHandler} />
+          <Stages userId={user?.id} onTaskUpdate={handleStagesTaskHandler} />
         </div>
       </div>
 
