@@ -8,14 +8,16 @@ import DroppableColumn from '../DroppableColumn/DroppableColumn';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Subtasks from "@/app/Components/Subtasks/Subtasks";
 
-const Stages = ({ className = "", onTaskUpdate }) => {
+const Stages = ({ className = "", onTaskUpdate, userId }) => {
     const [tasks, setTasks] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [activeId, setActiveId] = useState(null);
     const [activeDragData, setActiveDragData] = useState(null);
     const [commentCounts, setCommentCounts] = useState({});
-    const [subTasks, setSubTasks] = useState('null');
+    const [subTasks, setSubTasks] = useState(null);
+    const [subTaskId, setSubTaskId] = useState(null);
+    const [subTasksCount, setSubTaskCount] = useState({});
 
     // ✅ IMPORTANT: Always define sensors in the same way - don't change order or structure
     const sensors = useSensors(
@@ -36,6 +38,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
         if (tasks && tasks.length > 0) {
             fetchCommentCounts();
         }
+        fetchSubtasks();
     }, [tasks]);
 
     async function fetchData() {
@@ -55,6 +58,31 @@ const Stages = ({ className = "", onTaskUpdate }) => {
         } finally {
             setLoading(false);
         }
+    }
+
+    const fetchSubtasks = async () => {
+        try{
+            const { data, error } = await supabase
+            .from('tasks')
+            .select('*')
+            .not('parent_task_id', 'is', null);
+        
+            if(error) {
+                throw error;
+            }
+        setSubTasks(data);
+        data.forEach((subtask) => {
+            console.log(subtask);
+        }) 
+        const count = {};
+        data.forEach((subtask) => {
+            count[subtask.parent_task_id] = (count[subtask.parent_task_id] || 0) + 1;
+        })
+        setSubTaskCount(count);
+        }catch(error){
+            console.error("Error while fetching the subtasks", error);
+        }
+            
     }
 
     // Fetch comment counts for all tasks at once
@@ -109,6 +137,11 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                 fetchCommentCounts();
             }
         }, 100);
+    };
+
+    // Handle subtask visibility toggle
+    const toggleSubtasks = (taskId) => {
+        setSubTaskId(subTaskId === taskId ? null : taskId);
     };
 
     // Expose the handleTaskUpdates function to parent components
@@ -295,9 +328,19 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             notStarted.map((task) => (
-                                <div>
-                                    <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
-                                    {subTasks && <Subtasks/>}
+                                <div key={`task-${task.id}`}>
+                                    <Task 
+                                        id={task.id} 
+                                        task={task} 
+                                        onTaskUpdate={handleTaskUpdates} 
+                                        commentCount={commentCounts[task.id] || 0}
+                                        onToggleSubtasks={() => toggleSubtasks(task.id)}
+                                        showSubtasks={subTaskId === task.id}
+                                        subTasksCount={subTasksCount[task.id] || 0}
+                                    />
+                                    {subTasks && subTaskId === task.id && (
+                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                    )}
                                 </div>
                             ))
                         )}
@@ -316,7 +359,19 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             inProgress.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
+                                <div key={`task-${task.id}`}>
+                                    <Task 
+                                        id={task.id} 
+                                        task={task} 
+                                        onTaskUpdate={handleTaskUpdates} 
+                                        commentCount={commentCounts[task.id] || 0}
+                                        onToggleSubtasks={() => toggleSubtasks(task.id)}
+                                        showSubtasks={subTaskId === task.id}
+                                    />
+                                    {subTasks && subTaskId === task.id && (
+                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                    )}
+                                </div>
                             ))
                         )}
                     </DroppableColumn>
@@ -333,7 +388,19 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             underReview.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
+                                <div key={`task-${task.id}`}>
+                                    <Task 
+                                        id={task.id} 
+                                        task={task} 
+                                        onTaskUpdate={handleTaskUpdates} 
+                                        commentCount={commentCounts[task.id] || 0}
+                                        onToggleSubtasks={() => toggleSubtasks(task.id)}
+                                        showSubtasks={subTaskId === task.id}
+                                    />
+                                    {subTasks && subTaskId === task.id && (
+                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                    )}
+                                </div>
                             ))
                         )}
                     </DroppableColumn>
@@ -350,7 +417,19 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             completed.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
+                                <div key={`task-${task.id}`}>
+                                    <Task 
+                                        id={task.id} 
+                                        task={task} 
+                                        onTaskUpdate={handleTaskUpdates} 
+                                        commentCount={commentCounts[task.id] || 0}
+                                        onToggleSubtasks={() => toggleSubtasks(task.id)}
+                                        showSubtasks={subTaskId === task.id}
+                                    />
+                                    {subTasks && subTaskId === task.id && (
+                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                    )}
+                                </div>
                             ))
                         )}
                     </DroppableColumn>

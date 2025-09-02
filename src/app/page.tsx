@@ -241,7 +241,7 @@ export default function Home() {
 
         {/* Stages component - explicitly take all remaining space */}
         <div className="flex-1 overflow-hidden">
-          <Stages onTaskUpdate={undefined} />
+          <Stages onTaskUpdate={undefined} userId={user.id}  />
         </div>
       </div>
     </div>
