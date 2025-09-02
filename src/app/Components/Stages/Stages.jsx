@@ -13,6 +13,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
     const [error, setError] = useState('');
     const [activeId, setActiveId] = useState(null);
     const [activeDragData, setActiveDragData] = useState(null);
+    const [commentCounts, setCommentCounts] = useState({});
 
     // ✅ IMPORTANT: Always define sensors in the same way - don't change order or structure
     const sensors = useSensors(
@@ -27,6 +28,13 @@ const Stages = ({ className = "", onTaskUpdate }) => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    // Fetch comment counts for all tasks
+    useEffect(() => {
+        if (tasks && tasks.length > 0) {
+            fetchCommentCounts();
+        }
+    }, [tasks]);
 
     async function fetchData() {
         try {
@@ -46,6 +54,31 @@ const Stages = ({ className = "", onTaskUpdate }) => {
             setLoading(false);
         }
     }
+
+    // Fetch comment counts for all tasks at once
+    const fetchCommentCounts = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('comments')
+                .select('task_id')
+                .in('task_id', tasks.map(task => task.id));
+
+            if (error) {
+                console.error('Error fetching comment counts:', error);
+                return;
+            }
+
+            // Count comments per task
+            const counts = {};
+            data.forEach(comment => {
+                counts[comment.task_id] = (counts[comment.task_id] || 0) + 1;
+            });
+
+            setCommentCounts(counts);
+        } catch (error) {
+            console.error('Error fetching comment counts:', error);
+        }
+    };
 
     // Handle new task created
     const handleTaskCreated = (newTask) => {
@@ -67,6 +100,13 @@ const Stages = ({ className = "", onTaskUpdate }) => {
             default:
                 break;
         }
+        
+        // Refresh comment counts after any task update
+        setTimeout(() => {
+            if (tasks && tasks.length > 0) {
+                fetchCommentCounts();
+            }
+        }, 100);
     };
 
     // Expose the handleTaskUpdates function to parent components
@@ -105,10 +145,11 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                 columns.notStarted.push(task);
             }
         });
+
         return columns;
     }, [tasks]);
 
-    // Destructure for easier access
+    // Destructure the filtered tasks
     const { notStarted, inProgress, underReview, completed } = filteredTasks;
 
     // Handle drag start - defined as regular functions, not inside conditional blocks
@@ -252,7 +293,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             notStarted.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} />
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
                             ))
                         )}
                     </DroppableColumn>
@@ -269,7 +310,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             inProgress.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates}/>
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
                             ))
                         )}
                     </DroppableColumn>
@@ -286,7 +327,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             underReview.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates}/>
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
                             ))
                         )}
                     </DroppableColumn>
@@ -303,7 +344,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             completed.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates}/>
+                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
                             ))
                         )}
                     </DroppableColumn>
