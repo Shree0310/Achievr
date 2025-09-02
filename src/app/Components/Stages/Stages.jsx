@@ -6,6 +6,7 @@ import { supabase } from "@/utils/supabase/client";
 import Task from '../Task/Task';
 import DroppableColumn from '../DroppableColumn/DroppableColumn';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Subtasks from "@/app/Components/Subtasks/Subtasks";
 
 const Stages = ({ className = "", onTaskUpdate }) => {
     const [tasks, setTasks] = useState(null);
@@ -14,6 +15,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
     const [activeId, setActiveId] = useState(null);
     const [activeDragData, setActiveDragData] = useState(null);
     const [commentCounts, setCommentCounts] = useState({});
+    const [subTasks, setSubTasks] = useState('null');
 
     // ✅ IMPORTANT: Always define sensors in the same way - don't change order or structure
     const sensors = useSensors(
@@ -72,7 +74,7 @@ const Stages = ({ className = "", onTaskUpdate }) => {
             const counts = {};
             data.forEach(comment => {
                 counts[comment.task_id] = (counts[comment.task_id] || 0) + 1;
-            });
+                });
 
             setCommentCounts(counts);
         } catch (error) {
@@ -293,9 +295,13 @@ const Stages = ({ className = "", onTaskUpdate }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             notStarted.map((task) => (
-                                <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
+                                <div>
+                                    <Task key={task.id} id={task.id} task={task} onTaskUpdate={handleTaskUpdates} commentCount={commentCounts[task.id] || 0} />
+                                    {subTasks && <Subtasks/>}
+                                </div>
                             ))
                         )}
+
                     </DroppableColumn>
 
                     <DroppableColumn
