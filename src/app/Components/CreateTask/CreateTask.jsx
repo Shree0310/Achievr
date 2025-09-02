@@ -206,14 +206,26 @@ const CreateTask = ({
 
   const handleAddComments = () => {
     setIsAddCommentsMode(!isAddCommentsMode);
+    // Reset subtasks mode when entering comments mode
+    if (!isAddCommentsMode) {
+      setIsSubtasksMode(false);
+    }
   };
 
   const handleEditTaskTab = () => {
     setIsAddCommentsMode(!isAddCommentsMode);
+    // Reset subtasks mode when entering edit mode
+    if (!isAddCommentsMode) {
+      setIsSubtasksMode(false);
+    }
   };
 
   const handleSubtasksTab = () => {
     setIsSubtasksMode(!isSubtasksMode);
+    // Reset other modes when entering subtasks mode
+    if (!isSubtasksMode) {
+      setIsAddCommentsMode(false);
+    }
   };
 
   return (
@@ -243,6 +255,7 @@ const CreateTask = ({
                   Updates 
                   <span className="px-2">({commentCount})</span>
                 </li>
+                <span className="text-gray-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleSubtasksTab()}
                   className="mx-2 cursor-pointer text-gray-800 dark:text-white">
@@ -310,7 +323,7 @@ const CreateTask = ({
               <p>{error}</p>
             </div>
           )}
-          {(isCreateMode || isEditMode) && !isAddCommentsMode ? (
+          {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode ? (
             <div className="space-y-4">
               {/* Title Input */}
               <div>
@@ -399,6 +412,8 @@ const CreateTask = ({
                 </select>
               </div>
             </div>
+          ) : isSubtasksMode ? (
+            <SubtasksTab subTasks={subTasks} />
           ) : (
             <CommentBox taskToEdit={taskToEdit} userId={userId} />
           )}
@@ -409,7 +424,7 @@ const CreateTask = ({
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
               Cancel
             </button>
-            {(isCreateMode || isEditMode) && !isAddCommentsMode && (
+            {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode &&
               <button
                 onClick={handleCreateTask}
                 disabled={isLoading}
@@ -420,10 +435,7 @@ const CreateTask = ({
                   ? "Create Task"
                   : "Update Task"}
               </button>
-            )}
-            {isSubtasksMode && (
-              <SubtasksTab subTasks={subTasks}/>
-            )}
+            }
           </div>
         </div>
       </div>
