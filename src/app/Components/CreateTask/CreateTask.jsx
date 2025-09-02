@@ -15,6 +15,7 @@ const CreateTask = ({
   taskToEdit,
   onTaskUpdate,
   isCreateMode = true,
+  commentCount
 }) => {
   const [title, setTitle] = useState(taskToEdit?.title || "");
   const [description, setDescription] = useState(taskToEdit?.description || "");
@@ -231,7 +232,8 @@ const CreateTask = ({
                 <li
                   onClick={() => handleAddComments()}
                   className="mx-2 cursor-pointer text-gray-800 dark:text-white">
-                  Updates
+                  Updates 
+                  <span className="px-2">({commentCount})</span>
                 </li>
               </ul>
             </div>

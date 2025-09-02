@@ -122,6 +122,7 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                     userId={task.user_id}
                     onClose={() => { setIsEditMode(false) }}
                     onTaskUpdate={handleTaskUpdate}
+                    commentCount={commentCount}
                 />
             )}
         </>
