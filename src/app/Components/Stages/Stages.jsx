@@ -340,7 +340,12 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         subTasks={subTasks}
                                     />
                                     {subTasks && subTaskId === task.id && (
-                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                        <Subtasks 
+                                            subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} 
+                                            taskToEdit={task}
+                                            userId={userId}
+                                            onSubtaskCreated={fetchSubtasks}
+                                        />
                                     )}
                                 </div>
                             ))
@@ -370,7 +375,12 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         showSubtasks={subTaskId === task.id}
                                     />
                                     {subTasks && subTaskId === task.id && (
-                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                        <Subtasks 
+                                            subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} 
+                                            taskToEdit={task}
+                                            userId={userId}
+                                            onSubtaskCreated={fetchSubtasks}
+                                        />
                                     )}
                                 </div>
                             ))
@@ -399,7 +409,12 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         showSubtasks={subTaskId === task.id}
                                     />
                                     {subTasks && subTaskId === task.id && (
-                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                        <Subtasks 
+                                            subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} 
+                                            taskToEdit={task}
+                                            userId={userId}
+                                            onSubtaskCreated={fetchSubtasks}
+                                        />
                                     )}
                                 </div>
                             ))
@@ -428,7 +443,12 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         showSubtasks={subTaskId === task.id}
                                     />
                                     {subTasks && subTaskId === task.id && (
-                                        <Subtasks subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} />
+                                        <Subtasks 
+                                            subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)} 
+                                            taskToEdit={task}
+                                            userId={userId}
+                                            onSubtaskCreated={fetchSubtasks}
+                                        />
                                     )}
                                 </div>
                             ))
