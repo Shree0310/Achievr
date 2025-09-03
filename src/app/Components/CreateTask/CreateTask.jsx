@@ -413,7 +413,7 @@ const CreateTask = ({
               </div>
             </div>
           ) : isSubtasksMode ? (
-            <SubtasksTab subTasks={subTasks} />
+            <SubtasksTab subTasks={subTasks} taskToEdit={taskToEdit} userId={userId} />
           ) : (
             <CommentBox taskToEdit={taskToEdit} userId={userId} />
           )}

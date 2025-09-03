@@ -3,7 +3,7 @@ const SubtasksTab = ({ subTasks }) => {
     if (!subTasks || subTasks.length === 0) {
         return (
             <div className="p-3 text-center text-gray-500 dark:text-gray-400 text-sm">
-                No subtasks available
+            No subtasks available
             </div>
         );
     }
