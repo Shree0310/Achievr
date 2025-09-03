@@ -11,7 +11,6 @@ const Subtasks = ({subTasks, taskToEdit, userId, onSubtaskCreated}) => {
     const handleAddSubtask = async (taskTitle) => {
         try {
             setIsAddingSubtask(true);
-            
             const { data, error} = await supabase
                 .from('tasks')
                 .insert([
@@ -29,12 +28,12 @@ const Subtasks = ({subTasks, taskToEdit, userId, onSubtaskCreated}) => {
                 .select();
             
             if (error) throw error;
-                setNewSubtaskTitle("");
+            setNewSubtaskTitle("");
                 
                 // Call the parent callback to refresh subtasks
                 if (onSubtaskCreated) {
-                    onSubtaskCreated();
-                }
+                onSubtaskCreated();
+            }
             } catch (error) {
             console.error('Error creating subtask:', error);
         } finally {
@@ -44,9 +43,9 @@ const Subtasks = ({subTasks, taskToEdit, userId, onSubtaskCreated}) => {
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault();
-            handleAddSubtask(newSubtaskTitle);
-        }
+        e.preventDefault();
+        handleAddSubtask(newSubtaskTitle);
+       }
     };
     return (
         <div>
