@@ -35,6 +35,7 @@ const CreateTask = ({
   const [tasks, setTasks] = useState([]);
   const { addNotification } = useNotifications();
   const [isSubtasksMode, setIsSubtasksMode] = useState(false);
+  const [createSubtaskMode,setCreateSubtaskMode] = useState(false);
 
   useEffect(() => {
     if (isEditMode && taskToEdit) {
@@ -228,6 +229,10 @@ const CreateTask = ({
     }
   };
 
+  const createSubtask = () => {
+    setCreateSubtaskMode(true);
+  }
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
@@ -413,7 +418,16 @@ const CreateTask = ({
               </div>
             </div>
           ) : isSubtasksMode ? (
-            <SubtasksTab subTasks={subTasks} taskToEdit={taskToEdit} userId={userId} />
+            <SubtasksTab 
+                subTasks={subTasks} 
+                taskToEdit={taskToEdit} 
+                userId={userId} 
+                createSubtaskMode={createSubtaskMode}
+                onSubtaskCreated={() => {
+                    // Refresh subtasks by reloading the page
+                    window.location.reload();
+                }}
+            />
           ) : (
             <CommentBox taskToEdit={taskToEdit} userId={userId} />
           )}
@@ -436,6 +450,12 @@ const CreateTask = ({
                   : "Update Task"}
               </button>
             }
+            { isSubtasksMode &&
+              <button
+                className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={createSubtask}>
+                Create Subtask
+              </button>}
           </div>
         </div>
       </div>
