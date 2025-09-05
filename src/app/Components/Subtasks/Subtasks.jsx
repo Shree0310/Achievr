@@ -72,7 +72,7 @@ const Subtasks = ({subTasks, taskToEdit, userId, onSubtaskCreated}) => {
             <input 
                 type="text"
                 className="w-full py-2 px-3 text-center h-10 text-gray-500 dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400" 
-                placeholder="+ Add sub-tasks (press Enter to save)"
+                placeholder="+ Add sub-tasks"
                 value={newSubtaskTitle}
                 onChange={(e) => setNewSubtaskTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
