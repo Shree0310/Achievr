@@ -4,7 +4,7 @@ import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation';
-import Image from 'next/image';
+import SummitIcon from "./SummitIcon";
 import CreateTaskButton from "../CreateTask/CreateTaskButton";
 
 /**
@@ -48,14 +48,12 @@ const Navbar = ({ userId, onTaskUpdate }) => {
     return (
         <div className="w-full md:w-64 bg-white h-16 md:h-screen border-r border-gray-200 dark:bg-gradient-to-r from-gray-900 to-gray-700">
             <div className="p-6">
-                <Link href="/" prefetch={true} className="flex items-center space-x-3 mb-8 group">
-                    <div className="relative h-8 w-8 transition-transform group-hover:scale-105">
-                        <Image
-                            src="/logo.svg"
-                            alt="Achievr Logo"
-                            width={32}
-                            height={32}
-                            className="h-8 w-8"
+                <Link href="/" prefetch={true} className="flex items-center space-x-3 mb-4 group">
+                    <div className="relative transition-transform group-hover:scale-105">
+                        <SummitIcon 
+                            size={48}
+                            variant="default"
+                            className="text-orange-500 dark:text-orange-400"
                         />
                     </div>
                     <span className="text-xl font-bold text-gray-800 group-hover:text-primary-600 transition-colors dark:text-white">
