@@ -11,6 +11,9 @@ const { transform } = require("typescript");
 const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, showSubtasks, subTasksCount,subTasks  }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     
+    // Debug logging
+    console.log(`Task ${task.id} received subtask count:`, subTasksCount);
+    
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: id,
         data: {

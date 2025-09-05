@@ -1,5 +1,77 @@
 "use client"
-const SubtasksTab = ({ subTasks }) => {
+
+import { useState } from "react";
+import { supabase } from "@/utils/supabase/client";
+
+const SubtasksTab = ({ subTasks, createSubtaskMode, taskToEdit, userId, onSubtaskCreated, onToggleCreateMode }) => {
+    const [subtaskTitle, setSubtaskTitle] = useState("");
+    const [subtaskDescription, setSubtaskDescription] = useState("");
+    const [subtaskStatus, setSubtaskStatus] = useState("");
+    const [subtaskPriority, setSubtaskPriority] = useState("");
+    const [subtaskEffort, setSubtaskEffort] = useState("");
+
+    // Debug logging
+    console.log('SubtasksTab received subtasks:', subTasks);
+    console.log('SubtasksTab taskToEdit:', taskToEdit);
+
+    const handleInsertSubtask = async() => {
+        if (!subtaskTitle.trim()) {
+            alert("Subtask title is required");
+            return;
+        }
+
+        if (!taskToEdit?.id || !userId) {
+            alert("Missing task or user information");
+            return;
+        }
+
+        try{
+            const {data, error} = await supabase
+            .from("tasks")
+            .insert([
+                {
+                    title: subtaskTitle.trim(),
+                    description: subtaskDescription || "",
+                    priority: subtaskPriority || "3",
+                    efforts: subtaskEffort || "1",
+                    status: subtaskStatus || "not_started",
+                    user_id: userId,
+                    parent_task_id: taskToEdit.id,
+                    cycle_id: taskToEdit.cycle_id
+                }
+            ])
+            .select();
+            
+            if(error){
+                throw error;
+            }
+
+            if (data && data.length > 0) {
+                // Clear form
+                setSubtaskTitle("");
+                setSubtaskDescription("");
+                setSubtaskStatus("");
+                setSubtaskPriority("");
+                setSubtaskEffort("");
+                
+                // Refresh subtasks list
+                if (onSubtaskCreated) {
+                    onSubtaskCreated();
+                }
+                
+                // Turn off create mode
+                if (onToggleCreateMode) {
+                    onToggleCreateMode(false);
+                }
+                
+                alert("Subtask created successfully!");
+            }
+        }catch(error){
+            console.error("Error inserting subtask:", error);
+            alert("Failed to create subtask. Please try again.");
+        }finally{
+        }
+    }
     if (!subTasks || subTasks.length === 0) {
         return (
             <div className="p-3 text-center text-gray-500 dark:text-gray-400 text-sm">
@@ -73,6 +145,56 @@ const SubtasksTab = ({ subTasks }) => {
                             </td>
                         </tr>
                     ))}
+                    {createSubtaskMode && 
+                        <tr className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                            <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <input className="w-full py-2 px-3 text-center h-10 text-gray-500 dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                        value={subtaskTitle}
+                                        onChange={(e) => setSubtaskTitle(e.target.value)}/>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
+                                <input className="w-full py-2 px-3 text-center h-10 text-gray-500 dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                        value={subtaskDescription}
+                                        onChange={(e) => setSubtaskDescription(e.target.value)}/>
+                            </td>
+                            <td  className="px-4 py-3 text-sm"> 
+                                <input className="w-full py-2 px-3 text-center h-10 text-gray-500 dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                        value={subtaskStatus}
+                                        onChange={(e) => setSubtaskStatus(e.target.value)}/>
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                                <input className="w-full py-2 px-3 text-center h-10 text-gray-500 dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                        value={subtaskPriority}
+                                        onChange={(e) => setSubtaskPriority(e.target.value)}/>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                                <input className="w-full py-2 px-3 text-center h-10 text-gray-500 dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                        value={subtaskEffort}
+                                        onChange={(e) => setSubtaskEffort(e.target.value)}/>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                                <div className="flex space-x-2">
+                                    <button className="px-3 py-1 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            onClick={handleInsertSubtask}>
+                                        Add
+                                    </button>
+                                    <button className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                                            onClick={() => {
+                                                // Clear form and exit create mode
+                                                setSubtaskTitle("");
+                                                setSubtaskDescription("");
+                                                setSubtaskStatus("");
+                                                setSubtaskPriority("");
+                                                setSubtaskEffort("");
+                                                if (onToggleCreateMode) {
+                                                    onToggleCreateMode(false);
+                                                }
+                                            }}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr> }
                 </tbody>
             </table>
         </div>
