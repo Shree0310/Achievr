@@ -427,6 +427,7 @@ const CreateTask = ({
                     // Refresh subtasks by reloading the page
                     window.location.reload();
                 }}
+                onToggleCreateMode={(value) => setCreateSubtaskMode(value)}
             />
           ) : (
             <CommentBox taskToEdit={taskToEdit} userId={userId} />

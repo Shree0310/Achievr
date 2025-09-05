@@ -3,12 +3,16 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 
-const SubtasksTab = ({ subTasks, createSubtaskMode, taskToEdit, userId, onSubtaskCreated }) => {
+const SubtasksTab = ({ subTasks, createSubtaskMode, taskToEdit, userId, onSubtaskCreated, onToggleCreateMode }) => {
     const [subtaskTitle, setSubtaskTitle] = useState("");
     const [subtaskDescription, setSubtaskDescription] = useState("");
     const [subtaskStatus, setSubtaskStatus] = useState("");
     const [subtaskPriority, setSubtaskPriority] = useState("");
     const [subtaskEffort, setSubtaskEffort] = useState("");
+
+    // Debug logging
+    console.log('SubtasksTab received subtasks:', subTasks);
+    console.log('SubtasksTab taskToEdit:', taskToEdit);
 
     const handleInsertSubtask = async() => {
         if (!subtaskTitle.trim()) {
@@ -53,6 +57,11 @@ const SubtasksTab = ({ subTasks, createSubtaskMode, taskToEdit, userId, onSubtas
                 // Refresh subtasks list
                 if (onSubtaskCreated) {
                     onSubtaskCreated();
+                }
+                
+                // Turn off create mode
+                if (onToggleCreateMode) {
+                    onToggleCreateMode(false);
                 }
                 
                 alert("Subtask created successfully!");
@@ -164,10 +173,26 @@ const SubtasksTab = ({ subTasks, createSubtaskMode, taskToEdit, userId, onSubtas
                                         onChange={(e) => setSubtaskEffort(e.target.value)}/>
                             </td>
                             <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                                <button className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        onClick={handleInsertSubtask}>
-                                    Add
-                                </button>
+                                <div className="flex space-x-2">
+                                    <button className="px-3 py-1 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            onClick={handleInsertSubtask}>
+                                        Add
+                                    </button>
+                                    <button className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                                            onClick={() => {
+                                                // Clear form and exit create mode
+                                                setSubtaskTitle("");
+                                                setSubtaskDescription("");
+                                                setSubtaskStatus("");
+                                                setSubtaskPriority("");
+                                                setSubtaskEffort("");
+                                                if (onToggleCreateMode) {
+                                                    onToggleCreateMode(false);
+                                                }
+                                            }}>
+                                        Cancel
+                                    </button>
+                                </div>
                             </td>
                         </tr> }
                 </tbody>

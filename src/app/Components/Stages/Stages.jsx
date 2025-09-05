@@ -33,12 +33,12 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
         fetchData();
     }, []);
 
-    // Fetch comment counts for all tasks
+    // Fetch comment counts and subtask counts for all tasks
     useEffect(() => {
         if (tasks && tasks.length > 0) {
             fetchCommentCounts();
+            fetchSubtasks();
         }
-        fetchSubtasks();
     }, [tasks]);
 
     async function fetchData() {
@@ -75,9 +75,10 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
             console.log(subtask);
         }) 
         const count = {};
-        data.forEach((subtask) => {
+        data.forEach(subtask => {
             count[subtask.parent_task_id] = (count[subtask.parent_task_id] || 0) + 1;
         })
+        console.log('Subtask counts:', count);
         setSubTaskCount(count);
         }catch(error){
             console.error("Error while fetching the subtasks", error);
@@ -131,10 +132,11 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                 break;
         }
         
-        // Refresh comment counts after any task update
+        // Refresh comment counts and subtask counts after any task update
         setTimeout(() => {
             if (tasks && tasks.length > 0) {
                 fetchCommentCounts();
+                fetchSubtasks();
             }
         }, 100);
     };
@@ -327,7 +329,9 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                         ) : notStarted.length === 0 ? (
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
-                            notStarted.map((task) => (
+                            notStarted.map((task) => {
+                                console.log(`Task ${task.id} subtask count:`, subTasksCount[task.id] || 0);
+                                return (
                                 <div key={`task-${task.id}`}>
                                     <Task 
                                         id={task.id} 
@@ -337,7 +341,7 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         onToggleSubtasks={() => toggleSubtasks(task.id)}
                                         showSubtasks={subTaskId === task.id}
                                         subTasksCount={subTasksCount[task.id] || 0}
-                                        subTasks={subTasks}
+                                        subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)}
                                     />
                                     {subTasks && subTaskId === task.id && (
                                         <Subtasks 
@@ -348,7 +352,8 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         />
                                     )}
                                 </div>
-                            ))
+                                );
+                            })
                         )}
 
                     </DroppableColumn>
@@ -373,6 +378,8 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         commentCount={commentCounts[task.id] || 0}
                                         onToggleSubtasks={() => toggleSubtasks(task.id)}
                                         showSubtasks={subTaskId === task.id}
+                                        subTasksCount={subTasksCount[task.id] || 0}
+                                        subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)}
                                     />
                                     {subTasks && subTaskId === task.id && (
                                         <Subtasks 
@@ -407,6 +414,8 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         commentCount={commentCounts[task.id] || 0}
                                         onToggleSubtasks={() => toggleSubtasks(task.id)}
                                         showSubtasks={subTaskId === task.id}
+                                        subTasksCount={subTasksCount[task.id] || 0}
+                                        subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)}
                                     />
                                     {subTasks && subTaskId === task.id && (
                                         <Subtasks 
@@ -441,6 +450,8 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                                         commentCount={commentCounts[task.id] || 0}
                                         onToggleSubtasks={() => toggleSubtasks(task.id)}
                                         showSubtasks={subTaskId === task.id}
+                                        subTasksCount={subTasksCount[task.id] || 0}
+                                        subTasks={subTasks.filter(subtask => subtask.parent_task_id === task.id)}
                                     />
                                     {subTasks && subTaskId === task.id && (
                                         <Subtasks 
