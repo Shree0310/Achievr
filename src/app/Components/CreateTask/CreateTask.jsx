@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNotifications } from "@/app/contexts/NotificationContext";
 import SubtasksTab from "@/app/Components/Subtasks/SubtasksTab";
+import GithubTab from "@/app/Components/GithubUI/GithubTab";
 
 const CreateTask = ({
   onClose,
@@ -36,6 +37,7 @@ const CreateTask = ({
   const { addNotification } = useNotifications();
   const [isSubtasksMode, setIsSubtasksMode] = useState(false);
   const [createSubtaskMode,setCreateSubtaskMode] = useState(false);
+  const [isGithubMode, setIsGithubMode] = useState(false);
 
   useEffect(() => {
     if (isEditMode && taskToEdit) {
@@ -214,11 +216,10 @@ const CreateTask = ({
   };
 
   const handleEditTaskTab = () => {
-    setIsAddCommentsMode(!isAddCommentsMode);
-    // Reset subtasks mode when entering edit mode
-    if (!isAddCommentsMode) {
-      setIsSubtasksMode(false);
-    }
+    // Reset all other modes when entering edit task mode
+    setIsAddCommentsMode(false);
+    setIsSubtasksMode(false);
+    setIsGithubMode(false);
   };
 
   const handleSubtasksTab = () => {
@@ -228,6 +229,13 @@ const CreateTask = ({
       setIsAddCommentsMode(false);
     }
   };
+
+  const handleGithubTab = () => {
+    setIsGithubMode(!isGithubMode);
+    if(!isGithubMode){
+      setIsSubtasksMode(false);
+    }
+  }
 
   const createSubtask = () => {
     setCreateSubtaskMode(true);
@@ -266,6 +274,12 @@ const CreateTask = ({
                   className="mx-2 cursor-pointer text-gray-800 dark:text-white">
                     Subtasks 
                     <span className="px-2">({subTasksCount})</span>
+                </li>
+                <span className="text-gray-800 dark:text-white"> | </span>
+                <li
+                  onClick={() => handleGithubTab()}
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-white">
+                  GITHUB
                 </li>
               </ul>
             </div>
@@ -328,7 +342,7 @@ const CreateTask = ({
               <p>{error}</p>
             </div>
           )}
-          {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode ? (
+          {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode && !isGithubMode ? (
             <div className="space-y-4">
               {/* Title Input */}
               <div>
@@ -429,7 +443,9 @@ const CreateTask = ({
                 }}
                 onToggleCreateMode={(value) => setCreateSubtaskMode(value)}
             />
-          ) : (
+          ) : isGithubMode ? (
+            <GithubTab taskToEdit={taskToEdit} userId={userId}/>
+          ):(
             <CommentBox taskToEdit={taskToEdit} userId={userId} />
           )}
           {/* Footer Actions */}
@@ -439,7 +455,7 @@ const CreateTask = ({
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
               Cancel
             </button>
-            {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode &&
+            {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode && !isGithubMode &&
               <button
                 onClick={handleCreateTask}
                 disabled={isLoading}
