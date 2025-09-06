@@ -65,7 +65,6 @@ const Cycles = ({ userId }) => {
         }
         if (isDemoMode) {
             // Initialize with demo cycles
-            console.log('Initializing demo cycles');
             const demoCycles = [
                 {
                     id: generateUUID(),
