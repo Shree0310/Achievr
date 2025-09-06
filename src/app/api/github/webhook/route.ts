@@ -23,18 +23,31 @@ export async function POST(request: Request) {
       }
     }
 
-    const payload = JSON.parse(body)
-    console.log(`Received GitHub webhook: ${event}`)
+    let payload
+    try {
+      payload = JSON.parse(body)
+      console.log('✅ JSON parsing successful')
+    } catch (parseError) {
+      console.error('❌ Failed to parse JSON:', parseError)
+      return Response.json({ message: 'Invalid JSON payload' }, { status: 400 })
+    }
+    
+    console.log(`📨 Received GitHub webhook: ${event}`)
 
     // Handle push events (when commits are pushed)
     if (event === 'push') {
+      console.log('🚀 Processing push event...')
       await handlePushEvent(payload)
+    } else {
+      console.log(`⏭️  Skipping event type: ${event}`)
     }
 
+    console.log('✅ Webhook processed successfully')
     return Response.json({ message: 'Webhook processed successfully' })
 
   } catch (error: any) {
-    console.error('Webhook error:', error)
+    console.error('💥 Webhook error:', error)
+    console.error('💥 Error stack:', error.stack)
     return Response.json(
       { message: 'Webhook processing failed', error: error.message },
       { status: 500 }
