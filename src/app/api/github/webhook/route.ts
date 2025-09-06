@@ -1,40 +1,170 @@
 // app/api/github/webhook/route.ts
-import { supabase } from '../../../../lib/supabase'
+import { supabaseAdmin } from '../../../../lib/supabase'
 import crypto from 'crypto'
+
+// GET: Test endpoint to verify webhook is working
+export async function GET() {
+  console.log('🧪 Webhook test endpoint called')
+  
+  try {
+    // Test Supabase connection
+    const { data, error } = await supabaseAdmin
+      .from('github_repositories')
+      .select('count')
+      .limit(1)
+    
+    if (error) {
+      console.error('❌ Supabase test failed:', error)
+      return Response.json(
+        { 
+          message: 'Webhook test failed', 
+          error: error.message,
+          supabaseError: true 
+        }, 
+        { status: 500 }
+      )
+    }
+    
+    console.log('✅ Supabase connection test successful')
+    return Response.json({ 
+      message: 'Webhook is working!', 
+      supabaseConnected: true,
+      timestamp: new Date().toISOString()
+    })
+    
+  } catch (error: any) {
+    console.error('💥 Webhook test error:', error)
+    return Response.json(
+      { 
+        message: 'Webhook test failed', 
+        error: error.message,
+        timestamp: new Date().toISOString()
+      }, 
+      { status: 500 }
+    )
+  }
+}
 
 // POST: Handle GitHub webhook events
 export async function POST(request: Request) {
+  console.log('🚀 Webhook endpoint called')
+  
   try {
+    // Log incoming request details
+    console.log('🔍 Webhook request received')
+    console.log('📋 Headers:', Object.fromEntries(request.headers.entries()))
+    
     const body = await request.text()
     const signature = request.headers.get('x-hub-signature-256')
     const event = request.headers.get('x-github-event')
+    
+    console.log(`📨 Event type: ${event}`)
+    console.log(`🔐 Signature present: ${signature ? 'Yes' : 'No'}`)
+    console.log(`📄 Body length: ${body.length}`)
 
-    // Verify webhook signature (security)
+    // Check for empty body
+    if (!body || body.trim().length === 0) {
+      console.error('❌ Empty request body')
+      return Response.json({ message: 'Empty request body' }, { status: 400 })
+    }
+
+    // Verify webhook signature (security) - only if secret is configured
     const webhookSecret = process.env.GITHUB_WEBHOOK_SECRET
-    if (webhookSecret && signature) {
+    if (webhookSecret) {
+      if (!signature) {
+        console.error('❌ Missing webhook signature but secret is configured')
+        return Response.json({ message: 'Missing webhook signature' }, { status: 401 })
+      }
+      
       const expectedSignature = `sha256=${crypto
         .createHmac('sha256', webhookSecret)
         .update(body)
         .digest('hex')}`
       
       if (signature !== expectedSignature) {
-        console.error('Invalid webhook signature')
+        console.error('❌ Invalid webhook signature')
+        console.error(`Expected: ${expectedSignature}`)
+        console.error(`Received: ${signature}`)
         return Response.json({ message: 'Invalid signature' }, { status: 401 })
       }
+      console.log('✅ Signature verification successful')
+    } else {
+      console.log('⚠️ No webhooks secret configured - skipping signature verification')
     }
 
-    const payload = JSON.parse(body)
-    console.log(`Received GitHub webhook: ${event}`)
+    let payload
+    try {
+      payload = JSON.parse(body)
+      console.log('✅ JSON parsing successful')
+    } catch (parseError) {
+      console.error('❌ Failed to parse JSON:', parseError)
+      console.error('Body content:', body.substring(0, 200) + '...')
+      return Response.json({ message: 'Invalid JSON payload' }, { status: 400 })
+    }
+    
+    console.log(`📨 Received GitHub webhook: ${event}`)
+
+    // Validate required event type
+    if (!event) {
+      console.error('❌ Missing x-github-event header')
+      return Response.json({ message: 'Missing x-github-event header' }, { status: 400 })
+    }
+
+    // Basic payload validation
+    if (!payload || typeof payload !== 'object') {
+      console.error('❌ Invalid payload structure')
+      return Response.json({ message: 'Invalid payload structure' }, { status: 400 })
+    }
 
     // Handle push events (when commits are pushed)
     if (event === 'push') {
+      console.log('🚀 Processing push event...')
+      
+      // Validate push payload structure
+      if (!payload.repository || !payload.repository.full_name) {
+        console.error('❌ Invalid push payload: missing repository information')
+        return Response.json({ message: 'Invalid push payload: missing repository' }, { status: 400 })
+      }
+      
+      if (!payload.ref) {
+        console.error('❌ Invalid push payload: missing ref information')
+        return Response.json({ message: 'Invalid push payload: missing ref' }, { status: 400 })
+      }
+      
       await handlePushEvent(payload)
+    } else if (event === 'ping') {
+      console.log('🏓 Received ping event - webhook is working!')
+      return Response.json({ message: 'Webhook ping received successfully' })
+    } else {
+      console.log(`⏭️  Skipping event type: ${event}`)
     }
 
+    console.log('✅ Webhook processed successfully')
     return Response.json({ message: 'Webhook processed successfully' })
 
   } catch (error: any) {
-    console.error('Webhook error:', error)
+    console.error('💥 Webhook error:', error)
+    console.error('💥 Error stack:', error.stack)
+    console.error('💥 Error name:', error.name)
+    console.error('💥 Error message:', error.message)
+    
+    // Check if it's a Supabase connection error
+    if (error.message?.includes('supabase') || error.message?.includes('database')) {
+      console.error('💥 Database connection error detected')
+      return Response.json(
+        { message: 'Database connection failed', error: error.message },
+        { status: 503 }
+      )
+    }
+    
+    // Return more specific error messages based on error type
+    if (error.name === 'SyntaxError') {
+      return Response.json(
+        { message: 'Invalid JSON payload', error: 'Malformed JSON' },
+        { status: 400 }
+      )
+    }
+    
     return Response.json(
       { message: 'Webhook processing failed', error: error.message },
       { status: 500 }
@@ -48,32 +178,60 @@ async function handlePushEvent(payload: any) {
     const branchName = payload.ref.replace('refs/heads/', '')
     const commits = payload.commits || []
 
-    console.log(`Push to ${repositoryFullName}:${branchName} with ${commits.length} commits`)
+    console.log(`🔄 Push to ${repositoryFullName}:${branchName} with ${commits.length} commits`)
+
+    // Handle branch deletion
+    if (payload.deleted) {
+      console.log(`🗑️ Branch ${branchName} was deleted, skipping processing`)
+      return
+    }
+
+    // Handle empty commits (force push or branch creation)
+    if (commits.length === 0) {
+      console.log(`📭 No commits in this push (likely branch creation or force push)`)
+      return
+    }
 
     // Get repository info from database
-    const { data: repository } = await supabase
+    const { data: repository, error: repoError } = await supabaseAdmin
       .from('github_repositories')
       .select('id, full_name')
       .eq('full_name', repositoryFullName)
       .single()
 
+    if (repoError) {
+      console.error('❌ Error querying repository:', repoError)
+      throw new Error(`Failed to query repository: ${repoError.message}`)
+    }
+
     if (!repository) {
-      console.log(`Repository ${repositoryFullName} not connected to our system, skipping`)
+      console.log(`📝 Repository ${repositoryFullName} not connected to our system, skipping`)
       return
     }
 
     // Process each commit and look for task ID patterns
     for (const commit of commits) {
-      await processCommitForTaskReferences(
-        commit,
-        repository.id,
-        repositoryFullName,
-        branchName
-      )
+      if (!commit || !commit.id || !commit.message) {
+        console.log(`⚠️ Skipping malformed commit:`, commit)
+        continue
+      }
+      
+      try {
+        await processCommitForTaskReferences(
+          commit,
+          repository.id,
+          repositoryFullName,
+          branchName
+        )
+      } catch (commitError) {
+        console.error(`❌ Error processing commit ${commit.id?.substring(0, 7)}:`, commitError)
+        // Continue with other commits even if one fails
+      }
     }
 
   } catch (error) {
-    console.error('Error handling push event:', error)
+    console.error('❌ Error handling push event:', error)
+    throw error // Re-throw to be caught by main handler
   }
 }
 
@@ -151,7 +309,7 @@ async function linkCommitToTask(
 ) {
   try {
     // Verify task exists in your system
-    const { data: task } = await supabase
+    const { data: task } = await supabaseAdmin
       .from('tasks')
       .select('id, title')
       .eq('id', taskId)
@@ -163,7 +321,7 @@ async function linkCommitToTask(
     }
 
     // Check if commit already linked to this task
-    const { data: existingCommit } = await supabase
+    const { data: existingCommit } = await supabaseAdmin
       .from('github_references')
       .select('id')
       .eq('github_type', 'commit')
@@ -177,7 +335,7 @@ async function linkCommitToTask(
     }
 
     // Store new commit reference
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('github_references')
       .insert({
         task_id: taskId,
@@ -205,7 +363,7 @@ async function linkCommitToTask(
       .single()
 
     if (error) {
-      console.error('Error storing commit reference:', error)
+      console.error('Error storing commit references:', error)
       return
     }
 
