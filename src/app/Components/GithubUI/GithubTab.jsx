@@ -2,6 +2,7 @@
 import { useState } from "react";
 import GithubBranchCreator from "@/app/Components/GithubUI/GithubBranchCreator";
 import GithubBranchList from "@/app/Components/GithubUI/GithubBranchList";
+import GithubCommitsList from "@/app/Components/GithubUI/GithubCommitsList";
 
 const GithubTab = ({taskToEdit, userId }) => {
     const [isBranchesMode, setIsBranchesMode] = useState(false);
@@ -114,6 +115,9 @@ const GithubTab = ({taskToEdit, userId }) => {
                         <p className="text-gray-500 dark:text-gray-400 mb-4">Track commits related to this task</p>
                         <div className="text-sm text-gray-400 dark:text-gray-500">
                             Coming soon...
+                        </div>
+                        <div>
+                            <GithubCommitsList taskId={taskToEdit.id}/>
                         </div>
                     </div>
                 )}
