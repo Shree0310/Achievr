@@ -57,7 +57,7 @@ const CreateTask = ({
     try {
       const { data, error } = await supabase
         .from("tasks")
-        .select("id, created_at, user_id, status, cycle_id, title, description,")
+        .select("id, created_at, user_id, status, cycle_id, title, description")
         .eq("user_id", userId)
         .order("created_at", { ascending: true });
       

@@ -8,15 +8,10 @@ function GithubBranchCreator({taskToEdit, userId}) {
   const [creating, setCreating] = useState(false)
   const [result, setResult] = useState(null)
 
-  console.log('Form state:', { taskId, taskTitle, repositoryFullName, baseBranch }) // Debug log
+//   console.log('Form state:', { taskId, taskTitle, repositoryFullName, baseBranch }) // Debug log
 
   const createBranch = async () => {
     console.log('Create branch clicked') // Debug log
-    
-    if (!taskId || !taskTitle || !repositoryFullName) {
-      alert('Please fill in all required fields')
-      return
-    }
 
     setCreating(true)
     setResult(null)
@@ -90,9 +85,8 @@ function GithubBranchCreator({taskToEdit, userId}) {
               <span className="text-orange-600 dark:text-orange-400 font-medium text-sm">T</span>
             </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">Task #{taskToEdit.id}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-300 truncate">{taskToEdit.title}</p>
+          <div className="flex justify-center pt-2">
+            <p className="text-sm text-gray-600 dark:text-gray-300 truncate font-bold">{taskToEdit.title}</p>
           </div>
         </div>
       </div>
