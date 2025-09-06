@@ -218,7 +218,7 @@ async function linkCommitToTask(
       .single()
 
     if (error) {
-      console.error('Error storing commit reference:', error)
+      console.error('Error storing commit references:', error)
       return
     }
 
