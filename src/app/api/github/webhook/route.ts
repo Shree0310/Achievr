@@ -1,5 +1,5 @@
 // app/api/github/webhook/route.ts
-import { supabase } from '../../../../lib/supabase'
+import { supabaseAdmin } from '../../../../lib/supabase'
 import crypto from 'crypto'
 
 // POST: Handle GitHub webhook events
@@ -137,7 +137,7 @@ async function handlePushEvent(payload: any) {
     }
 
     // Get repository info from database
-    const { data: repository, error: repoError } = await supabase
+    const { data: repository, error: repoError } = await supabaseAdmin
       .from('github_repositories')
       .select('id, full_name')
       .eq('full_name', repositoryFullName)
@@ -253,7 +253,7 @@ async function linkCommitToTask(
 ) {
   try {
     // Verify task exists in your system
-    const { data: task } = await supabase
+    const { data: task } = await supabaseAdmin
       .from('tasks')
       .select('id, title')
       .eq('id', taskId)
@@ -265,7 +265,7 @@ async function linkCommitToTask(
     }
 
     // Check if commit already linked to this task
-    const { data: existingCommit } = await supabase
+    const { data: existingCommit } = await supabaseAdmin
       .from('github_references')
       .select('id')
       .eq('github_type', 'commit')
@@ -279,7 +279,7 @@ async function linkCommitToTask(
     }
 
     // Store new commit reference
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('github_references')
       .insert({
         task_id: taskId,
