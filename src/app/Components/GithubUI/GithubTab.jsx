@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react";
 import GithubBranchCreator from "@/app/Components/GithubUI/GithubBranchCreator";
+import GithubBranchList from "@/app/Components/GithubUI/GithubBranchList";
 
 const GithubTab = ({taskToEdit, userId }) => {
     const [isBranchesMode, setIsBranchesMode] = useState(false);
@@ -96,7 +97,10 @@ const GithubTab = ({taskToEdit, userId }) => {
             {/* Content Area */}
             <div className="p-6">
                 {isBranchesMode && !isCommitsMode && !isPRMode && (
-                    <GithubBranchCreator taskToEdit={taskToEdit} userId={userId} />
+                    <div className="space-y-6">
+                        <GithubBranchCreator taskToEdit={taskToEdit} userId={userId} />
+                        <GithubBranchList taskId={taskToEdit.id} />
+                    </div>
                 )}
 
                 {isCommitsMode && !isPRMode && (
