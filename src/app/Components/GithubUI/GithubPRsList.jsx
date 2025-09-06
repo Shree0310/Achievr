@@ -262,4 +262,4 @@ const GithubPRsList = ({ taskId }) => {
     );
 }
 
-export default GithubPRList;
+export default GithubPRsList;
