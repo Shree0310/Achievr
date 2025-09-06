@@ -38,6 +38,14 @@ const GithubCommitsList = ({ taskId }) => {
             }
 
             setCommits(commits || []);
+            
+            // Debug logging
+            console.log("Fetched commits:", commits);
+            if (commits && commits.length > 0) {
+                commits.forEach((commit, index) => {
+                    console.log(`Commit ${index + 1}:`, commit);
+                });
+            }
         } catch (error) {
             console.error("Error while fetching the commits", error);
             setError('Failed to load commits');

@@ -71,14 +71,10 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                 throw error;
             }
         setSubTasks(data);
-        data.forEach((subtask) => {
-            console.log(subtask);
-        }) 
         const count = {};
         data.forEach(subtask => {
             count[subtask.parent_task_id] = (count[subtask.parent_task_id] || 0) + 1;
         })
-        console.log('Subtask counts:', count);
         setSubTaskCount(count);
         }catch(error){
             console.error("Error while fetching the subtasks", error);
@@ -255,7 +251,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                 throw error;
             }
 
-            console.log("Update successful:", data);
         } catch (error) {
             console.error("Error updating task status:", error);
             // Revert UI changes if update fails
@@ -330,7 +325,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                             <p className="text-center text-gray-500 p-4">No Tasks..</p>
                         ) : (
                             notStarted.map((task) => {
-                                console.log(`Task ${task.id} subtask count:`, subTasksCount[task.id] || 0);
                                 return (
                                 <div key={`task-${task.id}`}>
                                     <Task 
