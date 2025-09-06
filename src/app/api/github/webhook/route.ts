@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       }
       console.log('✅ Signature verification successful')
     } else {
-      console.log('⚠️ No webhook secret configured - skipping signature verification')
+      console.log('⚠️ No webhooks secret configured - skipping signature verification')
     }
 
     let payload
