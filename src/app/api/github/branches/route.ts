@@ -17,11 +17,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    console.log('Received body:', body) // Debug log
     
     const { task_id, repository_full_name, task_title, base_branch = 'main' } = body
-
-    console.log('Extracted values:', { task_id, repository_full_name, task_title, base_branch }) // Debug log
 
     if (!task_id || !repository_full_name || !task_title) {
       console.log('Missing required fields:', { 
