@@ -2,8 +2,53 @@
 import { supabaseAdmin } from '../../../../lib/supabase'
 import crypto from 'crypto'
 
+// GET: Test endpoint to verify webhook is working
+export async function GET() {
+  console.log('🧪 Webhook test endpoint called')
+  
+  try {
+    // Test Supabase connection
+    const { data, error } = await supabaseAdmin
+      .from('github_repositories')
+      .select('count')
+      .limit(1)
+    
+    if (error) {
+      console.error('❌ Supabase test failed:', error)
+      return Response.json(
+        { 
+          message: 'Webhook test failed', 
+          error: error.message,
+          supabaseError: true 
+        }, 
+        { status: 500 }
+      )
+    }
+    
+    console.log('✅ Supabase connection test successful')
+    return Response.json({ 
+      message: 'Webhook is working!', 
+      supabaseConnected: true,
+      timestamp: new Date().toISOString()
+    })
+    
+  } catch (error: any) {
+    console.error('💥 Webhook test error:', error)
+    return Response.json(
+      { 
+        message: 'Webhook test failed', 
+        error: error.message,
+        timestamp: new Date().toISOString()
+      }, 
+      { status: 500 }
+    )
+  }
+}
+
 // POST: Handle GitHub webhook events
 export async function POST(request: Request) {
+  console.log('🚀 Webhook endpoint called')
+  
   try {
     // Log incoming request details
     console.log('🔍 Webhook request received')
@@ -100,6 +145,17 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('💥 Webhook error:', error)
     console.error('💥 Error stack:', error.stack)
+    console.error('💥 Error name:', error.name)
+    console.error('💥 Error message:', error.message)
+    
+    // Check if it's a Supabase connection error
+    if (error.message?.includes('supabase') || error.message?.includes('database')) {
+      console.error('💥 Database connection error detected')
+      return Response.json(
+        { message: 'Database connection failed', error: error.message },
+        { status: 503 }
+      )
+    }
     
     // Return more specific error messages based on error type
     if (error.name === 'SyntaxError') {
