@@ -17,6 +17,11 @@ export async function handlePullRequestEvent(payload: unknown) {
     console.log(`PR branch: ${(pullRequest.head as Record<string, unknown>)?.ref as string}`)
 
     // Get repository info from database
+    if (!supabaseAdmin) {
+      console.log('Database not configured, skipping PR processing')
+      return
+    }
+
     const { data: repository } = await supabaseAdmin
       .from('github_repositories')
       .select('id, full_name')
@@ -84,6 +89,11 @@ async function linkPullRequestToTask(
     const pr = pullRequest as Record<string, unknown> // Type assertion for GitHub pull request
     
     // Verify task exists in your system
+    if (!supabaseAdmin) {
+      console.log('Database not configured, skipping PR link')
+      return
+    }
+
     const { data: task } = await supabaseAdmin
       .from('tasks')
       .select('id, title')
