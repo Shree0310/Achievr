@@ -1,6 +1,6 @@
 // app/api/github/repositories/route.ts
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '../../../../lib/auth'
 import { createOctokit } from '../../../../lib/github'
 import { supabase } from '../../../../lib/supabase'
 
@@ -9,14 +9,14 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || !session.accessToken) {
+    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const octokit = createOctokit(session.accessToken)
+    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
     
     // Get user's repositories from GitHub
     const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({
@@ -55,10 +55,10 @@ export async function GET() {
       total: repos.length
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching repositories:', error)
     return Response.json(
-      { message: 'Failed to fetch repositories', error: error.message },
+      { message: 'Failed to fetch repositories', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || !session.accessToken) {
+    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     }
 
     // Get repository details from GitHub
-    const octokit = createOctokit(session.accessToken)
+    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
     const [owner, repo_name] = full_name.split('/')
     
     const { data: repo } = await octokit.rest.repos.get({
@@ -127,10 +127,10 @@ export async function POST(request: Request) {
       repository: data
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error connecting repository:', error)
     return Response.json(
-      { message: 'Failed to connect repository', error: error.message },
+      { message: 'Failed to connect repository', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

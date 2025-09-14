@@ -1,11 +1,16 @@
 // src/lib/github-webhooks/push-handler.ts
 import { supabaseAdmin } from '../supabase'
 
-export async function handlePushEvent(payload: any) {
+export async function handlePushEvent(payload: unknown) {
   try {
-    const repositoryFullName = payload.repository.full_name
-    const branchName = payload.ref.replace('refs/heads/', '')
-    const commits = payload.commits || []
+    if (!payload || typeof payload !== 'object') {
+      throw new Error('Invalid payload structure')
+    }
+    
+    const p = payload as Record<string, unknown> // Type assertion for GitHub webhook payload
+    const repositoryFullName = (p.repository as Record<string, unknown>)?.full_name as string
+    const branchName = (p.ref as string)?.replace('refs/heads/', '')
+    const commits = (p.commits as unknown[]) || []
 
     console.log(`Push to ${repositoryFullName}:${branchName} with ${commits.length} commits`)
 
@@ -37,23 +42,28 @@ export async function handlePushEvent(payload: any) {
 }
 
 async function processCommitForTaskReferences(
-  commit: any,
+  commit: unknown,
   repositoryId: string,
   repositoryFullName: string,
   branchName: string
 ) {
   try {
-    const commitMessage = commit.message || ''
+    if (!commit || typeof commit !== 'object') {
+      throw new Error('Invalid commit structure')
+    }
+    
+    const c = commit as Record<string, unknown> // Type assertion for GitHub commit
+    const commitMessage = (c.message as string) || ''
     
     // Extract task IDs from commit message using multiple patterns
     const taskIds = extractTaskIds(commitMessage)
     
     if (taskIds.length === 0) {
-      console.log(`No task IDs found in commit: ${commit.id.substring(0, 7)} - "${commitMessage}"`)
+      console.log(`No task IDs found in commit: ${(c.id as string)?.substring(0, 7)} - "${commitMessage}"`)
       return
     }
 
-    console.log(`Found task IDs in commit ${commit.id.substring(0, 7)}: ${taskIds.join(', ')}`)
+    console.log(`Found task IDs in commit ${(c.id as string)?.substring(0, 7)}: ${taskIds.join(', ')}`)
 
     // Link commit to each mentioned task
     for (const taskId of taskIds) {
@@ -68,11 +78,17 @@ async function processCommitForTaskReferences(
 async function linkCommitToTask(
   taskId: string,
   repositoryId: string,
-  commit: any,
+  commit: unknown,
   repositoryFullName: string,
   branchName: string
 ) {
   try {
+    if (!commit || typeof commit !== 'object') {
+      throw new Error('Invalid commit structure')
+    }
+    
+    const c = commit as Record<string, unknown> // Type assertion for GitHub commit
+    
     // Verify task exists in your system
     const { data: task } = await supabaseAdmin
       .from('tasks')
@@ -90,38 +106,38 @@ async function linkCommitToTask(
       .from('github_references')
       .select('id')
       .eq('github_type', 'commit')
-      .eq('github_id', commit.id)
+      .eq('github_id', c.id as string)
       .eq('task_id', taskId)
       .single()
 
     if (existingCommit) {
-      console.log(`Commit ${commit.id.substring(0, 7)} already linked to task ${taskId}`)
+      console.log(`Commit ${(c.id as string)?.substring(0, 7)} already linked to task ${taskId}`)
       return
     }
 
     // Store new commit reference
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from('github_references')
       .insert({
         task_id: taskId,
         repository_id: repositoryId,
         github_type: 'commit',
-        github_id: commit.id,
-        title: commit.message.substring(0, 255),
-        description: commit.message,
-        url: commit.url,
+        github_id: c.id as string,
+        title: (c.message as string)?.substring(0, 255) || '',
+        description: (c.message as string) || '',
+        url: c.url as string,
         status: 'committed',
-        author: commit.author.name || commit.author.username,
+        author: ((c.author as Record<string, unknown>)?.name as string) || ((c.author as Record<string, unknown>)?.username as string) || 'Unknown',
         metadata: {
-          author_email: commit.author.email,
-          commit_date: commit.timestamp,
-          full_sha: commit.id,
+          author_email: (c.author as Record<string, unknown>)?.email as string,
+          commit_date: c.timestamp as string,
+          full_sha: c.id as string,
           branch_name: branchName,
           auto_linked_via_pattern: true,
-          detected_patterns: extractTaskIds(commit.message),
-          added_files: commit.added || [],
-          modified_files: commit.modified || [],
-          removed_files: commit.removed || []
+          detected_patterns: extractTaskIds((c.message as string) || ''),
+          added_files: (c.added as string[]) || [],
+          modified_files: (c.modified as string[]) || [],
+          removed_files: (c.removed as string[]) || []
         }
       })
       .select()
@@ -132,7 +148,7 @@ async function linkCommitToTask(
       return
     }
 
-    console.log(`Auto-linked commit ${commit.id.substring(0, 7)} to task ${taskId} (${task.title})`)
+    console.log(`Auto-linked commit ${(c.id as string)?.substring(0, 7)} to task ${taskId} (${task.title})`)
 
   } catch (error) {
     console.error('Error linking commit to task:', error)

@@ -1,20 +1,20 @@
 // app/api/github/test/route.ts
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '../../../../lib/auth'
 import { testGitHubConnection } from '../../../../lib/github'
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || !session.accessToken) {
+    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const result = await testGitHubConnection(session.accessToken)
+    const result = await testGitHubConnection((session as unknown as Record<string, unknown>).accessToken as string)
     
     if (result.success) {
       return Response.json({
@@ -24,7 +24,7 @@ export async function GET() {
           name: result.user.name,
           public_repos: result.user.public_repos
         } : null,
-        recent_repos: (result.repositories ?? []).map((repo: any) => ({
+        recent_repos: (result.repositories ?? []).map((repo: Record<string, unknown>) => ({
           name: repo.name,
           full_name: repo.full_name,
           private: repo.private,
@@ -37,7 +37,7 @@ export async function GET() {
         error: result.error
       }, { status: 400 })
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('GitHub test error:', error)
     return Response.json(
       { message: 'Internal server error' },

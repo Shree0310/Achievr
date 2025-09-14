@@ -1,15 +1,15 @@
 // app/api/github/branches/route.ts
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '../../../../lib/auth'
 import { createOctokit } from '../../../../lib/github'
-import { supabase } from '../../../../lib/supabase'
+import { supabaseAdmin } from '../../../../lib/supabase'
 
 // POST: Create a branch for a task
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || !session.accessToken) {
+    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const octokit = createOctokit(session.accessToken)
+    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
     const [owner, repo] = repository_full_name.split('/')
 
     // Get the base branch SHA
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     })
 
     // Get repository ID from database
-    const { data: repository } = await supabase
+    const { data: repository } = await supabaseAdmin
       .from('github_repositories')
       .select('id')
       .eq('full_name', repository_full_name)
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     }
 
     // Store branch reference in database
-    const { data: reference, error } = await supabase
+    const { data: reference, error } = await supabaseAdmin
       .from('github_references')
       .insert({
         task_id,
@@ -112,19 +112,29 @@ export async function POST(request: Request) {
       }
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating branch:', error)
     
     // Handle specific GitHub errors
-    if (error.status === 422) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as Record<string, unknown>).status === 422) {
       return Response.json(
         { message: 'Branch already exists or invalid branch name' },
         { status: 400 }
       )
     }
 
+    // Fallback error response
+    const errorMessage = 'Failed to create branch'
+    let errorDetail: string | undefined = undefined
+
+    if (typeof error === 'object' && error !== null && 'message' in error && typeof (error as Record<string, unknown>).message === 'string') {
+      errorDetail = (error as Record<string, unknown>).message as string
+    } else if (typeof error === 'string') {
+      errorDetail = error
+    }
+
     return Response.json(
-      { message: 'Failed to create branch', error: error.message },
+      { message: errorMessage, error: errorDetail },
       { status: 500 }
     )
   }
@@ -144,7 +154,7 @@ export async function GET(request: Request) {
     }
 
     // Get GitHub references for this task
-    const { data: references, error } = await supabase
+    const { data: references, error } = await supabaseAdmin
       .from('github_references')
       .select(`
         *,
@@ -170,10 +180,10 @@ export async function GET(request: Request) {
       total: references?.length || 0
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching branches:', error)
     return Response.json(
-      { message: 'Failed to fetch branches', error: error.message },
+      { message: 'Failed to fetch branches', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
