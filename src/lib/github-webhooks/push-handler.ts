@@ -15,6 +15,11 @@ export async function handlePushEvent(payload: unknown) {
     console.log(`Push to ${repositoryFullName}:${branchName} with ${commits.length} commits`)
 
     // Get repository info from database
+    if (!supabaseAdmin) {
+      console.log('Database not configured, skipping push processing')
+      return
+    }
+
     const { data: repository } = await supabaseAdmin
       .from('github_repositories')
       .select('id, full_name')
@@ -90,6 +95,11 @@ async function linkCommitToTask(
     const c = commit as Record<string, unknown> // Type assertion for GitHub commit
     
     // Verify task exists in your system
+    if (!supabaseAdmin) {
+      console.log('Database not configured, skipping commit link')
+      return
+    }
+
     const { data: task } = await supabaseAdmin
       .from('tasks')
       .select('id, title')
