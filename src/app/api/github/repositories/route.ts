@@ -26,12 +26,17 @@ export async function GET() {
     })
 
     // Get connected repositories from database
-    const { data: connectedRepos, error } = await supabase
-      .from('github_repositories')
-      .select('*')
+    let connectedRepos = null
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('github_repositories')
+        .select('*')
 
-    if (error) {
-      console.error('Database error:', error)
+      if (error) {
+        console.error('Database error:', error)
+      } else {
+        connectedRepos = data
+      }
     }
 
     // Mark which repos are already connected
@@ -96,6 +101,13 @@ export async function POST(request: Request) {
     })
 
     // Store repository in database
+    if (!supabase) {
+      return Response.json(
+        { message: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { data, error } = await supabase
       .from('github_repositories')
       .upsert({
