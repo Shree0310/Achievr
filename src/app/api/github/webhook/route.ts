@@ -9,12 +9,14 @@ export async function GET() {
   console.log('🧪 Webhook test endpoint called')
   
   try {
+    if (!supabaseAdmin) {
+      throw new Error('Supabase client is not initialized');
+    }
     // Test Supabase connection
     const { error } = await supabaseAdmin
       .from('github_repositories')
       .select('count')
-      .limit(1)
-    
+      .limit(1);
     if (error) {
       console.error('❌ Supabase test failed:', error)
       return Response.json(

@@ -62,6 +62,13 @@ export async function POST(request: Request) {
     })
 
     // Get repository ID from database
+    if (!supabaseAdmin) {
+      return Response.json(
+        { message: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { data: repository } = await supabaseAdmin
       .from('github_repositories')
       .select('id')
@@ -154,6 +161,13 @@ export async function GET(request: Request) {
     }
 
     // Get GitHub references for this task
+    if (!supabaseAdmin) {
+      return Response.json(
+        { message: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { data: references, error } = await supabaseAdmin
       .from('github_references')
       .select(`
