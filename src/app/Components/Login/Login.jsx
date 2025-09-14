@@ -14,7 +14,7 @@ const Login = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Check authentication state on mount
+    // Check authentication state on mounting
     useEffect(() => {
         const checkAuth = async () => {
             try {
