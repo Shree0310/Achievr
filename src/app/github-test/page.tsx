@@ -2,6 +2,7 @@
 // src/app/github-test/page.tsx
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useState } from 'react'
+import Image from 'next/image'
 
 interface TestResult {
   message: string
@@ -36,9 +37,11 @@ function GitHubAuth() {
       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img 
+            <Image 
               src={session.user?.image || ''} 
               alt="Profile" 
+              width={40}
+              height={40}
               className="w-10 h-10 rounded-full"
             />
             <div>
@@ -90,10 +93,10 @@ function GitHubConnectionTest() {
       const response = await fetch('/api/github/test')
       const data = await response.json()
       setTestResult(data)
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResult({ 
         message: 'Test failed', 
-        error: error.message 
+        error: error instanceof Error ? error.message : 'Unknown error'
       })
     } finally {
       setLoading(false)
