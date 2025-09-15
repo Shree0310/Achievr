@@ -14,7 +14,7 @@ const Login = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Check authentication state on mount
+    // Check authentication state on mounting
     useEffect(() => {
         const checkAuth = async () => {
             try {
@@ -74,7 +74,7 @@ const Login = () => {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${siteUrl}/auth/callback`
+                    redirectTo: `${siteUrl}/auth/callback?provider=google`
                 }
             });
 

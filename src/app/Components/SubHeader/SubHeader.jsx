@@ -9,11 +9,11 @@ const SubHeader = () => {
     const router = useRouter();
     
     const navItems = [
-        { name: 'Overview', path: '/' },
+        // { name: 'Overview', path: '/' },
         { name: 'Board', path: '/board' },
         { name: 'Dashboard', path: '/statChart' },
-        { name: 'This Week', path: '/week' },
-        { name: 'This Cycle', path: '/cycle' }
+        // { name: 'This Week', path: '/week' },
+        // { name: 'This Cycle', path: '/cycle' }
     ];
 
     // Prefetch all routes
