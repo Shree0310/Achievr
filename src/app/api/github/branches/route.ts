@@ -7,30 +7,82 @@ import { supabaseAdmin } from '../../../../lib/supabase'
 // POST: Create a branch for a task
 export async function POST(request: Request) {
   try {
+    // Log environment variables
+    console.log('Environment check:', {
+      hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+      hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
+      hasGitHubClientId: !!process.env.GITHUB_CLIENT_ID,
+      hasGitHubClientSecret: !!process.env.GITHUB_CLIENT_SECRET,
+      nodeEnv: process.env.NODE_ENV,
+      nextAuthUrl: process.env.NEXTAUTH_URL
+    })
+
+    // Log request headers
+    const headers = Object.fromEntries(request.headers.entries())
+    console.log('Request headers:', {
+      cookie: headers.cookie ? 'Present' : 'Missing',
+      authorization: headers.authorization ? 'Present' : 'Missing',
+      userAgent: headers['user-agent'],
+      origin: headers.origin,
+      referer: headers.referer
+    })
+
     const session = await getServerSession(authOptions)
     
-    // Debug logging for production troubleshooting
-    console.log('Session check:', {
-      hasSession: !!session,
-      hasAccessToken: !!(session as unknown as Record<string, unknown>)?.accessToken,
+    // Comprehensive session debugging
+    console.log('Session analysis:', {
+      sessionExists: !!session,
+      sessionType: typeof session,
       sessionKeys: session ? Object.keys(session) : [],
-      user: session?.user,
+      userExists: !!session?.user,
+      userKeys: session?.user ? Object.keys(session.user) : [],
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      accessTokenExists: !!(session as unknown as Record<string, unknown>)?.accessToken,
+      accessTokenType: typeof (session as unknown as Record<string, unknown>)?.accessToken,
+      accessTokenLength: (session as unknown as Record<string, unknown>)?.accessToken ? 
+        ((session as unknown as Record<string, unknown>).accessToken as string).length : 0,
+      githubIdExists: !!(session as unknown as Record<string, unknown>)?.githubId,
+      githubId: (session as unknown as Record<string, unknown>)?.githubId,
+      expires: session?.expires,
       nodeEnv: process.env.NODE_ENV
     })
     
-    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
+    if (!session) {
+      console.log('❌ No session found')
       return Response.json(
         { 
-          message: 'Not authenticated',
+          message: 'Not authenticated - No session found',
           debug: {
-            hasSession: !!session,
-            hasAccessToken: !!(session as unknown as Record<string, unknown>)?.accessToken,
+            hasSession: false,
+            hasAccessToken: false,
+            nodeEnv: process.env.NODE_ENV,
+            nextAuthUrl: process.env.NEXTAUTH_URL,
+            hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET
+          }
+        },
+        { status: 401 }
+      )
+    }
+
+    if (!(session as unknown as Record<string, unknown>).accessToken) {
+      console.log('❌ No access token in session')
+      return Response.json(
+        { 
+          message: 'Not authenticated - No access token',
+          debug: {
+            hasSession: true,
+            hasAccessToken: false,
+            sessionKeys: Object.keys(session),
+            userExists: !!session?.user,
             nodeEnv: process.env.NODE_ENV
           }
         },
         { status: 401 }
       )
     }
+
+    console.log('✅ Authentication successful')
 
     const body = await request.json()
     

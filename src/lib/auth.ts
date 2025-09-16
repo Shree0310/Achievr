@@ -24,33 +24,73 @@ export const authOptions: NextAuthOptions = {
   ],
   
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
+      console.log('JWT callback triggered:', {
+        hasToken: !!token,
+        hasAccount: !!account,
+        hasUser: !!user,
+        accountProvider: account?.provider,
+        accountType: account?.type,
+        hasAccessToken: !!account?.access_token,
+        tokenKeys: Object.keys(token),
+        nodeEnv: process.env.NODE_ENV
+      })
+
       // Store GitHub access token in JWT
       if (account) {
         (token as JWT & { accessToken?: string; githubId?: string }).accessToken = account.access_token as string
         (token as JWT & { accessToken?: string; githubId?: string }).githubId = account.providerAccountId as string
+        
+        console.log('Stored in JWT token:', {
+          accessTokenLength: account.access_token?.length || 0,
+          githubId: account.providerAccountId,
+          provider: account.provider
+        })
       }
       return token
     },
     
     async session({ session, token }) {
+      console.log('Session callback triggered:', {
+        hasSession: !!session,
+        hasToken: !!token,
+        sessionKeys: session ? Object.keys(session) : [],
+        tokenKeys: token ? Object.keys(token) : [],
+        hasAccessToken: !!(token as JWT & { accessToken?: string; githubId?: string }).accessToken,
+        nodeEnv: process.env.NODE_ENV
+      })
+
       // Send properties to the client
       const extendedToken = token as JWT & { accessToken?: string; githubId?: string }
       const extendedSession = session as Session & { accessToken?: string; githubId?: string }
       
       if (extendedToken.accessToken) {
         extendedSession.accessToken = extendedToken.accessToken
+        console.log('Added access token to session:', {
+          accessTokenLength: extendedToken.accessToken.length,
+          githubId: extendedToken.githubId
+        })
       }
       if (extendedToken.githubId) {
         extendedSession.githubId = extendedToken.githubId
       }
       
+      console.log('Final session:', {
+        hasAccessToken: !!extendedSession.accessToken,
+        hasGithubId: !!extendedSession.githubId,
+        userEmail: extendedSession.user?.email
+      })
+      
       return session
     },
     
     async signIn({ user, account, profile }) {
-      // Temporarily disable Supabase operations for testing
-      console.log('Sign in attempt:', { user, account, profile })
+      console.log('Sign in callback triggered:', { 
+        user: user ? { id: user.id, email: user.email, name: user.name } : null,
+        account: account ? { provider: account.provider, type: account.type } : null,
+        profile: profile ? { login: (profile as any).login, id: (profile as any).id } : null,
+        nodeEnv: process.env.NODE_ENV
+      })
       return true
     }
   },
