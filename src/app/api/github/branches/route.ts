@@ -9,9 +9,25 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
     
+    // Debug logging for production troubleshooting
+    console.log('Session check:', {
+      hasSession: !!session,
+      hasAccessToken: !!(session as unknown as Record<string, unknown>)?.accessToken,
+      sessionKeys: session ? Object.keys(session) : [],
+      user: session?.user,
+      nodeEnv: process.env.NODE_ENV
+    })
+    
     if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(
-        { message: 'Not authenticated' },
+        { 
+          message: 'Not authenticated',
+          debug: {
+            hasSession: !!session,
+            hasAccessToken: !!(session as unknown as Record<string, unknown>)?.accessToken,
+            nodeEnv: process.env.NODE_ENV
+          }
+        },
         { status: 401 }
       )
     }
