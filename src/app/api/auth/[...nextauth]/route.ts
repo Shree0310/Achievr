@@ -30,14 +30,4 @@ if (!process.env.GITHUB_CLIENT_SECRET) {
 
 const handler = NextAuth(authOptions)
 
-// Add error handling
-handler.auth = async (req: any, res: any) => {
-  try {
-    return await handler.auth(req, res)
-  } catch (error) {
-    console.error('NextAuth error:', error)
-    throw error
-  }
-}
-
 export { handler as GET, handler as POST }
