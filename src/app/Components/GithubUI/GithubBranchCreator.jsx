@@ -58,7 +58,6 @@ function GithubBranchCreator({taskToEdit, userId}) {
   }
 
   const handleRepositoryChange = (e) => {
-    console.log('Repository changing to:', e.target.value) // Debug log
     setRepositoryFullName(e.target.value)
   }
 
