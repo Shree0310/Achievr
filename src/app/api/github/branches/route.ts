@@ -14,7 +14,10 @@ export async function POST(request: Request) {
       hasGitHubClientId: !!process.env.GITHUB_CLIENT_ID,
       hasGitHubClientSecret: !!process.env.GITHUB_CLIENT_SECRET,
       nodeEnv: process.env.NODE_ENV,
-      nextAuthUrl: process.env.NEXTAUTH_URL
+      nextAuthUrl: process.env.NEXTAUTH_URL,
+      secretLength: process.env.NEXTAUTH_SECRET?.length || 0,
+      githubClientIdLength: process.env.GITHUB_CLIENT_ID?.length || 0,
+      githubClientSecretLength: process.env.GITHUB_CLIENT_SECRET?.length || 0
     })
 
     // Log request headers

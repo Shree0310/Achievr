@@ -7,6 +7,13 @@ import GoogleProvider from 'next-auth/providers/google'
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -88,7 +95,10 @@ export const authOptions: NextAuthOptions = {
       console.log('Sign in callback triggered:', { 
         user: user ? { id: user.id, email: user.email, name: user.name } : null,
         account: account ? { provider: account.provider, type: account.type } : null,
-        profile: profile ? { login: (profile as any).login, id: (profile as any).id } : null,
+        profile: profile ? { 
+          login: (profile as Record<string, unknown>).login, 
+          id: (profile as Record<string, unknown>).id 
+        } : null,
         nodeEnv: process.env.NODE_ENV
       })
       return true
