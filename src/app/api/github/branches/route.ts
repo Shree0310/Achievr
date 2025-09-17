@@ -1,89 +1,63 @@
 // app/api/github/branches/route.ts
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../../../../lib/auth'
 import { createOctokit } from '../../../../lib/github'
 import { supabaseAdmin } from '../../../../lib/supabase'
-
-// Extend Session type to include accessToken
-import type { Session as NextAuthSession } from 'next-auth'
-
-type SessionWithToken = NextAuthSession & { accessToken?: string }
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 // POST: Create a new branch for a task
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions) as SessionWithToken
-    // Log environment variables
-    console.log('Environment check:', {
-      hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
-      hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
-      hasGitHubClientId: !!process.env.GITHUB_CLIENT_ID,
-      hasGitHubClientSecret: !!process.env.GITHUB_CLIENT_SECRET,
-      nodeEnv: process.env.NODE_ENV,
-      nextAuthUrl: process.env.NEXTAUTH_URL,
-      secretLength: process.env.NEXTAUTH_SECRET?.length || 0,
-      githubClientIdLength: process.env.GITHUB_CLIENT_ID?.length || 0,
-      githubClientSecretLength: process.env.GITHUB_CLIENT_SECRET?.length || 0
-    })
-
-    // Log request headers
-    const headers = Object.fromEntries(request.headers.entries())
-    console.log('Request headers:', {
-      cookie: headers.cookie ? 'Present' : 'Missing',
-      authorization: headers.authorization ? 'Present' : 'Missing',
-      userAgent: headers['user-agent'],
-      origin: headers.origin,
-      referer: headers.referer
-    })
-
-    const session = await getServerSession(authOptions)
-    
-    // Comprehensive session debugging
-    console.log('Session analysis:', {
-      sessionExists: !!session,
-      sessionType: typeof session,
-      sessionKeys: session ? Object.keys(session) : [],
-      userExists: !!session?.user,
-      userKeys: session?.user ? Object.keys(session.user) : [],
-      userEmail: session?.user?.email,
-      userName: session?.user?.name,
-      accessTokenExists: !!(session as unknown as Record<string, unknown>)?.accessToken,
-      accessTokenType: typeof (session as unknown as Record<string, unknown>)?.accessToken,
-      accessTokenLength: (session as unknown as Record<string, unknown>)?.accessToken ? 
-        ((session as unknown as Record<string, unknown>).accessToken as string).length : 0,
-      githubIdExists: !!(session as unknown as Record<string, unknown>)?.githubId,
-      githubId: (session as unknown as Record<string, unknown>)?.githubId,
-      expires: session?.expires,
-      nodeEnv: process.env.NODE_ENV
-    })
-    
-    if (!session) {
-      console.log('❌ No session found')
-      return Response.json(
-        { 
-          message: 'Not authenticated - No session found',
-          debug: {
-            hasSession: false,
-            hasAccessToken: false,
-            nodeEnv: process.env.NODE_ENV,
-            nextAuthUrl: process.env.NEXTAUTH_URL,
-            hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET
-          }
+    // Get Supabase session
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
         },
+      }
+    )
+
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    console.log('GitHub branches API - Session check:', {
+      hasSession: !!session,
+      hasUser: !!session?.user,
+      userEmail: session?.user?.email,
+      userMetadata: session?.user?.user_metadata,
+      sessionError: sessionError?.message
+    })
+    
+    if (sessionError) {
+      console.error('Session error:', sessionError)
+      return Response.json(
+        { message: 'Authentication error', error: sessionError.message },
         { status: 401 }
       )
     }
 
-    if (!(session as unknown as Record<string, unknown>).accessToken) {
-      console.log('❌ No access token in session')
+    // Get GitHub access token from user metadata or Authorization header
+    let githubAccessToken = session?.user?.user_metadata?.github_access_token
+    
+    // Check Authorization header for demo mode or direct token
+    const authHeader = request.headers.get('authorization')
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      githubAccessToken = authHeader.substring(7)
+      console.log('Using GitHub token from Authorization header')
+    }
+    
+    if (!githubAccessToken) {
+      console.log('❌ No GitHub access token found')
       return Response.json(
         { 
-          message: 'Not authenticated - No access token',
+          message: 'Not authenticated - No GitHub access token. Please connect your GitHub account.',
           debug: {
-            hasSession: true,
-            hasAccessToken: false,
-            sessionKeys: Object.keys(session),
-            userExists: !!session?.user,
+            hasSession: !!session,
+            hasUser: !!session?.user,
+            hasGitHubToken: false,
             nodeEnv: process.env.NODE_ENV
           }
         },
@@ -91,11 +65,20 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log('✅ Authentication successful')
+    console.log('✅ Supabase authentication successful')
 
     const body = await request.json()
     
-    const { task_id, repository_full_name, task_title, base_branch = 'main' } = body
+    const { task_id, repository_full_name, task_title, base_branch: initial_base_branch = 'main' } = body
+    let base_branch = initial_base_branch
+
+    console.log('Branch creation request:', {
+      task_id,
+      repository_full_name,
+      task_title,
+      base_branch,
+      hasGithubToken: !!githubAccessToken
+    })
 
     if (!task_id || !repository_full_name || !task_title) {
       console.log('Missing required fields:', { 
@@ -110,15 +93,53 @@ export async function POST(request: Request) {
       )
     }
 
-    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
+    const octokit = createOctokit(githubAccessToken)
     const [owner, repo] = repository_full_name.split('/')
 
+    console.log('Creating Octokit client and splitting repo:', { owner, repo })
+
     // Get the base branch SHA
-    const { data: baseRef } = await octokit.rest.git.getRef({
-      owner,
-      repo,
-      ref: `heads/${base_branch}`
-    })
+    console.log('Getting base branch SHA for:', `heads/${base_branch}`)
+    console.log('Repository details:', { owner, repo, full_name: repository_full_name })
+    
+    let baseRef
+    try {
+      const result = await octokit.rest.git.getRef({
+        owner,
+        repo,
+        ref: `heads/${base_branch}`
+      })
+      baseRef = result.data
+      console.log('Base branch SHA:', baseRef.object.sha)
+    } catch (refError) {
+      console.error('Error getting base branch:', refError)
+      
+      // Try to get the default branch first
+      try {
+        console.log('Trying to get repository info to find default branch...')
+        const { data: repoInfo } = await octokit.rest.repos.get({
+          owner,
+          repo
+        })
+        
+        console.log('Repository info:', { default_branch: repoInfo.default_branch })
+        
+        // Try with the default branch
+        const result = await octokit.rest.git.getRef({
+          owner,
+          repo,
+          ref: `heads/${repoInfo.default_branch}`
+        })
+        
+        baseRef = result.data
+        console.log('Using default branch SHA:', baseRef.object.sha)
+        // Update base_branch for the rest of the function
+        base_branch = repoInfo.default_branch
+      } catch (repoError) {
+        console.error('Error getting repository info:', repoError)
+        throw refError
+      }
+    }
 
     // Create branch name from task
     const sanitizedTitle = task_title
@@ -129,14 +150,18 @@ export async function POST(request: Request) {
       .substring(0, 50)
 
     const branchName = `feature/TASK-${task_id}-${sanitizedTitle}`
+    console.log('Generated branch name:', branchName)
 
     // Create new branch on GitHub
-    await octokit.rest.git.createRef({
+    console.log('Creating branch on GitHub...')
+    const branchResult = await octokit.rest.git.createRef({
       owner,
       repo,
       ref: `refs/heads/${branchName}`,
       sha: baseRef.object.sha
     })
+    
+    console.log('Branch created on GitHub:', branchResult.data)
 
     // Get repository ID from database
     if (!supabaseAdmin) {
@@ -146,13 +171,17 @@ export async function POST(request: Request) {
       )
     }
 
-    const { data: repository } = await supabaseAdmin
+    console.log('Looking up repository in database:', repository_full_name)
+    const { data: repository, error: repoError } = await supabaseAdmin
       .from('github_repositories')
       .select('id')
       .eq('full_name', repository_full_name)
       .single()
 
+    console.log('Repository lookup result:', { repository, repoError })
+
     if (!repository) {
+      console.log('Repository not found in database')
       return Response.json(
         { message: 'Repository not connected. Please connect it first.' },
         { status: 400 }
@@ -160,24 +189,31 @@ export async function POST(request: Request) {
     }
 
     // Store branch reference in database
+    console.log('Storing branch reference in database...')
+    const referenceData = {
+      task_id,
+      repository_id: repository.id,
+      github_type: 'branch',
+      github_id: branchName,
+      title: `Branch for: ${task_title}`,
+      url: `https://github.com/${repository_full_name}/tree/${branchName}`,
+      status: 'active',
+        author: session?.user?.user_metadata?.full_name || session?.user?.email || 'Demo User',
+      metadata: {
+        base_branch,
+        created_from_task: true
+      }
+    }
+    
+    console.log('Reference data to insert:', referenceData)
+    
     const { data: reference, error } = await supabaseAdmin
       .from('github_references')
-      .insert({
-        task_id,
-        repository_id: repository.id,
-        github_type: 'branch',
-        github_id: branchName,
-        title: `Branch for: ${task_title}`,
-        url: `https://github.com/${repository_full_name}/tree/${branchName}`,
-        status: 'active',
-        author: session.user?.name || 'Unknown',
-        metadata: {
-          base_branch,
-          created_from_task: true
-        }
-      })
+      .insert(referenceData)
       .select()
       .single()
+
+    console.log('Database insert result:', { reference, error })
 
     if (error) {
       console.error('Database error:', error)

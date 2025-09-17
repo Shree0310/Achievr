@@ -9,6 +9,7 @@ import { supabase } from "@/utils/supabase/client";
 const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isDemoLoading, setIsDemoLoading] = useState(false);
+    const [isGitHubLoading, setIsGitHubLoading] = useState(false);
     const [error, setError] = useState('');
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const router = useRouter();
@@ -19,7 +20,11 @@ const Login = () => {
         const checkAuth = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
+                console.log('Session check:', { hasSession: !!session, hasUser: !!session?.user });
                 if (session?.user) {
+                    // Check if there's temporary GitHub data to apply
+                    console.log('User authenticated, checking for GitHub data...');
+                    await applyTemporaryGitHubData(session.user);
                     // User is already authenticated, redirect to board
                     router.push('/board');
                     return;
@@ -34,12 +39,70 @@ const Login = () => {
         checkAuth();
     }, [router]);
 
+    // Function to apply temporary GitHub data after authentication
+    const applyTemporaryGitHubData = async (user) => {
+        try {
+            // Check if there's temporary GitHub data in localStorage or sessionStorage
+            let tempData = localStorage.getItem('temp_github_data');
+            if (!tempData) {
+                tempData = sessionStorage.getItem('temp_github_data');
+            }
+            
+            console.log('Checking for temp GitHub data:', tempData);
+            if (!tempData) {
+                console.log('No temporary GitHub data found');
+                return; // No temporary data to apply
+            }
+
+            const githubData = JSON.parse(tempData);
+            console.log('Applying GitHub data:', githubData);
+
+            // Update user metadata with GitHub data
+            const { error } = await supabase.auth.updateUser({
+                data: {
+                    github_access_token: githubData.access_token,
+                    github_id: githubData.github_id,
+                    github_username: githubData.github_username,
+                    github_name: githubData.github_name,
+                    github_avatar_url: githubData.github_avatar_url,
+                }
+            });
+
+            if (error) {
+                console.error('Failed to update user metadata:', error);
+            } else {
+                console.log('GitHub data applied successfully');
+                // Clear temporary data from both storages
+                localStorage.removeItem('temp_github_data');
+                sessionStorage.removeItem('temp_github_data');
+            }
+        } catch (error) {
+            console.error('Error applying temporary GitHub data:', error);
+        }
+    };
+
     // Handle error parameters from URL
     useEffect(() => {
         const errorParam = searchParams.get('error');
         const errorDescription = searchParams.get('description');
+        const githubTokenReady = searchParams.get('github_token_ready');
         
-        if (errorParam) {
+        if (githubTokenReady === 'true') {
+            setError('GitHub account connected! Please sign in to complete the setup.');
+            // Store GitHub data in localStorage for later use
+            const githubData = {
+                access_token: searchParams.get('github_access_token'),
+                github_id: searchParams.get('github_id'),
+                github_username: searchParams.get('github_username'),
+                github_name: searchParams.get('github_name'),
+                github_avatar_url: searchParams.get('github_avatar_url'),
+            };
+            console.log('Storing GitHub data in localStorage:', githubData);
+            localStorage.setItem('temp_github_data', JSON.stringify(githubData));
+            
+            // Also store in sessionStorage as backup
+            sessionStorage.setItem('temp_github_data', JSON.stringify(githubData));
+        } else if (errorParam) {
             switch (errorParam) {
                 case 'authentication_failed':
                     setError('Authentication failed. Please try again.');
@@ -67,19 +130,47 @@ const Login = () => {
             setIsLoading(true);
             setError('');
             
-            // Get the current site URL dynamically
-            const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-                           (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+            // Use our auth callback page
+            const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+            const supabaseCallbackUrl = `${siteUrl}/auth/callback`;
             
-            const { error } = await supabase.auth.signInWithOAuth({
+            // Check if there's GitHub data to pass through
+            const githubData = localStorage.getItem('temp_github_data') || sessionStorage.getItem('temp_github_data');
+            
+            if (githubData) {
+                const parsed = JSON.parse(githubData);
+                // Store GitHub data in localStorage with a flag to apply it after Google OAuth
+                localStorage.setItem('pending_github_data', JSON.stringify(parsed));
+                console.log('Stored pending GitHub data for after Google OAuth');
+            }
+            
+            console.log('Google OAuth redirect URL:', supabaseCallbackUrl);
+            
+            const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${siteUrl}/auth/callback?provider=google`
+                    redirectTo: supabaseCallbackUrl,
+                    queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent'
+                    }
                 }
             });
 
+            console.log('Google OAuth response:', { data, error });
+            console.log('Supabase callback URL:', supabaseCallbackUrl);
+
             if (error) {
+                console.error('Google OAuth error:', error);
                 throw error;
+            }
+            
+            // Check if we got a URL to redirect to
+            if (data?.url) {
+                console.log('Redirecting to Google OAuth:', data.url);
+                window.location.href = data.url;
+            } else {
+                console.log('No redirect URL received from Google OAuth');
             }
             // Don't set loading to false here as the page will redirect
         } catch (error) {
@@ -93,15 +184,42 @@ const Login = () => {
         setIsDemoLoading(true);
         setError('');
         try {
-            // Set demo mode in localStorage directly
-            localStorage.setItem('demoMode', 'true');
-            localStorage.setItem('demoUser', JSON.stringify({
-                id: 'demo-user-id',
-                email: 'demo@example.com',
-                user_metadata: {
-                    name: 'Demo User'
-                }
-            }));
+            // Check for GitHub data first
+            const githubData = localStorage.getItem('temp_github_data') || sessionStorage.getItem('temp_github_data');
+            
+            if (githubData) {
+                const parsedGithubData = JSON.parse(githubData);
+                console.log('Demo login with GitHub data:', parsedGithubData);
+                
+                // Use localStorage approach for now since Supabase signup might require email confirmation
+                localStorage.setItem('demoMode', 'true');
+                localStorage.setItem('demoUser', JSON.stringify({
+                    id: 'demo-user-id',
+                    email: 'demo@achievr.app',
+                    user_metadata: {
+                        name: 'Demo User',
+                        ...parsedGithubData
+                    }
+                }));
+                
+                console.log('Demo user created with GitHub data in localStorage');
+                
+                // Clear temporary GitHub data
+                localStorage.removeItem('temp_github_data');
+                sessionStorage.removeItem('temp_github_data');
+            } else {
+                // Regular demo login without GitHub data
+                localStorage.setItem('demoMode', 'true');
+                localStorage.setItem('demoUser', JSON.stringify({
+                    id: 'demo-user-id',
+                    email: 'demo@achievr.app',
+                    user_metadata: {
+                        name: 'Demo User'
+                    }
+                }));
+                
+                console.log('Demo user created in localStorage');
+            }
             
             // Navigate to the board page
             router.push('/board');
@@ -110,6 +228,20 @@ const Login = () => {
             setError(error.message);
         } finally {
             setIsDemoLoading(false);
+        }
+    };
+
+    const handleGitHubConnect = async () => {
+        setIsGitHubLoading(true);
+        setError('');
+        
+        try {
+            // Redirect to GitHub OAuth initiation
+            window.location.href = '/api/github/oauth/initiate';
+        } catch (error) {
+            console.error('GitHub connect error:', error);
+            setError('Failed to connect GitHub. Please try again.');
+            setIsGitHubLoading(false);
         }
     };
 
@@ -177,6 +309,27 @@ const Login = () => {
                             )}
                             <span className="text-sm font-medium">
                                 {isLoading ? 'Signing in...' : 'Sign in with Google'}
+                            </span>
+                        </button>
+
+                        {/* GitHub Connect Button */}
+                        <button
+                            onClick={handleGitHubConnect}
+                            disabled={isGitHubLoading}
+                            className={`w-full flex items-center justify-center space-x-3 px-4 py-3 text-white bg-gray-900 rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all ${isGitHubLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        >
+                            {isGitHubLoading ? (
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clipRule="evenodd" />
+                                </svg>
+                            )}
+                            <span className="text-sm font-medium">
+                                {isGitHubLoading ? 'Connecting...' : 'Connect GitHub'}
                             </span>
                         </button>
 

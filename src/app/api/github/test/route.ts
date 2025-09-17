@@ -1,23 +1,44 @@
 // app/api/github/test/route.ts
-import { getServerSession, Session } from 'next-auth'
-import { authOptions } from '../../../../lib/auth'
 import { testGitHubConnection } from '../../../../lib/github'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
-    
-    // Type assertion to include accessToken
-    const accessToken = (session as Session & { accessToken?: string })?.accessToken
+    // Get Supabase session
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+        },
+      }
+    )
 
-    if (!session || !accessToken) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError || !session?.user) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const result = await testGitHubConnection(accessToken)
+    // Get GitHub access token from user metadata
+    const githubAccessToken = session.user.user_metadata?.github_access_token
+    
+    if (!githubAccessToken) {
+      return Response.json(
+        { message: 'No GitHub access token. Please connect your GitHub account.' },
+        { status: 401 }
+      )
+    }
+
+    const result = await testGitHubConnection(githubAccessToken)
     
     if (result.success) {
       return Response.json({
