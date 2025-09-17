@@ -1,5 +1,6 @@
 // components/GitHubAuth.jsx
-import { useSession, signIn, signOut } from 'next-auth/react'
+import { useSession, signIn, signOut } from 'next-auth/react';
+import Image from 'next/image'
 
 export default function GitHubAuth() {
   const { data: session, status } = useSession()
@@ -9,10 +10,12 @@ export default function GitHubAuth() {
   if (session) {
     return (
       <div className="flex items-center gap-4">
-        <img 
-          src={session.user.image} 
-          alt="Profile" 
-          className="w-8 h-8 rounded-full"
+        <Image 
+            src={session.user?.image || '/default-avatar.png'} 
+            alt="Profile" 
+            width={40}
+            height={40}
+            className="rounded-full"
         />
         <span>Signed in as {session.user.name}</span>
         <button 

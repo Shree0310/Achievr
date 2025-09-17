@@ -1,6 +1,6 @@
 // app/api/github/test/route.ts
 import { getServerSession, Session } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '../../../../lib/auth'
 import { testGitHubConnection } from '../../../../lib/github'
 
 export async function GET() {
