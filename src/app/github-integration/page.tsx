@@ -146,7 +146,7 @@ function BranchCreator() {
   console.log('Form state:', { taskId, taskTitle, repositoryFullName, baseBranch }) // Debug log
 
   const createBranch = async () => {
-    console.log('Create branch clicked') // Debug log
+    console.log('Create branch clicked')
     
     if (!taskId || !taskTitle || !repositoryFullName) {
       alert('Please fill in all required fields')
@@ -188,17 +188,14 @@ function BranchCreator() {
   }
 
   const handleTaskIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Task ID changing to:', e.target.value) // Debug log
     setTaskId(e.target.value)
   }
 
   const handleTaskTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Task title changing to:', e.target.value) // Debug log
     setTaskTitle(e.target.value)
   }
 
   const handleRepositoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Repository changing to:', e.target.value) // Debug log
     setRepositoryFullName(e.target.value)
   }
 
