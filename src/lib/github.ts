@@ -26,10 +26,10 @@ export async function testGitHubConnection(accessToken: string) {
       user: user,
       repositories: repos
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     }
   }
 }
@@ -74,10 +74,10 @@ export async function createTaskBranch(
       branchName,
       url: `https://github.com/${owner}/${repo}/tree/${branchName}`
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     }
   }
 }
