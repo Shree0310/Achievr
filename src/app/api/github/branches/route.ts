@@ -35,8 +35,6 @@ export async function POST(request: Request) {
       origin: headers.origin,
       referer: headers.referer
     })
-
-    const session = await getServerSession(authOptions)
     
     // Comprehensive session debugging
     console.log('Session analysis:', {
