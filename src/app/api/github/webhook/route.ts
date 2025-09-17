@@ -53,7 +53,6 @@ export async function POST(request: Request) {
   
   try {
     // Log incoming request details
-    console.log('🔍 Webhook request received')
     console.log('📋 Headers:', Object.fromEntries(request.headers.entries()))
     
     const body = await request.text()
