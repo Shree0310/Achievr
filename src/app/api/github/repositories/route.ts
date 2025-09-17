@@ -4,11 +4,16 @@ import { authOptions } from '../../auth/[...nextauth]/route'
 import { createOctokit } from '../../../../lib/github'
 import { supabase } from '../../../../lib/supabase'
 
-// GET: List user's GitHub repositories
+import type { Session } from 'next-auth'
+
+// Extend Session type to include accessToken
+type SessionWithToken = Session & { accessToken?: string }
+
+// GET: Fetch user's repositories from GitHub and mark connected ones
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
-    
+    const session = await getServerSession(authOptions) as SessionWithToken
+
     if (!session || !session.accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
@@ -17,7 +22,7 @@ export async function GET() {
     }
 
     const octokit = createOctokit(session.accessToken)
-    
+
     // Get user's repositories from GitHub
     const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({
       per_page: 100,
@@ -67,7 +72,7 @@ export async function GET() {
 // POST: Connect a repository to a project
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as SessionWithToken
     
     if (!session || !session.accessToken) {
       return Response.json(

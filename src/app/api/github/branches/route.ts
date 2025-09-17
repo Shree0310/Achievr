@@ -4,10 +4,15 @@ import { authOptions } from '../../auth/[...nextauth]/route'
 import { createOctokit } from '../../../../lib/github'
 import { supabase } from '../../../../lib/supabase'
 
-// POST: Create a branch for a task
+// Extend Session type to include accessToken
+import type { Session as NextAuthSession } from 'next-auth'
+
+type SessionWithToken = NextAuthSession & { accessToken?: string }
+
+// POST: Create a new branch for a task
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as SessionWithToken
     
     if (!session || !session.accessToken) {
       return Response.json(
@@ -116,7 +121,7 @@ export async function POST(request: Request) {
     console.error('Error creating branch:', error)
     
     // Handle specific GitHub errors
-    if (error.status === 422) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as any).status === 422) {
       return Response.json(
         { message: 'Branch already exists or invalid branch name' },
         { status: 400 }

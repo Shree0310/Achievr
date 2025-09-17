@@ -187,7 +187,10 @@ export async function POST(request: Request) {
     }
     
     return Response.json(
-      { message: 'Webhook processing failed', error: error.message },
+      { 
+        message: 'Webhook processing failed', 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     )
   }
