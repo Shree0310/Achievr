@@ -4,9 +4,15 @@ import { authOptions } from '../../../../lib/auth'
 import { createOctokit } from '../../../../lib/github'
 import { supabaseAdmin } from '../../../../lib/supabase'
 
-// POST: Create a branch for a task
+// Extend Session type to include accessToken
+import type { Session as NextAuthSession } from 'next-auth'
+
+type SessionWithToken = NextAuthSession & { accessToken?: string }
+
+// POST: Create a new branch for a task
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession(authOptions) as SessionWithToken
     // Log environment variables
     console.log('Environment check:', {
       hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,

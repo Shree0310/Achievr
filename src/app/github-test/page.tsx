@@ -1,7 +1,7 @@
 'use client'
 // src/app/github-test/page.tsx
 import { useSession, signIn, signOut } from 'next-auth/react'
-import { useState } from 'react'
+import { useState } from 'react';
 import Image from 'next/image'
 
 interface TestResult {
@@ -38,12 +38,12 @@ function GitHubAuth() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Image 
-              src={session.user?.image || ''} 
-              alt="Profile" 
-              width={40}
-              height={40}
-              className="w-10 h-10 rounded-full"
-            />
+                src={session.user?.image || ''} 
+                alt="Profile" 
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full"
+                />
             <div>
               <p className="font-medium text-green-800">
                 Signed in as {session.user?.name}

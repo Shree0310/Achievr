@@ -1,27 +1,17 @@
 // src/lib/github-webhooks/pr-handler.ts
 import { supabaseAdmin } from '../supabase'
 
-export async function handlePullRequestEvent(payload: unknown) {
+export async function handlePullRequestEvent(payload: Record<string, unknown>) {
   try {
-    if (!payload || typeof payload !== 'object') {
-      throw new Error('Invalid payload structure')
-    }
-    
-    const p = payload as Record<string, unknown> // Type assertion for GitHub webhook payload
-    const repositoryFullName = (p.repository as Record<string, unknown>)?.full_name as string
-    const pullRequest = p.pull_request as Record<string, unknown>
-    const action = p.action as string // opened, closed, synchronize, etc.
+  const repositoryFullName = (payload.repository as Record<string, unknown>)?.full_name as string
+  const pullRequest = payload.pull_request as Record<string, unknown>
+  const action = payload.action as string // opened, closed, synchronize, etc.
 
-    console.log(`PR ${action}: #${(pullRequest.number as number)} in ${repositoryFullName}`)
-    console.log(`PR title: ${pullRequest.title as string}`)
-    console.log(`PR branch: ${(pullRequest.head as Record<string, unknown>)?.ref as string}`)
+    console.log(`PR ${action}: #${pullRequest.number} in ${repositoryFullName}`)
+    console.log(`PR title: ${pullRequest.title}`)
+    console.log(`PR branch: ${(pullRequest.head as Record<string, unknown>)?.ref}`)
 
     // Get repository info from database
-    if (!supabaseAdmin) {
-      console.log('Database not configured, skipping PR processing')
-      return
-    }
-
     const { data: repository } = await supabaseAdmin
       .from('github_repositories')
       .select('id, full_name')
@@ -53,12 +43,12 @@ export async function handlePullRequestEvent(payload: unknown) {
           await linkPullRequestToTask(taskId, repository.id, pullRequest, repositoryFullName, action)
         }
       } else {
-        console.log(`PR #${pullRequest.number as number} not from tracked branch and no task IDs found, skipping`)
+        console.log(`PR #${pullRequest.number} not from tracked branch and no task IDs found, skipping`)
       }
       return
     }
 
-    console.log(`PR #${pullRequest.number as number} is from tracked branch linked to task ${branchReference.task_id}`)
+    console.log(`PR #${pullRequest.number} is from tracked branch linked to task ${branchReference.task_id}`)
 
     // Link PR to the task
     await linkPullRequestToTask(
@@ -77,23 +67,12 @@ export async function handlePullRequestEvent(payload: unknown) {
 async function linkPullRequestToTask(
   taskId: string,
   repositoryId: string,
-  pullRequest: unknown,
+  pullRequest: Record<string, unknown>,
   repositoryFullName: string,
   action: string
 ) {
   try {
-    if (!pullRequest || typeof pullRequest !== 'object') {
-      throw new Error('Invalid pull request structure')
-    }
-    
-    const pr = pullRequest as Record<string, unknown> // Type assertion for GitHub pull request
-    
     // Verify task exists in your system
-    if (!supabaseAdmin) {
-      console.log('Database not configured, skipping PR link')
-      return
-    }
-
     const { data: task } = await supabaseAdmin
       .from('tasks')
       .select('id, title')
@@ -107,8 +86,8 @@ async function linkPullRequestToTask(
 
     // Determine PR status based on action and state
     let prStatus = 'open'
-    if (pr.state === 'closed') {
-      prStatus = pr.merged ? 'merged' : 'closed'
+    if ((pullRequest.state as string) === 'closed') {
+      prStatus = (pullRequest.merged as boolean) ? 'merged' : 'closed'
     }
 
     // Check if PR already linked to this task
@@ -116,7 +95,7 @@ async function linkPullRequestToTask(
       .from('github_references')
       .select('id, metadata')
       .eq('github_type', 'pr')
-      .eq('github_id', (pr.number as number)?.toString())
+      .eq('github_id', (pullRequest.number as number).toString())
       .eq('task_id', taskId)
       .single()
 
@@ -126,15 +105,15 @@ async function linkPullRequestToTask(
         .from('github_references')
         .update({
           status: prStatus,
-          title: pr.title as string,
-          description: (pr.body as string) || (pr.title as string),
+          title: pullRequest.title as string,
+          description: (pullRequest.body as string) || (pullRequest.title as string),
           metadata: {
-            ...existingPR.metadata,
+            ...(existingPR.metadata as Record<string, unknown>),
             pr_action: action,
-            merged_at: pr.merged_at as string,
-            closed_at: pr.closed_at as string,
-            head_branch: (pr.head as Record<string, unknown>)?.ref as string,
-            base_branch: (pr.base as Record<string, unknown>)?.ref as string,
+            merged_at: pullRequest.merged_at,
+            closed_at: pullRequest.closed_at,
+            head_branch: (pullRequest.head as Record<string, unknown>)?.ref,
+            base_branch: (pullRequest.base as Record<string, unknown>)?.ref,
             updated_via_webhook: true
           }
         })
@@ -145,7 +124,7 @@ async function linkPullRequestToTask(
         return
       }
 
-      console.log(`Updated PR #${pr.number as number} status to ${prStatus} for task ${taskId}`)
+      console.log(`Updated PR #${pullRequest.number} status to ${prStatus} for task ${taskId}`)
       return
     }
 
@@ -156,25 +135,25 @@ async function linkPullRequestToTask(
         task_id: taskId,
         repository_id: repositoryId,
         github_type: 'pr',
-        github_id: (pr.number as number).toString(),
-        title: pr.title as string,
-        description: (pr.body as string) || (pr.title as string),
-        url: pr.html_url as string,
+        github_id: (pullRequest.number as number).toString(),
+        title: pullRequest.title as string,
+        description: (pullRequest.body as string) || (pullRequest.title as string),
+        url: pullRequest.html_url as string,
         status: prStatus,
-        author: (pr.user as Record<string, unknown>)?.login as string,
+        author: (pullRequest.user as Record<string, unknown>)?.login as string,
         metadata: {
           pr_action: action,
-          pr_state: pr.state as string,
-          merged: pr.merged as boolean,
-          merged_at: pr.merged_at as string,
-          closed_at: pr.closed_at as string,
-          head_branch: (pr.head as Record<string, unknown>)?.ref as string,
-          base_branch: (pr.base as Record<string, unknown>)?.ref as string,
-          head_sha: (pr.head as Record<string, unknown>)?.sha as string,
+          pr_state: pullRequest.state,
+          merged: pullRequest.merged,
+          merged_at: pullRequest.merged_at,
+          closed_at: pullRequest.closed_at,
+          head_branch: (pullRequest.head as Record<string, unknown>)?.ref,
+          base_branch: (pullRequest.base as Record<string, unknown>)?.ref,
+          head_sha: (pullRequest.head as Record<string, unknown>)?.sha,
           auto_linked_via_webhook: true,
-          additions: (pr.additions as number) || 0,
-          deletions: (pr.deletions as number) || 0,
-          changed_files: (pr.changed_files as number) || 0
+          additions: pullRequest.additions || 0,
+          deletions: pullRequest.deletions || 0,
+          changed_files: pullRequest.changed_files || 0
         }
       })
       .select()
@@ -185,7 +164,7 @@ async function linkPullRequestToTask(
       return
     }
 
-    console.log(`Auto-linked PR #${pr.number as number} to task ${taskId} (${task.title})`)
+    console.log(`Auto-linked PR #${pullRequest.number} to task ${taskId} (${task.title})`)
 
   } catch (error) {
     console.error('Error linking PR to task:', error)

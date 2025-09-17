@@ -4,7 +4,12 @@ import { authOptions } from '../../../../lib/auth'
 import { createOctokit } from '../../../../lib/github'
 import { supabase } from '../../../../lib/supabase'
 
-// GET: List user's GitHub repositories
+import type { Session } from 'next-auth'
+
+// Extend Session type to include accessToken
+type SessionWithToken = Session & { accessToken?: string }
+
+// GET: Fetch user's repositories from GitHub and mark connected ones
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
@@ -72,7 +77,7 @@ export async function GET() {
 // POST: Connect a repository to a project
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as SessionWithToken
     
     if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(

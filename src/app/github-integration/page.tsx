@@ -15,6 +15,20 @@ interface Repository {
   connected: boolean
 }
 
+// interface Branch {
+//   id: string
+//   github_id: string
+//   title: string
+//   url: string
+//   status: string
+//   author: string
+//   created_at: string
+//   github_repositories: {
+//     full_name: string
+//     owner: string
+//     repo_name: string
+//   }
+// }
 
 function RepositoryManager() {
   const [repositories, setRepositories] = useState<Repository[]>([])
@@ -141,7 +155,15 @@ function BranchCreator() {
   const [repositoryFullName, setRepositoryFullName] = useState('')
   const [baseBranch, setBaseBranch] = useState('main')
   const [creating, setCreating] = useState(false)
-  const [result, setResult] = useState<Record<string, unknown> | null>(null)
+  type BranchResult = {
+    message?: string
+    error?: string
+    branch?: {
+      name: string
+      url: string
+    }
+  }
+  const [result, setResult] = useState<BranchResult | null>(null)
 
   console.log('Form state:', { taskId, taskTitle, repositoryFullName, baseBranch }) // Debug log
 
@@ -279,39 +301,33 @@ function BranchCreator() {
         {/* Debug info */}
         <div className="text-xs text-gray-500 p-2 bg-gray-50 rounded">
           <strong>Debug Info:</strong><br/>
-          Task ID: &quot;{taskId}&quot;<br/>
-          Task Title: &quot;{taskTitle}&quot;<br/>
-          Repository: &quot;{repositoryFullName}&quot;<br/>
-          Base Branch: &quot;{baseBranch}&quot;<br/>
-          Form valid: {taskId && taskTitle && repositoryFullName ? 'Yes' : 'No'}
-        </div>
-      </div>
-
-      {result && (
-        <div className={`p-4 rounded border ${
-          result.error ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
-        }`}>
-          <p className={`font-medium ${result.error ? 'text-red-800' : 'text-green-800'}`}>
-            {String(result.message)}
-          </p>
-          {(result.branch as Record<string, unknown>) && (
-            <div className="mt-2 text-sm">
-              <p><strong>Branch:</strong> {String((result.branch as Record<string, unknown>).name)}</p>
-              <a 
-                href={String((result.branch as Record<string, unknown>).url)} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                View on GitHub →
-              </a>
+          {result && (
+            <div className={`p-4 rounded border ${
+              result.error ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
+            }`}>
+              <p className={`font-medium ${result.error ? 'text-red-800' : 'text-green-800'}`}>
+                {typeof result.message === 'string' ? result.message : String(result.message)}
+              </p>
+              {result.branch && typeof result.branch === 'object' && 'name' in result.branch && 'url' in result.branch && (
+                <div className="mt-2 text-sm">
+                  <p><strong>Branch:</strong> {result.branch.name}</p>
+                  <a 
+                    href={result.branch.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    View on GitHub →
+                  </a>
+                </div>
+              )}
+              {result.error && (
+                <p className="text-red-600 text-sm mt-1">{result.error}</p>
+              )}
             </div>
           )}
-          {(result.error as string) && (
-            <p className="text-red-600 text-sm mt-1">{String(result.error)}</p>
-          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }

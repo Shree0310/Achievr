@@ -1,5 +1,5 @@
 // app/api/github/test/route.ts
-import { getServerSession } from 'next-auth'
+import { getServerSession, Session } from 'next-auth'
 import { authOptions } from '../../../../lib/auth'
 import { testGitHubConnection } from '../../../../lib/github'
 
@@ -7,14 +7,17 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
+    // Type assertion to include accessToken
+    const accessToken = (session as Session & { accessToken?: string })?.accessToken
+
+    if (!session || !accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const result = await testGitHubConnection((session as unknown as Record<string, unknown>).accessToken as string)
+    const result = await testGitHubConnection(accessToken)
     
     if (result.success) {
       return Response.json({

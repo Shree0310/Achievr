@@ -9,14 +9,12 @@ export async function GET() {
   console.log('🧪 Webhook test endpoint called')
   
   try {
-    if (!supabaseAdmin) {
-      throw new Error('Supabase client is not initialized');
-    }
     // Test Supabase connection
     const { error } = await supabaseAdmin
       .from('github_repositories')
       .select('count')
-      .limit(1);
+      .limit(1)
+    
     if (error) {
       console.error('❌ Supabase test failed:', error)
       return Response.json(
@@ -165,24 +163,23 @@ export async function POST(request: Request) {
 
   } catch (error: unknown) {
     console.error('💥 Webhook error:', error)
-    console.error('💥 Error stack:', error instanceof Error ? error.stack : 'No stack trace')
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    const errorName = error instanceof Error ? error.name : 'Unknown'
-    
-    console.error('💥 Error name:', errorName)
-    console.error('💥 Error message:', errorMessage)
+    if (error instanceof Error) {
+      console.error('💥 Error stack:', error.stack)
+      console.error('💥 Error name:', error.name)
+      console.error('💥 Error message:', error.message)
+    }
     
     // Check if it's a Supabase connection error
-    if (errorMessage.includes('supabase') || errorMessage.includes('database')) {
+    if (error instanceof Error && (error.message?.includes('supabase') || error.message?.includes('database'))) {
       console.error('💥 Database connection error detected')
       return Response.json(
-        { message: 'Database connection failed', error: errorMessage },
+        { message: 'Database connection failed', error: error.message },
         { status: 503 }
       )
     }
     
     // Return more specific error messages based on error type
-    if (errorName === 'SyntaxError') {
+    if (error instanceof Error && error.name === 'SyntaxError') {
       return Response.json(
         { message: 'Invalid JSON payload', error: 'Malformed JSON' },
         { status: 400 }
@@ -190,7 +187,10 @@ export async function POST(request: Request) {
     }
     
     return Response.json(
-      { message: 'Webhook processing failed', error: errorMessage },
+      { 
+        message: 'Webhook processing failed', 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     )
   }
