@@ -2,7 +2,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../../../../lib/auth'
 import { createOctokit } from '../../../../lib/github'
-import { supabase } from '../../../../lib/supabase'
+import { supabaseAdmin } from '../../../../lib/supabase'
 
 // Extend Session type to include accessToken
 import type { Session as NextAuthSession } from 'next-auth'
@@ -13,13 +13,85 @@ type SessionWithToken = NextAuthSession & { accessToken?: string }
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions) as SessionWithToken
+    // Log environment variables
+    console.log('Environment check:', {
+      hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+      hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
+      hasGitHubClientId: !!process.env.GITHUB_CLIENT_ID,
+      hasGitHubClientSecret: !!process.env.GITHUB_CLIENT_SECRET,
+      nodeEnv: process.env.NODE_ENV,
+      nextAuthUrl: process.env.NEXTAUTH_URL,
+      secretLength: process.env.NEXTAUTH_SECRET?.length || 0,
+      githubClientIdLength: process.env.GITHUB_CLIENT_ID?.length || 0,
+      githubClientSecretLength: process.env.GITHUB_CLIENT_SECRET?.length || 0
+    })
+
+    // Log request headers
+    const headers = Object.fromEntries(request.headers.entries())
+    console.log('Request headers:', {
+      cookie: headers.cookie ? 'Present' : 'Missing',
+      authorization: headers.authorization ? 'Present' : 'Missing',
+      userAgent: headers['user-agent'],
+      origin: headers.origin,
+      referer: headers.referer
+    })
+
+    const session = await getServerSession(authOptions)
     
-    if (!session || !session.accessToken) {
+    // Comprehensive session debugging
+    console.log('Session analysis:', {
+      sessionExists: !!session,
+      sessionType: typeof session,
+      sessionKeys: session ? Object.keys(session) : [],
+      userExists: !!session?.user,
+      userKeys: session?.user ? Object.keys(session.user) : [],
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      accessTokenExists: !!(session as unknown as Record<string, unknown>)?.accessToken,
+      accessTokenType: typeof (session as unknown as Record<string, unknown>)?.accessToken,
+      accessTokenLength: (session as unknown as Record<string, unknown>)?.accessToken ? 
+        ((session as unknown as Record<string, unknown>).accessToken as string).length : 0,
+      githubIdExists: !!(session as unknown as Record<string, unknown>)?.githubId,
+      githubId: (session as unknown as Record<string, unknown>)?.githubId,
+      expires: session?.expires,
+      nodeEnv: process.env.NODE_ENV
+    })
+    
+    if (!session) {
+      console.log('❌ No session found')
       return Response.json(
-        { message: 'Not authenticated' },
+        { 
+          message: 'Not authenticated - No session found',
+          debug: {
+            hasSession: false,
+            hasAccessToken: false,
+            nodeEnv: process.env.NODE_ENV,
+            nextAuthUrl: process.env.NEXTAUTH_URL,
+            hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET
+          }
+        },
         { status: 401 }
       )
     }
+
+    if (!(session as unknown as Record<string, unknown>).accessToken) {
+      console.log('❌ No access token in session')
+      return Response.json(
+        { 
+          message: 'Not authenticated - No access token',
+          debug: {
+            hasSession: true,
+            hasAccessToken: false,
+            sessionKeys: Object.keys(session),
+            userExists: !!session?.user,
+            nodeEnv: process.env.NODE_ENV
+          }
+        },
+        { status: 401 }
+      )
+    }
+
+    console.log('✅ Authentication successful')
 
     const body = await request.json()
     
@@ -38,7 +110,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const octokit = createOctokit(session.accessToken)
+    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
     const [owner, repo] = repository_full_name.split('/')
 
     // Get the base branch SHA
@@ -67,7 +139,14 @@ export async function POST(request: Request) {
     })
 
     // Get repository ID from database
-    const { data: repository } = await supabase
+    if (!supabaseAdmin) {
+      return Response.json(
+        { message: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
+    const { data: repository } = await supabaseAdmin
       .from('github_repositories')
       .select('id')
       .eq('full_name', repository_full_name)
@@ -81,7 +160,7 @@ export async function POST(request: Request) {
     }
 
     // Store branch reference in database
-    const { data: reference, error } = await supabase
+    const { data: reference, error } = await supabaseAdmin
       .from('github_references')
       .insert({
         task_id,
@@ -128,10 +207,20 @@ export async function POST(request: Request) {
       )
     }
 
-      return Response.json(
-        { message: 'Failed to create branch', error: error instanceof Error ? error.message : 'Unknown error' },
-        { status: 500 }
-      )
+    // Fallback error response
+    const errorMessage = 'Failed to create branch'
+    let errorDetail: string | undefined = undefined
+
+    if (typeof error === 'object' && error !== null && 'message' in error && typeof (error as Record<string, unknown>).message === 'string') {
+      errorDetail = (error as Record<string, unknown>).message as string
+    } else if (typeof error === 'string') {
+      errorDetail = error
+    }
+
+    return Response.json(
+      { message: errorMessage, error: errorDetail },
+      { status: 500 }
+    )
   }
 }
 
@@ -149,7 +238,14 @@ export async function GET(request: Request) {
     }
 
     // Get GitHub references for this task
-    const { data: references, error } = await supabase
+    if (!supabaseAdmin) {
+      return Response.json(
+        { message: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
+    const { data: references, error } = await supabaseAdmin
       .from('github_references')
       .select(`
         *,

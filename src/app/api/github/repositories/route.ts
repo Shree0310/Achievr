@@ -12,17 +12,17 @@ type SessionWithToken = Session & { accessToken?: string }
 // GET: Fetch user's repositories from GitHub and mark connected ones
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions) as SessionWithToken
-
-    if (!session || !session.accessToken) {
+    const session = await getServerSession(authOptions)
+    
+    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const octokit = createOctokit(session.accessToken)
-
+    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
+    
     // Get user's repositories from GitHub
     const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({
       per_page: 100,
@@ -31,12 +31,17 @@ export async function GET() {
     })
 
     // Get connected repositories from database
-    const { data: connectedRepos, error } = await supabase
-      .from('github_repositories')
-      .select('*')
+    let connectedRepos = null
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('github_repositories')
+        .select('*')
 
-    if (error) {
-      console.error('Database error:', error)
+      if (error) {
+        console.error('Database error:', error)
+      } else {
+        connectedRepos = data
+      }
     }
 
     // Mark which repos are already connected
@@ -74,7 +79,7 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions) as SessionWithToken
     
-    if (!session || !session.accessToken) {
+    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
@@ -92,7 +97,7 @@ export async function POST(request: Request) {
     }
 
     // Get repository details from GitHub
-    const octokit = createOctokit(session.accessToken)
+    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
     const [owner, repo_name] = full_name.split('/')
     
     const { data: repo } = await octokit.rest.repos.get({
@@ -101,6 +106,13 @@ export async function POST(request: Request) {
     })
 
     // Store repository in database
+    if (!supabase) {
+      return Response.json(
+        { message: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const { data, error } = await supabase
       .from('github_repositories')
       .upsert({
