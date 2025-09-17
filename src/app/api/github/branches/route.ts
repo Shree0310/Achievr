@@ -121,7 +121,7 @@ export async function POST(request: Request) {
     console.error('Error creating branch:', error)
     
     // Handle specific GitHub errors
-    if (typeof error === 'object' && error !== null && 'status' in error && (error as any).status === 422) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as Record<string, unknown>).status === 422) {
       return Response.json(
         { message: 'Branch already exists or invalid branch name' },
         { status: 400 }
