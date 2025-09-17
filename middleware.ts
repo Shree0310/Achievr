@@ -81,8 +81,9 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - api/auth (NextAuth routes)
+     * - api/github (GitHub API routes)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/auth|api/github|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 } 

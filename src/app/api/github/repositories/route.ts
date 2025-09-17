@@ -1,27 +1,46 @@
 // app/api/github/repositories/route.ts
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../../../../lib/auth'
 import { createOctokit } from '../../../../lib/github'
 import { supabase } from '../../../../lib/supabase'
-
-import type { Session } from 'next-auth'
-
-// Extend Session type to include accessToken
-type SessionWithToken = Session & { accessToken?: string }
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 // GET: Fetch user's repositories from GitHub and mark connected ones
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    // Get Supabase session
+    const cookieStore = await cookies()
+    const supabaseClient = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+        },
+      }
+    )
+
+    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession()
     
-    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
+    if (sessionError || !session?.user) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
+    // Get GitHub access token from user metadata
+    const githubAccessToken = session.user.user_metadata?.github_access_token
+    
+    if (!githubAccessToken) {
+      return Response.json(
+        { message: 'No GitHub access token. Please connect your GitHub account.' },
+        { status: 401 }
+      )
+    }
+
+    const octokit = createOctokit(githubAccessToken)
     
     // Get user's repositories from GitHub
     const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({
@@ -77,9 +96,23 @@ export async function GET() {
 // POST: Connect a repository to a project
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions) as SessionWithToken
+    // Get Supabase session
+    const cookieStore = await cookies()
+    const supabaseClient = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+        },
+      }
+    )
+
+    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession()
     
-    if (!session || !(session as unknown as Record<string, unknown>).accessToken) {
+    if (sessionError || !session?.user) {
       return Response.json(
         { message: 'Not authenticated' },
         { status: 401 }

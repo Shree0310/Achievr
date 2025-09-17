@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react";
+import { githubClient } from "@/lib/github-client";
 function GithubBranchCreator({taskToEdit, userId}) {
   const [taskId, setTaskId] = useState('')
   const [taskTitle, setTaskTitle] = useState('')
@@ -17,31 +18,24 @@ function GithubBranchCreator({taskToEdit, userId}) {
     setResult(null)
 
     try {
-      const response = await fetch('/api/github/branches', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          task_id: taskToEdit.id,
-          task_title: taskToEdit.title,
-          repository_full_name: repositoryFullName,
-          base_branch: baseBranch
-        })
+      const data = await githubClient.createBranch({
+        task_id: taskToEdit.id,
+        task_title: taskToEdit.title,
+        repository_full_name: repositoryFullName,
+        base_branch: baseBranch
       })
 
-      const data = await response.json()
       console.log('API response:', data) // Debug log
       setResult(data)
 
-      if (response.ok) {
-        // Clear form on success
-        setTaskId('')
-        setTaskTitle('')
-        setRepositoryFullName('')
-        setBaseBranch('main')
-      }
+      // Clear form on success
+      setTaskId('')
+      setTaskTitle('')
+      setRepositoryFullName('')
+      setBaseBranch('main')
     } catch (error) {
       console.error('Create branch error:', error) // Debug log
-      setResult({ message: 'Failed to create branch', error: 'Network error' })
+      setResult({ message: 'Failed to create branch', error: error.message })
     } finally {
       setCreating(false)
     }
