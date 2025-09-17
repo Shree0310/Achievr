@@ -15,20 +15,20 @@ interface Repository {
   connected: boolean
 }
 
-interface Branch {
-  id: string
-  github_id: string
-  title: string
-  url: string
-  status: string
-  author: string
-  created_at: string
-  github_repositories: {
-    full_name: string
-    owner: string
-    repo_name: string
-  }
-}
+// interface Branch {
+//   id: string
+//   github_id: string
+//   title: string
+//   url: string
+//   status: string
+//   author: string
+//   created_at: string
+//   github_repositories: {
+//     full_name: string
+//     owner: string
+//     repo_name: string
+//   }
+// }
 
 function RepositoryManager() {
   const [repositories, setRepositories] = useState<Repository[]>([])
@@ -155,7 +155,7 @@ function BranchCreator() {
   const [repositoryFullName, setRepositoryFullName] = useState('')
   const [baseBranch, setBaseBranch] = useState('main')
   const [creating, setCreating] = useState(false)
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<Record<string, unknown> | null>(null)
 
   console.log('Form state:', { taskId, taskTitle, repositoryFullName, baseBranch }) // Debug log
 
@@ -231,7 +231,7 @@ function BranchCreator() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
-          <p className="text-xs text-gray-500 mt-1">Current value: "{taskId}"</p>
+          <p className="text-xs text-gray-500 mt-1">Current value: &quot;{taskId}&quot;</p>
         </div>
 
         <div>
@@ -247,7 +247,7 @@ function BranchCreator() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
-          <p className="text-xs text-gray-500 mt-1">Current value: "{taskTitle}"</p>
+          <p className="text-xs text-gray-500 mt-1">Current value: &quot;{taskTitle}&quot;</p>
         </div>
 
         <div>
@@ -263,7 +263,7 @@ function BranchCreator() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
-          <p className="text-xs text-gray-500 mt-1">Current value: "{repositoryFullName}"</p>
+          <p className="text-xs text-gray-500 mt-1">Current value: &quot;{repositoryFullName}&quot;</p>
         </div>
 
         <div>
@@ -293,10 +293,10 @@ function BranchCreator() {
         {/* Debug info */}
         <div className="text-xs text-gray-500 p-2 bg-gray-50 rounded">
           <strong>Debug Info:</strong><br/>
-          Task ID: "{taskId}"<br/>
-          Task Title: "{taskTitle}"<br/>
-          Repository: "{repositoryFullName}"<br/>
-          Base Branch: "{baseBranch}"<br/>
+          Task ID: &quot;{taskId}&quot;<br/>
+          Task Title: &quot;{taskTitle}&quot;<br/>
+          Repository: &quot;{repositoryFullName}&quot;<br/>
+          Base Branch: &quot;{baseBranch}&quot;<br/>
           Form valid: {taskId && taskTitle && repositoryFullName ? 'Yes' : 'No'}
         </div>
       </div>

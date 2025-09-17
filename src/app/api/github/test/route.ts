@@ -24,7 +24,7 @@ export async function GET() {
           name: result.user.name,
           public_repos: result.user.public_repos
         } : null,
-        recent_repos: (result.repositories ?? []).map((repo: any) => ({
+        recent_repos: (result.repositories ?? []).map((repo: Record<string, unknown>) => ({
           name: repo.name,
           full_name: repo.full_name,
           private: repo.private,
@@ -37,7 +37,7 @@ export async function GET() {
         error: result.error
       }, { status: 400 })
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('GitHub test error:', error)
     return Response.json(
       { message: 'Internal server error' },

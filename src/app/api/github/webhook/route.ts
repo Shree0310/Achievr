@@ -10,7 +10,7 @@ export async function GET() {
   
   try {
     // Test Supabase connection
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from('github_repositories')
       .select('count')
       .limit(1)
@@ -34,12 +34,12 @@ export async function GET() {
       timestamp: new Date().toISOString()
     })
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('💥 Webhook test error:', error)
     return Response.json(
       { 
         message: 'Webhook test failed', 
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString()
       }, 
       { status: 500 }
@@ -161,14 +161,16 @@ export async function POST(request: Request) {
     console.log('✅ Webhook processed successfully')
     return Response.json({ message: 'Webhook processed successfully' })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('💥 Webhook error:', error)
-    console.error('💥 Error stack:', error.stack)
-    console.error('💥 Error name:', error.name)
-    console.error('💥 Error message:', error.message)
+    if (error instanceof Error) {
+      console.error('💥 Error stack:', error.stack)
+      console.error('💥 Error name:', error.name)
+      console.error('💥 Error message:', error.message)
+    }
     
     // Check if it's a Supabase connection error
-    if (error.message?.includes('supabase') || error.message?.includes('database')) {
+    if (error instanceof Error && (error.message?.includes('supabase') || error.message?.includes('database'))) {
       console.error('💥 Database connection error detected')
       return Response.json(
         { message: 'Database connection failed', error: error.message },
@@ -177,7 +179,7 @@ export async function POST(request: Request) {
     }
     
     // Return more specific error messages based on error type
-    if (error.name === 'SyntaxError') {
+    if (error instanceof Error && error.name === 'SyntaxError') {
       return Response.json(
         { message: 'Invalid JSON payload', error: 'Malformed JSON' },
         { status: 400 }

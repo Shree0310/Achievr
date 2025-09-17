@@ -112,7 +112,7 @@ export async function POST(request: Request) {
       }
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating branch:', error)
     
     // Handle specific GitHub errors
@@ -123,10 +123,10 @@ export async function POST(request: Request) {
       )
     }
 
-    return Response.json(
-      { message: 'Failed to create branch', error: error.message },
-      { status: 500 }
-    )
+      return Response.json(
+        { message: 'Failed to create branch', error: error instanceof Error ? error.message : 'Unknown error' },
+        { status: 500 }
+      )
   }
 }
 
@@ -170,10 +170,10 @@ export async function GET(request: Request) {
       total: references?.length || 0
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching branches:', error)
     return Response.json(
-      { message: 'Failed to fetch branches', error: error.message },
+      { message: 'Failed to fetch branches', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

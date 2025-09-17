@@ -90,10 +90,10 @@ function GitHubConnectionTest() {
       const response = await fetch('/api/github/test')
       const data = await response.json()
       setTestResult(data)
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResult({ 
         message: 'Test failed', 
-        error: error.message 
+        error: error instanceof Error ? error.message : 'Unknown error'
       })
     } finally {
       setLoading(false)

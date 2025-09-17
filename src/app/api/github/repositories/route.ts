@@ -55,10 +55,10 @@ export async function GET() {
       total: repos.length
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching repositories:', error)
     return Response.json(
-      { message: 'Failed to fetch repositories', error: error.message },
+      { message: 'Failed to fetch repositories', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
@@ -127,10 +127,10 @@ export async function POST(request: Request) {
       repository: data
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error connecting repository:', error)
     return Response.json(
-      { message: 'Failed to connect repository', error: error.message },
+      { message: 'Failed to connect repository', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
