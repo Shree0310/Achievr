@@ -1,8 +1,10 @@
 // app/api/auth/[...nextauth]/route.ts
-import NextAuth from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
+import type { JWT } from 'next-auth/jwt'
+import type { Session } from 'next-auth'
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
@@ -16,19 +18,27 @@ export const authOptions = {
   ],
   
   callbacks: {
-    async jwt({ token, account }: { token: any; account?: any }) {
+    async jwt({ token, account }: { token: JWT; account?: any }) {
       // Store GitHub access token in JWT
       if (account) {
-        token.accessToken = account.access_token
-        token.githubId = account.providerAccountId
+        (token as JWT & { accessToken?: string; githubId?: string }).accessToken = account.access_token as string
+        (token as JWT & { accessToken?: string; githubId?: string }).githubId = account.providerAccountId as string
       }
       return token
     },
     
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       // Send properties to the client
-      session.accessToken = token.accessToken
-      session.githubId = token.githubId
+      const extendedToken = token as JWT & { accessToken?: string; githubId?: string }
+      const extendedSession = session as Session & { accessToken?: string; githubId?: string }
+      
+      if (extendedToken.accessToken) {
+        extendedSession.accessToken = extendedToken.accessToken
+      }
+      if (extendedToken.githubId) {
+        extendedSession.githubId = extendedToken.githubId
+      }
+      
       return session
     },
     
