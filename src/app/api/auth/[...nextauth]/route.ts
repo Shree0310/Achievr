@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
   ],
   
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account?: import("next-auth").Account | null }) {
+    async jwt({ token, account }) {
       // Store GitHub access token in JWT
       if (account) {
         (token as JWT & { accessToken?: string; githubId?: string }).accessToken = account.access_token as string
@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       // Send properties to the client
       const extendedToken = token as JWT & { accessToken?: string; githubId?: string }
       const extendedSession = session as Session & { accessToken?: string; githubId?: string }
@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     
-    async signIn({ user, account, profile }: { user: import("next-auth").User | import("next-auth/adapters").AdapterUser; account: import("next-auth").Account | null; profile?: import("next-auth").Profile }) {
+    async signIn({ user, account, profile }) {
       // Temporarily disable Supabase operations for testing
       console.log('Sign in attempt:', { user, account, profile })
       return true
