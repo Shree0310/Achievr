@@ -12,7 +12,7 @@ const GitHubRepositoryConnector = () => {
   const [hasAuth, setHasAuth] = useState(false)
 
   useEffect(() => {
-    // Check for authentication (either Supabase or demo mode)
+    // Check for authentication (Supabase, demo mode, or NextAuth)
     const checkAuth = async () => {
       // Check for demo user first
       const demoUser = localStorage.getItem('demoUser')
@@ -23,10 +23,32 @@ const GitHubRepositoryConnector = () => {
       
       // Check for Supabase user
       const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      setHasAuth(!!user)
+      if (user) {
+        setUser(user)
+        setHasAuth(true)
+        return
+      }
+      
+      // Check for NextAuth session (Google OAuth)
+      try {
+        const response = await fetch('/api/auth/session')
+        if (response.ok) {
+          const session = await response.json()
+          if (session?.user) {
+            setHasAuth(true)
+            return
+          }
+        }
+      } catch (error) {
+        console.log('NextAuth session check failed:', error)
+      }
+      
+      setHasAuth(false)
     }
     checkAuth()
+    
+    // Debug logging
+    console.log('GitHubRepositoryConnector: Checking authentication...')
 
     // Listen for localStorage changes (demo login)
     const handleStorageChange = (e) => {
@@ -74,8 +96,20 @@ const GitHubRepositoryConnector = () => {
         // Use Supabase authentication
         response = await fetch('/api/github/repositories')
       } else {
-        console.log('No user authentication found')
-        return
+        // Check for NextAuth session and GitHub connection
+        try {
+          const sessionResponse = await fetch('/api/auth/session')
+          if (sessionResponse.ok) {
+            const session = await sessionResponse.json()
+            if (session?.user) {
+              // For NextAuth users, we need to check if they have GitHub connected
+              // This will show a message to connect GitHub first
+              response = await fetch('/api/github/repositories')
+            }
+          }
+        } catch (error) {
+          console.log('NextAuth session check failed:', error)
+        }
       }
       
       if (response && response.ok) {
@@ -84,6 +118,10 @@ const GitHubRepositoryConnector = () => {
       } else if (response) {
         const error = await response.json()
         console.error('Failed to fetch repositories:', error)
+        // If it's a 401, show a message to connect GitHub
+        if (response.status === 401) {
+          setRepositories([])
+        }
       }
     } catch (error) {
       console.error('Failed to fetch repositories:', error)
@@ -196,8 +234,11 @@ const GitHubRepositoryConnector = () => {
   }
 
   if (!hasAuth) {
+    console.log('GitHubRepositoryConnector: No authentication found, hiding component')
     return null // Don't show if user is not authenticated
   }
+  
+  console.log('GitHubRepositoryConnector: Authentication found, showing component')
 
   const connectedRepos = repositories.filter(repo => repo.connected)
   const unconnectedRepos = repositories.filter(repo => !repo.connected)
@@ -299,7 +340,13 @@ const GitHubRepositoryConnector = () => {
               {repositories.length === 0 && !loading && (
                 <div className="p-4 text-center text-gray-500">
                   <p className="text-sm">No repositories found</p>
-                  <p className="text-xs mt-1">Make sure you're connected to GitHub</p>
+                  <p className="text-xs mt-1">Connect your GitHub account to see repositories</p>
+                  <a 
+                    href="/api/github/oauth/initiate"
+                    className="text-xs text-blue-500 hover:text-blue-700 mt-2 inline-block"
+                  >
+                    Connect GitHub →
+                  </a>
                 </div>
               )}
             </div>
