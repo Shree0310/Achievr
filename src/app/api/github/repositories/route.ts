@@ -5,7 +5,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 // GET: Fetch user's repositories from GitHub and mark connected ones
-export async function GET() {
+export async function GET(request: Request) {
   try {
     // Get Supabase session
     const cookieStore = await cookies()
@@ -23,19 +23,19 @@ export async function GET() {
 
     const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession()
     
-    if (sessionError || !session?.user) {
-      return Response.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      )
+    // Get GitHub access token from user metadata or Authorization header
+    let githubAccessToken = session?.user?.user_metadata?.github_access_token
+    
+    // Check Authorization header for demo mode or direct token
+    const authHeader = request.headers.get('authorization')
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      githubAccessToken = authHeader.substring(7)
+      console.log('Using GitHub token from Authorization header for repositories')
     }
-
-    // Get GitHub access token from user metadata
-    const githubAccessToken = session.user.user_metadata?.github_access_token
     
     if (!githubAccessToken) {
       return Response.json(
-        { message: 'No GitHub access token. Please connect your GitHub account.' },
+        { message: 'Not authenticated - No GitHub access token. Please connect your GitHub account.' },
         { status: 401 }
       )
     }
@@ -112,13 +112,6 @@ export async function POST(request: Request) {
 
     const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession()
     
-    if (sessionError || !session?.user) {
-      return Response.json(
-        { message: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
     const body = await request.json()
     const { full_name, project_id } = body
 
@@ -129,8 +122,25 @@ export async function POST(request: Request) {
       )
     }
 
+    // Get GitHub access token from user metadata or Authorization header
+    let githubAccessToken = session?.user?.user_metadata?.github_access_token
+    
+    // Check Authorization header for demo mode or direct token
+    const authHeader = request.headers.get('authorization')
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      githubAccessToken = authHeader.substring(7)
+      console.log('Using GitHub token from Authorization header for repository connection')
+    }
+    
+    if (!githubAccessToken) {
+      return Response.json(
+        { message: 'Not authenticated - No GitHub access token. Please connect your GitHub account.' },
+        { status: 401 }
+      )
+    }
+
     // Get repository details from GitHub
-    const octokit = createOctokit((session as unknown as Record<string, unknown>).accessToken as string)
+    const octokit = createOctokit(githubAccessToken)
     const [owner, repo_name] = full_name.split('/')
     
     const { data: repo } = await octokit.rest.repos.get({
@@ -181,6 +191,81 @@ export async function POST(request: Request) {
     console.error('Error connecting repository:', error)
     return Response.json(
       { message: 'Failed to connect repository', error: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE: Disconnect a repository
+export async function DELETE(request: Request) {
+  try {
+    // Get Supabase session
+    const cookieStore = await cookies()
+    const supabaseClient = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+        },
+      }
+    )
+
+    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession()
+    
+    const body = await request.json()
+    const { full_name } = body
+
+    if (!full_name) {
+      return Response.json(
+        { message: 'Repository full_name is required' },
+        { status: 400 }
+      )
+    }
+
+    // For DELETE, we don't need GitHub token, just database access
+    // But we still check for authentication context
+    const authHeader = request.headers.get('authorization')
+    const hasAuth = session?.user || authHeader
+    
+    if (!hasAuth) {
+      return Response.json(
+        { message: 'Not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    // Delete repository from database
+    if (!supabase) {
+      return Response.json(
+        { message: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('github_repositories')
+      .delete()
+      .eq('full_name', full_name)
+
+    if (error) {
+      console.error('Database error:', error)
+      return Response.json(
+        { message: 'Failed to disconnect repository', error: error.message },
+        { status: 500 }
+      )
+    }
+
+    return Response.json({
+      message: 'Repository disconnected successfully'
+    })
+
+  } catch (error: unknown) {
+    console.error('Error disconnecting repository:', error)
+    return Response.json(
+      { message: 'Failed to disconnect repository', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

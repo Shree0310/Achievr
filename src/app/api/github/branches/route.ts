@@ -183,7 +183,13 @@ export async function POST(request: Request) {
     if (!repository) {
       console.log('Repository not found in database')
       return Response.json(
-        { message: 'Repository not connected. Please connect it first.' },
+        { 
+          message: 'Repository not connected. Please connect it first using the GitHub Repos section in the sidebar.',
+          debug: {
+            repository_full_name,
+            suggestion: 'Use the GitHub Repos dropdown in the sidebar to connect repositories'
+          }
+        },
         { status: 400 }
       )
     }

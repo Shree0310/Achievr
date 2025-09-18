@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation';
 import SummitIcon from "./SummitIcon";
 import CreateTaskButton from "../CreateTask/CreateTaskButton";
+import GitHubRepositoryConnector from "../GitHubConnect/GitHubRepositoryConnector";
 
 /**
  * @param {Object} props
@@ -63,6 +64,10 @@ const Navbar = ({ userId, onTaskUpdate }) => {
                 
                 <nav className="space-y-1 dark:text-white">
                     <CreateTaskButton userId={userId} onTaskUpdate={onTaskUpdate} />
+                    
+                    {/* GitHub Repository Connector */}
+                    <GitHubRepositoryConnector />
+                    
                     {navItems.map((item) => (
                         <Link
                             key={item.path}
