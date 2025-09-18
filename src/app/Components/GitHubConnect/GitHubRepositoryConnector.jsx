@@ -42,6 +42,19 @@ const GitHubRepositoryConnector = () => {
           return
         } else {
           console.log('GitHubRepositoryConnector: Supabase user found but no GitHub token:', user.email)
+          // Check if this is after a GitHub OAuth completion
+          const urlParams = new URLSearchParams(window.location.search)
+          if (urlParams.has('github_connected')) {
+            console.log('GitHub OAuth completed but token not found, refreshing user data...')
+            // Force refresh the session to get updated user data
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session?.user?.user_metadata?.github_access_token) {
+              console.log('GitHubRepositoryConnector: Found GitHub token after session refresh:', session.user.email)
+              setUser(session.user)
+              setHasAuth(true)
+              return
+            }
+          }
         }
       }
       
@@ -91,8 +104,21 @@ const GitHubRepositoryConnector = () => {
       }
     }
     
+    // Check for GitHub OAuth completion on page load
+    const checkForGitHubCompletion = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.has('github_connected')) {
+        console.log('GitHub connection completed, re-checking authentication...')
+        // Force a fresh check of Supabase user data
+        setTimeout(() => {
+          checkAuth()
+        }, 500)
+      }
+    }
+    
     // Check immediately and on URL changes
     checkForGitHubCallback()
+    checkForGitHubCompletion() // Check for GitHub completion on page load
     window.addEventListener('popstate', checkForGitHubCallback)
     
     // Also check on page visibility change (when user comes back from OAuth)
