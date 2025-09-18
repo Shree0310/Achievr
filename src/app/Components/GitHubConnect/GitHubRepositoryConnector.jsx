@@ -10,6 +10,7 @@ const GitHubRepositoryConnector = () => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [user, setUser] = useState(null)
   const [hasAuth, setHasAuth] = useState(false)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
 
   useEffect(() => {
     // Check for authentication (Supabase, demo mode, or NextAuth)
@@ -45,10 +46,13 @@ const GitHubRepositoryConnector = () => {
       
       setHasAuth(false)
     }
-    checkAuth()
     
     // Debug logging
     console.log('GitHubRepositoryConnector: Checking authentication...')
+    
+    checkAuth().finally(() => {
+      setIsCheckingAuth(false)
+    })
 
     // Listen for localStorage changes (demo login)
     const handleStorageChange = (e) => {
@@ -66,9 +70,44 @@ const GitHubRepositoryConnector = () => {
     
     window.addEventListener('demoUserChanged', handleCustomStorageChange)
     
+    // Check for authentication changes periodically (useful after OAuth redirects)
+    const authCheckInterval = setInterval(() => {
+      if (!hasAuth) {
+        checkAuth()
+      }
+    }, 2000) // Check every 2 seconds if not authenticated
+    
+    // Check for GitHub OAuth callback in URL
+    const checkForGitHubCallback = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.has('github_token_ready') || urlParams.has('github_connected')) {
+        console.log('GitHub OAuth callback detected, checking authentication...')
+        // Delay slightly to allow the OAuth callback to complete
+        setTimeout(() => {
+          checkAuth()
+        }, 1000)
+      }
+    }
+    
+    // Check immediately and on URL changes
+    checkForGitHubCallback()
+    window.addEventListener('popstate', checkForGitHubCallback)
+    
+    // Also check on page visibility change (when user comes back from OAuth)
+    const handleVisibilityChange = () => {
+      if (!document.hidden && !hasAuth) {
+        console.log('Page became visible, checking authentication...')
+        checkAuth()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
     return () => {
       window.removeEventListener('storage', handleStorageChange)
       window.removeEventListener('demoUserChanged', handleCustomStorageChange)
+      window.removeEventListener('popstate', checkForGitHubCallback)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      clearInterval(authCheckInterval)
     }
   }, [])
 
@@ -231,6 +270,23 @@ const GitHubRepositoryConnector = () => {
       fetchRepositories()
     }
     setShowDropdown(!showDropdown)
+  }
+
+  // Show loading state while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 dark:text-white w-full">
+        <svg
+          className="mr-3 h-5 w-5 text-gray-400 dark:text-white animate-spin"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span className="flex-1 text-left">Loading...</span>
+      </div>
+    )
   }
 
   if (!hasAuth) {
