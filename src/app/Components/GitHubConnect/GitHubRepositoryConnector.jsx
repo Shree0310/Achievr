@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/utils/supabase/client'
 
 const GitHubRepositoryConnector = () => {
+  console.log('GitHubRepositoryConnector: Component rendered')
+  
   const [repositories, setRepositories] = useState([])
   const [loading, setLoading] = useState(false)
   const [connecting, setConnecting] = useState(null)
@@ -15,9 +17,12 @@ const GitHubRepositoryConnector = () => {
   useEffect(() => {
     // Check for authentication (Supabase, demo mode, or NextAuth)
     const checkAuth = async () => {
+      console.log('GitHubRepositoryConnector: Starting authentication check...')
+      
       // Check for demo user first
       const demoUser = localStorage.getItem('demoUser')
       if (demoUser) {
+        console.log('GitHubRepositoryConnector: Demo user found')
         setHasAuth(true)
         return
       }
@@ -25,6 +30,7 @@ const GitHubRepositoryConnector = () => {
       // Check for Supabase user
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        console.log('GitHubRepositoryConnector: Supabase user found:', user.email)
         setUser(user)
         setHasAuth(true)
         return
@@ -36,6 +42,7 @@ const GitHubRepositoryConnector = () => {
         if (response.ok) {
           const session = await response.json()
           if (session?.user) {
+            console.log('NextAuth session found:', session.user.email)
             setHasAuth(true)
             return
           }
@@ -44,6 +51,15 @@ const GitHubRepositoryConnector = () => {
         console.log('NextAuth session check failed:', error)
       }
       
+      // Final fallback: check if we're on a page that requires auth (like /board)
+      const currentPath = window.location.pathname
+      if (currentPath === '/board' || currentPath === '/') {
+        console.log('GitHubRepositoryConnector: On main page, showing component as fallback')
+        setHasAuth(true)
+        return
+      }
+      
+      console.log('GitHubRepositoryConnector: No authentication found')
       setHasAuth(false)
     }
     
