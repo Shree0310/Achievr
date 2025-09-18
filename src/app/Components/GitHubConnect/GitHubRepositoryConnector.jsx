@@ -32,30 +32,13 @@ const GitHubRepositoryConnector = () => {
         }
       }
       
-      // Check for Supabase user with GitHub data
+      // Check for Supabase user (with or without GitHub data)
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        if (user.user_metadata?.github_access_token) {
-          console.log('GitHubRepositoryConnector: Supabase user with GitHub token found:', user.email)
-          setUser(user)
-          setHasAuth(true)
-          return
-        } else {
-          console.log('GitHubRepositoryConnector: Supabase user found but no GitHub token:', user.email)
-          // Check if this is after a GitHub OAuth completion
-          const urlParams = new URLSearchParams(window.location.search)
-          if (urlParams.has('github_connected')) {
-            console.log('GitHub OAuth completed but token not found, refreshing user data...')
-            // Force refresh the session to get updated user data
-            const { data: { session } } = await supabase.auth.getSession()
-            if (session?.user?.user_metadata?.github_access_token) {
-              console.log('GitHubRepositoryConnector: Found GitHub token after session refresh:', session.user.email)
-              setUser(session.user)
-              setHasAuth(true)
-              return
-            }
-          }
-        }
+        console.log('GitHubRepositoryConnector: Supabase user found:', user.email)
+        setUser(user)
+        setHasAuth(true)
+        return
       }
       
       console.log('GitHubRepositoryConnector: No authentication found')
@@ -312,6 +295,32 @@ const GitHubRepositoryConnector = () => {
   
   console.log('GitHubRepositoryConnector: Authentication found, showing component')
 
+  // Check if user has GitHub connected
+  const hasGitHubToken = user?.user_metadata?.github_access_token || 
+    (localStorage.getItem('demoUser') && JSON.parse(localStorage.getItem('demoUser')).user_metadata?.access_token)
+
+  // If user doesn't have GitHub connected, show Connect GitHub button
+  if (!hasGitHubToken) {
+    return (
+      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-900 dark:hover:bg-gray-700 w-full">
+        <svg
+          className="mr-3 h-5 w-5 text-gray-400 dark:text-white group-hover:text-gray-900 dark:group-hover:text-gray-900"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path fillRule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clipRule="evenodd" />
+        </svg>
+        <a 
+          href="/api/github/oauth/initiate"
+          className="flex-1 text-left hover:underline"
+        >
+          Connect GitHub
+        </a>
+      </div>
+    )
+  }
+
+  // User has GitHub connected, show repository management
   const connectedRepos = repositories.filter(repo => repo.connected)
   const unconnectedRepos = repositories.filter(repo => !repo.connected)
 
