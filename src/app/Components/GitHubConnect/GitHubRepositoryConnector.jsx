@@ -22,26 +22,27 @@ const GitHubRepositoryConnector = () => {
       // Check for demo user first (highest priority)
       const demoUser = localStorage.getItem('demoUser')
       if (demoUser) {
-        console.log('GitHubRepositoryConnector: Demo user found')
-        setHasAuth(true)
-        return
+        const parsedDemoUser = JSON.parse(demoUser)
+        if (parsedDemoUser.user_metadata?.access_token) {
+          console.log('GitHubRepositoryConnector: Demo user with GitHub token found')
+          setHasAuth(true)
+          return
+        } else {
+          console.log('GitHubRepositoryConnector: Demo user found but no GitHub token')
+        }
       }
       
-      // Check for Supabase user
+      // Check for Supabase user with GitHub data
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        console.log('GitHubRepositoryConnector: Supabase user found:', user.email)
-        setUser(user)
-        setHasAuth(true)
-        return
-      }
-      
-      // Fallback: show component on main pages (since we removed NextAuth dependency)
-      const currentPath = window.location.pathname
-      if (currentPath === '/board' || currentPath === '/') {
-        console.log('GitHubRepositoryConnector: On main page, showing component as fallback')
-        setHasAuth(true)
-        return
+        if (user.user_metadata?.github_access_token) {
+          console.log('GitHubRepositoryConnector: Supabase user with GitHub token found:', user.email)
+          setUser(user)
+          setHasAuth(true)
+          return
+        } else {
+          console.log('GitHubRepositoryConnector: Supabase user found but no GitHub token:', user.email)
+        }
       }
       
       console.log('GitHubRepositoryConnector: No authentication found')
