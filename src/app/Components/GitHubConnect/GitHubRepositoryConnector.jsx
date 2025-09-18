@@ -15,11 +15,11 @@ const GitHubRepositoryConnector = () => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
 
   useEffect(() => {
-    // Check for authentication (Supabase, demo mode, or NextAuth)
+    // Check for authentication (Supabase or demo mode only)
     const checkAuth = async () => {
       console.log('GitHubRepositoryConnector: Starting authentication check...')
       
-      // Check for demo user first
+      // Check for demo user first (highest priority)
       const demoUser = localStorage.getItem('demoUser')
       if (demoUser) {
         console.log('GitHubRepositoryConnector: Demo user found')
@@ -36,22 +36,7 @@ const GitHubRepositoryConnector = () => {
         return
       }
       
-      // Check for NextAuth session (Google OAuth)
-      try {
-        const response = await fetch('/api/auth/session')
-        if (response.ok) {
-          const session = await response.json()
-          if (session?.user) {
-            console.log('NextAuth session found:', session.user.email)
-            setHasAuth(true)
-            return
-          }
-        }
-      } catch (error) {
-        console.log('NextAuth session check failed:', error)
-      }
-      
-      // Final fallback: check if we're on a page that requires auth (like /board)
+      // Fallback: show component on main pages (since we removed NextAuth dependency)
       const currentPath = window.location.pathname
       if (currentPath === '/board' || currentPath === '/') {
         console.log('GitHubRepositoryConnector: On main page, showing component as fallback')
@@ -151,20 +136,8 @@ const GitHubRepositoryConnector = () => {
         // Use Supabase authentication
         response = await fetch('/api/github/repositories')
       } else {
-        // Check for NextAuth session and GitHub connection
-        try {
-          const sessionResponse = await fetch('/api/auth/session')
-          if (sessionResponse.ok) {
-            const session = await sessionResponse.json()
-            if (session?.user) {
-              // For NextAuth users, we need to check if they have GitHub connected
-              // This will show a message to connect GitHub first
-              response = await fetch('/api/github/repositories')
-            }
-          }
-        } catch (error) {
-          console.log('NextAuth session check failed:', error)
-        }
+        console.log('No authentication found (neither demo user nor Supabase user)')
+        return
       }
       
       if (response && response.ok) {
