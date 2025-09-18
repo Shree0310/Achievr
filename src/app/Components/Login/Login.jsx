@@ -207,6 +207,9 @@ const Login = () => {
                 // Clear temporary GitHub data
                 localStorage.removeItem('temp_github_data');
                 sessionStorage.removeItem('temp_github_data');
+                
+                // Dispatch custom event to notify components
+                window.dispatchEvent(new CustomEvent('demoUserChanged'));
             } else {
                 // Regular demo login without GitHub data
                 localStorage.setItem('demoMode', 'true');
@@ -219,6 +222,9 @@ const Login = () => {
                 }));
                 
                 console.log('Demo user created in localStorage');
+                
+                // Dispatch custom event to notify components
+                window.dispatchEvent(new CustomEvent('demoUserChanged'));
             }
             
             // Navigate to the board page

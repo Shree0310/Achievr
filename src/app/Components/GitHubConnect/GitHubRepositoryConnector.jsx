@@ -9,14 +9,45 @@ const GitHubRepositoryConnector = () => {
   const [connecting, setConnecting] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
   const [user, setUser] = useState(null)
+  const [hasAuth, setHasAuth] = useState(false)
 
   useEffect(() => {
-    // Get current user
-    const getUser = async () => {
+    // Check for authentication (either Supabase or demo mode)
+    const checkAuth = async () => {
+      // Check for demo user first
+      const demoUser = localStorage.getItem('demoUser')
+      if (demoUser) {
+        setHasAuth(true)
+        return
+      }
+      
+      // Check for Supabase user
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
+      setHasAuth(!!user)
     }
-    getUser()
+    checkAuth()
+
+    // Listen for localStorage changes (demo login)
+    const handleStorageChange = (e) => {
+      if (e.key === 'demoUser') {
+        checkAuth()
+      }
+    }
+    
+    window.addEventListener('storage', handleStorageChange)
+    
+    // Also listen for same-tab changes
+    const handleCustomStorageChange = () => {
+      checkAuth()
+    }
+    
+    window.addEventListener('demoUserChanged', handleCustomStorageChange)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('demoUserChanged', handleCustomStorageChange)
+    }
   }, [])
 
   const fetchRepositories = async () => {
@@ -164,7 +195,7 @@ const GitHubRepositoryConnector = () => {
     setShowDropdown(!showDropdown)
   }
 
-  if (!user) {
+  if (!hasAuth) {
     return null // Don't show if user is not authenticated
   }
 
