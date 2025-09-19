@@ -123,6 +123,7 @@ const GitHubRepositoryConnector = () => {
   }, [])
 
   const fetchRepositories = async () => {
+    console.log('GitHubRepositoryConnector: fetchRepositories called')
     setLoading(true)
     try {
       // Check for demo user first (localStorage)
@@ -132,6 +133,7 @@ const GitHubRepositoryConnector = () => {
       if (demoUser) {
         const githubToken = JSON.parse(demoUser).user_metadata?.access_token
         if (githubToken) {
+          console.log('GitHubRepositoryConnector: Using demo mode with GitHub token')
           // Use demo mode with Authorization header
           response = await fetch('/api/github/repositories', {
             headers: {
@@ -143,6 +145,7 @@ const GitHubRepositoryConnector = () => {
           return
         }
       } else if (user) {
+        console.log('GitHubRepositoryConnector: Using Supabase authentication for user:', user.email)
         // Use Supabase authentication
         response = await fetch('/api/github/repositories')
       } else {
@@ -152,14 +155,17 @@ const GitHubRepositoryConnector = () => {
       
       if (response && response.ok) {
         const data = await response.json()
+        console.log('GitHubRepositoryConnector: Repositories fetched successfully:', data)
         setRepositories(data.repositories || [])
       } else if (response) {
         const error = await response.json()
-        console.error('Failed to fetch repositories:', error)
+        console.error('GitHubRepositoryConnector: Failed to fetch repositories:', error)
         // If it's a 401, show a message to connect GitHub
         if (response.status === 401) {
           setRepositories([])
         }
+      } else {
+        console.log('GitHubRepositoryConnector: No response received')
       }
     } catch (error) {
       console.error('Failed to fetch repositories:', error)
@@ -323,6 +329,14 @@ const GitHubRepositoryConnector = () => {
   // User has GitHub connected, show repository management
   const connectedRepos = repositories.filter(repo => repo.connected)
   const unconnectedRepos = repositories.filter(repo => !repo.connected)
+
+  // Auto-fetch repositories when user has GitHub connected
+  useEffect(() => {
+    if (hasGitHubToken && repositories.length === 0 && !loading) {
+      console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
+      fetchRepositories()
+    }
+  }, [hasGitHubToken, repositories.length, loading])
 
   return (
     <div className="relative">
