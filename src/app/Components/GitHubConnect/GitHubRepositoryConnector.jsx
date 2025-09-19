@@ -123,6 +123,12 @@ const GitHubRepositoryConnector = () => {
     }
   }, [])
 
+  // Reset hasFetchedRepos when user changes
+  useEffect(() => {
+    console.log('GitHubRepositoryConnector: User changed, resetting hasFetchedRepos')
+    hasFetchedRepos.current = false
+  }, [user?.id])
+
   // Check if user has GitHub connected
   console.log('GitHubRepositoryConnector: Checking for GitHub token...')
   console.log('GitHubRepositoryConnector: User metadata:', user?.user_metadata)
@@ -141,8 +147,9 @@ const GitHubRepositoryConnector = () => {
     console.log('GitHubRepositoryConnector: useEffect - hasGitHubToken:', hasGitHubToken)
     console.log('GitHubRepositoryConnector: useEffect - hasFetchedRepos.current:', hasFetchedRepos.current)
     console.log('GitHubRepositoryConnector: useEffect - loading:', loading)
+    console.log('GitHubRepositoryConnector: useEffect - repositories.length:', repositories.length)
     
-    if (hasGitHubToken && !hasFetchedRepos.current && !loading) {
+    if (hasGitHubToken && !hasFetchedRepos.current && !loading && repositories.length === 0) {
       console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
       hasFetchedRepos.current = true
       fetchRepositories()
@@ -151,8 +158,9 @@ const GitHubRepositoryConnector = () => {
       console.log('- hasGitHubToken:', hasGitHubToken)
       console.log('- hasFetchedRepos.current:', hasFetchedRepos.current)
       console.log('- loading:', loading)
+      console.log('- repositories.length:', repositories.length)
     }
-  }, [hasGitHubToken, loading])
+  }, [hasGitHubToken, loading, repositories.length])
 
   const fetchRepositories = async () => {
     console.log('GitHubRepositoryConnector: fetchRepositories called')
@@ -387,8 +395,22 @@ const GitHubRepositoryConnector = () => {
 
       {showDropdown && (
         <div className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-          <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <h3 className="text-sm font-medium text-gray-900 dark:text-white">Connected Repositories</h3>
+            <button
+              onClick={() => {
+                console.log('GitHubRepositoryConnector: Manual refresh triggered')
+                hasFetchedRepos.current = false
+                fetchRepositories()
+              }}
+              className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1"
+              disabled={loading}
+            >
+              <svg className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh
+            </button>
           </div>
           
           {loading ? (
