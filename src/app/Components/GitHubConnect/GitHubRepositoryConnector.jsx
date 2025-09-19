@@ -14,6 +14,7 @@ const GitHubRepositoryConnector = () => {
   const [hasAuth, setHasAuth] = useState(false)
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const hasFetchedRepos = useRef(false)
+  const isFetching = useRef(false)
 
   useEffect(() => {
     // Check for authentication (Supabase or demo mode only)
@@ -149,9 +150,16 @@ const GitHubRepositoryConnector = () => {
     console.log('GitHubRepositoryConnector: useEffect - loading:', loading)
     console.log('GitHubRepositoryConnector: useEffect - repositories.length:', repositories.length)
     
-    if (hasGitHubToken && !hasFetchedRepos.current && !loading && repositories.length === 0) {
+    // Reset hasFetchedRepos if we have a token but no repositories and not loading
+    if (hasGitHubToken && repositories.length === 0 && !loading && hasFetchedRepos.current) {
+      console.log('GitHubRepositoryConnector: Resetting hasFetchedRepos - token exists but no repositories')
+      hasFetchedRepos.current = false
+    }
+    
+    if (hasGitHubToken && !hasFetchedRepos.current && !loading && !isFetching.current && repositories.length === 0) {
       console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
       hasFetchedRepos.current = true
+      isFetching.current = true
       fetchRepositories()
     } else {
       console.log('GitHubRepositoryConnector: Not auto-fetching repositories. Reasons:')
@@ -160,7 +168,7 @@ const GitHubRepositoryConnector = () => {
       console.log('- loading:', loading)
       console.log('- repositories.length:', repositories.length)
     }
-  }, [hasGitHubToken, loading, repositories.length])
+  }, [hasGitHubToken, loading])
 
   const fetchRepositories = async () => {
     console.log('GitHubRepositoryConnector: fetchRepositories called')
@@ -211,6 +219,7 @@ const GitHubRepositoryConnector = () => {
       console.error('Failed to fetch repositories:', error)
     } finally {
       setLoading(false)
+      isFetching.current = false
     }
   }
 
@@ -401,6 +410,7 @@ const GitHubRepositoryConnector = () => {
               onClick={() => {
                 console.log('GitHubRepositoryConnector: Manual refresh triggered')
                 hasFetchedRepos.current = false
+                isFetching.current = false
                 fetchRepositories()
               }}
               className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1"
