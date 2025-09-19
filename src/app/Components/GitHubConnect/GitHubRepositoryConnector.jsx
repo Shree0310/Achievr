@@ -125,15 +125,21 @@ const GitHubRepositoryConnector = () => {
 
   // Auto-fetch repositories when user has GitHub connected
   useEffect(() => {
-    const hasGitHubToken = user?.user_metadata?.github_access_token || 
-      (localStorage.getItem('demoUser') && JSON.parse(localStorage.getItem('demoUser')).user_metadata?.access_token)
+    console.log('GitHubRepositoryConnector: useEffect - hasGitHubToken:', hasGitHubToken)
+    console.log('GitHubRepositoryConnector: useEffect - hasFetchedRepos.current:', hasFetchedRepos.current)
+    console.log('GitHubRepositoryConnector: useEffect - loading:', loading)
     
     if (hasGitHubToken && !hasFetchedRepos.current && !loading) {
       console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
       hasFetchedRepos.current = true
       fetchRepositories()
+    } else {
+      console.log('GitHubRepositoryConnector: Not auto-fetching repositories. Reasons:')
+      console.log('- hasGitHubToken:', hasGitHubToken)
+      console.log('- hasFetchedRepos.current:', hasFetchedRepos.current)
+      console.log('- loading:', loading)
     }
-  }, [user, loading])
+  }, [hasGitHubToken, loading])
 
   const fetchRepositories = async () => {
     console.log('GitHubRepositoryConnector: fetchRepositories called')
@@ -315,8 +321,17 @@ const GitHubRepositoryConnector = () => {
   console.log('GitHubRepositoryConnector: Authentication found, showing component')
 
   // Check if user has GitHub connected
+  console.log('GitHubRepositoryConnector: Checking for GitHub token...')
+  console.log('GitHubRepositoryConnector: User metadata:', user?.user_metadata)
+  console.log('GitHubRepositoryConnector: GitHub access token in metadata:', user?.user_metadata?.github_access_token)
+  
+  const demoUser = localStorage.getItem('demoUser')
+  console.log('GitHubRepositoryConnector: Demo user in localStorage:', demoUser)
+  
   const hasGitHubToken = user?.user_metadata?.github_access_token || 
-    (localStorage.getItem('demoUser') && JSON.parse(localStorage.getItem('demoUser')).user_metadata?.access_token)
+    (demoUser && JSON.parse(demoUser).user_metadata?.access_token)
+  
+  console.log('GitHubRepositoryConnector: hasGitHubToken result:', hasGitHubToken)
 
   // If user doesn't have GitHub connected, show Connect GitHub button
   if (!hasGitHubToken) {
