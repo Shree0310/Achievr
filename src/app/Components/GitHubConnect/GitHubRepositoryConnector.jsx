@@ -123,6 +123,19 @@ const GitHubRepositoryConnector = () => {
     }
   }, [])
 
+  // Check if user has GitHub connected
+  const hasGitHubToken = user?.user_metadata?.github_access_token || 
+    (localStorage.getItem('demoUser') && JSON.parse(localStorage.getItem('demoUser')).user_metadata?.access_token)
+
+  // Auto-fetch repositories when user has GitHub connected
+  useEffect(() => {
+    if (hasGitHubToken && !hasFetchedRepos.current && !loading) {
+      console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
+      hasFetchedRepos.current = true
+      fetchRepositories()
+    }
+  }, [hasGitHubToken, loading])
+
   const fetchRepositories = async () => {
     console.log('GitHubRepositoryConnector: fetchRepositories called')
     setLoading(true)
@@ -302,10 +315,6 @@ const GitHubRepositoryConnector = () => {
   
   console.log('GitHubRepositoryConnector: Authentication found, showing component')
 
-  // Check if user has GitHub connected
-  const hasGitHubToken = user?.user_metadata?.github_access_token || 
-    (localStorage.getItem('demoUser') && JSON.parse(localStorage.getItem('demoUser')).user_metadata?.access_token)
-
   // If user doesn't have GitHub connected, show Connect GitHub button
   if (!hasGitHubToken) {
     return (
@@ -330,15 +339,6 @@ const GitHubRepositoryConnector = () => {
   // User has GitHub connected, show repository management
   const connectedRepos = repositories.filter(repo => repo.connected)
   const unconnectedRepos = repositories.filter(repo => !repo.connected)
-
-  // Auto-fetch repositories when user has GitHub connected
-  useEffect(() => {
-    if (hasGitHubToken && !hasFetchedRepos.current && !loading) {
-      console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
-      hasFetchedRepos.current = true
-      fetchRepositories()
-    }
-  }, [hasGitHubToken, loading])
 
   return (
     <div className="relative">
