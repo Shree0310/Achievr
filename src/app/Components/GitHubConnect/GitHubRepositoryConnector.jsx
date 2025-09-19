@@ -15,6 +15,7 @@ const GitHubRepositoryConnector = () => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const hasFetchedRepos = useRef(false)
   const isFetching = useRef(false)
+  const fetchTimeout = useRef(null)
 
   useEffect(() => {
     // Check for authentication (Supabase or demo mode only)
@@ -121,6 +122,12 @@ const GitHubRepositoryConnector = () => {
       window.removeEventListener('popstate', checkForGitHubCallback)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       clearInterval(authCheckInterval)
+      
+      // Clear fetch timeout
+      if (fetchTimeout.current) {
+        clearTimeout(fetchTimeout.current)
+        fetchTimeout.current = null
+      }
     }
   }, [])
 
@@ -143,32 +150,35 @@ const GitHubRepositoryConnector = () => {
   
   console.log('GitHubRepositoryConnector: hasGitHubToken result:', hasGitHubToken)
 
-  // Auto-fetch repositories when user has GitHub connected
+  // Auto-fetch repositories when user has GitHub connected (only once)
   useEffect(() => {
     console.log('GitHubRepositoryConnector: useEffect - hasGitHubToken:', hasGitHubToken)
     console.log('GitHubRepositoryConnector: useEffect - hasFetchedRepos.current:', hasFetchedRepos.current)
     console.log('GitHubRepositoryConnector: useEffect - loading:', loading)
     console.log('GitHubRepositoryConnector: useEffect - repositories.length:', repositories.length)
     
-    // Reset hasFetchedRepos if we have a token but no repositories and not loading
-    if (hasGitHubToken && repositories.length === 0 && !loading && hasFetchedRepos.current) {
-      console.log('GitHubRepositoryConnector: Resetting hasFetchedRepos - token exists but no repositories')
-      hasFetchedRepos.current = false
-    }
-    
-    if (hasGitHubToken && !hasFetchedRepos.current && !loading && !isFetching.current && repositories.length === 0) {
+    // Only auto-fetch once when component mounts and user has GitHub token
+    if (hasGitHubToken && !hasFetchedRepos.current && !loading && !isFetching.current) {
       console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
       hasFetchedRepos.current = true
       isFetching.current = true
+      
+      // Add a timeout to prevent infinite fetching
+      fetchTimeout.current = setTimeout(() => {
+        console.log('GitHubRepositoryConnector: Fetch timeout reached, resetting flags')
+        isFetching.current = false
+        hasFetchedRepos.current = false
+      }, 10000) // 10 second timeout
+      
       fetchRepositories()
     } else {
       console.log('GitHubRepositoryConnector: Not auto-fetching repositories. Reasons:')
       console.log('- hasGitHubToken:', hasGitHubToken)
       console.log('- hasFetchedRepos.current:', hasFetchedRepos.current)
       console.log('- loading:', loading)
-      console.log('- repositories.length:', repositories.length)
+      console.log('- isFetching.current:', isFetching.current)
     }
-  }, [hasGitHubToken, loading])
+  }, [hasGitHubToken]) // Only depend on hasGitHubToken, not loading
 
   const fetchRepositories = async () => {
     console.log('GitHubRepositoryConnector: fetchRepositories called')
@@ -220,6 +230,11 @@ const GitHubRepositoryConnector = () => {
     } finally {
       setLoading(false)
       isFetching.current = false
+      // Clear the timeout since fetch completed
+      if (fetchTimeout.current) {
+        clearTimeout(fetchTimeout.current)
+        fetchTimeout.current = null
+      }
     }
   }
 
@@ -411,6 +426,13 @@ const GitHubRepositoryConnector = () => {
                 console.log('GitHubRepositoryConnector: Manual refresh triggered')
                 hasFetchedRepos.current = false
                 isFetching.current = false
+                
+                // Clear any existing timeout
+                if (fetchTimeout.current) {
+                  clearTimeout(fetchTimeout.current)
+                  fetchTimeout.current = null
+                }
+                
                 fetchRepositories()
               }}
               className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1"
