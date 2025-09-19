@@ -204,8 +204,20 @@ const GitHubRepositoryConnector = () => {
         }
       } else if (user) {
         console.log('GitHubRepositoryConnector: Using Supabase authentication for user:', user.email)
-        // Use Supabase authentication
-        response = await fetch('/api/github/repositories')
+        // Get GitHub token from user metadata
+        const githubToken = user.user_metadata?.github_access_token
+        if (githubToken) {
+          console.log('GitHubRepositoryConnector: Sending GitHub token in Authorization header')
+          // Use Supabase authentication with GitHub token in header
+          response = await fetch('/api/github/repositories', {
+            headers: {
+              'Authorization': `Bearer ${githubToken}`
+            }
+          })
+        } else {
+          console.log('GitHubRepositoryConnector: No GitHub token in user metadata')
+          return
+        }
       } else {
         console.log('No authentication found (neither demo user nor Supabase user)')
         return
@@ -262,12 +274,22 @@ const GitHubRepositoryConnector = () => {
           return
         }
       } else if (user) {
-        // Use Supabase authentication
-        response = await fetch('/api/github/repositories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ full_name: fullName })
-        })
+        // Get GitHub token from user metadata
+        const githubToken = user.user_metadata?.github_access_token
+        if (githubToken) {
+          // Use Supabase authentication with GitHub token in header
+          response = await fetch('/api/github/repositories', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${githubToken}`
+            },
+            body: JSON.stringify({ full_name: fullName })
+          })
+        } else {
+          alert('No GitHub token found. Please connect your GitHub account first.')
+          return
+        }
       } else {
         alert('Please authenticate first')
         return
@@ -310,12 +332,22 @@ const GitHubRepositoryConnector = () => {
           return
         }
       } else if (user) {
-        // Use Supabase authentication
-        response = await fetch('/api/github/repositories', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ full_name: fullName })
-        })
+        // Get GitHub token from user metadata
+        const githubToken = user.user_metadata?.github_access_token
+        if (githubToken) {
+          // Use Supabase authentication with GitHub token in header
+          response = await fetch('/api/github/repositories', {
+            method: 'DELETE',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${githubToken}`
+            },
+            body: JSON.stringify({ full_name: fullName })
+          })
+        } else {
+          alert('No GitHub token found. Please connect your GitHub account first.')
+          return
+        }
       } else {
         alert('Please authenticate first')
         return
