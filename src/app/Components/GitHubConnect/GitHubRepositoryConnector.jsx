@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/utils/supabase/client'
 
 const GitHubRepositoryConnector = () => {
@@ -13,6 +13,7 @@ const GitHubRepositoryConnector = () => {
   const [user, setUser] = useState(null)
   const [hasAuth, setHasAuth] = useState(false)
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+  const hasFetchedRepos = useRef(false)
 
   useEffect(() => {
     // Check for authentication (Supabase or demo mode only)
@@ -121,6 +122,18 @@ const GitHubRepositoryConnector = () => {
       clearInterval(authCheckInterval)
     }
   }, [])
+
+  // Auto-fetch repositories when user has GitHub connected
+  useEffect(() => {
+    const hasGitHubToken = user?.user_metadata?.github_access_token || 
+      (localStorage.getItem('demoUser') && JSON.parse(localStorage.getItem('demoUser')).user_metadata?.access_token)
+    
+    if (hasGitHubToken && !hasFetchedRepos.current && !loading) {
+      console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
+      hasFetchedRepos.current = true
+      fetchRepositories()
+    }
+  }, [user, loading])
 
   const fetchRepositories = async () => {
     console.log('GitHubRepositoryConnector: fetchRepositories called')
@@ -329,14 +342,6 @@ const GitHubRepositoryConnector = () => {
   // User has GitHub connected, show repository management
   const connectedRepos = repositories.filter(repo => repo.connected)
   const unconnectedRepos = repositories.filter(repo => !repo.connected)
-
-  // Auto-fetch repositories when user has GitHub connected
-  useEffect(() => {
-    if (hasGitHubToken && repositories.length === 0 && !loading) {
-      console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
-      fetchRepositories()
-    }
-  }, [hasGitHubToken, repositories.length, loading])
 
   return (
     <div className="relative">
