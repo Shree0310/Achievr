@@ -20,36 +20,26 @@ const GitHubRepositoryConnector = () => {
   useEffect(() => {
     // Check for authentication (Supabase or demo mode only)
     const checkAuth = async () => {
-      console.log('GitHubRepositoryConnector: Starting authentication check...')
-      
       // Check for demo user first (highest priority)
       const demoUser = localStorage.getItem('demoUser')
       if (demoUser) {
         const parsedDemoUser = JSON.parse(demoUser)
         if (parsedDemoUser.user_metadata?.access_token) {
-          console.log('GitHubRepositoryConnector: Demo user with GitHub token found')
           setHasAuth(true)
           return
-        } else {
-          console.log('GitHubRepositoryConnector: Demo user found but no GitHub token')
         }
       }
       
       // Check for Supabase user (with or without GitHub data)
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        console.log('GitHubRepositoryConnector: Supabase user found:', user.email)
         setUser(user)
         setHasAuth(true)
         return
       }
       
-      console.log('GitHubRepositoryConnector: No authentication found')
       setHasAuth(false)
     }
-    
-    // Debug logging
-    console.log('GitHubRepositoryConnector: Checking authentication...')
     
     checkAuth().finally(() => {
       setIsCheckingAuth(false)
@@ -133,55 +123,33 @@ const GitHubRepositoryConnector = () => {
 
   // Reset hasFetchedRepos when user changes
   useEffect(() => {
-    console.log('GitHubRepositoryConnector: User changed, resetting hasFetchedRepos')
     hasFetchedRepos.current = false
   }, [user?.id])
 
   // Check if user has GitHub connected
-  console.log('GitHubRepositoryConnector: Checking for GitHub token...')
-  console.log('GitHubRepositoryConnector: User metadata:', user?.user_metadata)
-  console.log('GitHubRepositoryConnector: GitHub access token in metadata:', user?.user_metadata?.github_access_token)
-  
   const demoUser = localStorage.getItem('demoUser')
-  console.log('GitHubRepositoryConnector: Demo user in localStorage:', demoUser)
   
   const hasGitHubToken = user?.user_metadata?.github_access_token || 
     (demoUser && JSON.parse(demoUser).user_metadata?.access_token)
-  
-  console.log('GitHubRepositoryConnector: hasGitHubToken result:', hasGitHubToken)
 
   // Auto-fetch repositories when user has GitHub connected (only once)
   useEffect(() => {
-    console.log('GitHubRepositoryConnector: useEffect - hasGitHubToken:', hasGitHubToken)
-    console.log('GitHubRepositoryConnector: useEffect - hasFetchedRepos.current:', hasFetchedRepos.current)
-    console.log('GitHubRepositoryConnector: useEffect - loading:', loading)
-    console.log('GitHubRepositoryConnector: useEffect - repositories.length:', repositories.length)
-    
     // Only auto-fetch once when component mounts and user has GitHub token
     if (hasGitHubToken && !hasFetchedRepos.current && !loading && !isFetching.current) {
-      console.log('GitHubRepositoryConnector: Auto-fetching repositories for user with GitHub token')
       hasFetchedRepos.current = true
       isFetching.current = true
       
       // Add a timeout to prevent infinite fetching
       fetchTimeout.current = setTimeout(() => {
-        console.log('GitHubRepositoryConnector: Fetch timeout reached, resetting flags')
         isFetching.current = false
         hasFetchedRepos.current = false
       }, 10000) // 10 second timeout
       
       fetchRepositories()
-    } else {
-      console.log('GitHubRepositoryConnector: Not auto-fetching repositories. Reasons:')
-      console.log('- hasGitHubToken:', hasGitHubToken)
-      console.log('- hasFetchedRepos.current:', hasFetchedRepos.current)
-      console.log('- loading:', loading)
-      console.log('- isFetching.current:', isFetching.current)
     }
   }, [hasGitHubToken]) // Only depend on hasGitHubToken, not loading
 
   const fetchRepositories = async () => {
-    console.log('GitHubRepositoryConnector: fetchRepositories called')
     setLoading(true)
     try {
       // Check for demo user first (localStorage)
@@ -191,7 +159,6 @@ const GitHubRepositoryConnector = () => {
       if (demoUser) {
         const githubToken = JSON.parse(demoUser).user_metadata?.access_token
         if (githubToken) {
-          console.log('GitHubRepositoryConnector: Using demo mode with GitHub token')
           // Use demo mode with Authorization header
           response = await fetch('/api/github/repositories', {
             headers: {
@@ -199,15 +166,12 @@ const GitHubRepositoryConnector = () => {
             }
           })
         } else {
-          console.log('No GitHub token in demo user')
           return
         }
       } else if (user) {
-        console.log('GitHubRepositoryConnector: Using Supabase authentication for user:', user.email)
         // Get GitHub token from user metadata
         const githubToken = user.user_metadata?.github_access_token
         if (githubToken) {
-          console.log('GitHubRepositoryConnector: Sending GitHub token in Authorization header')
           // Use Supabase authentication with GitHub token in header
           response = await fetch('/api/github/repositories', {
             headers: {
@@ -215,27 +179,22 @@ const GitHubRepositoryConnector = () => {
             }
           })
         } else {
-          console.log('GitHubRepositoryConnector: No GitHub token in user metadata')
           return
         }
       } else {
-        console.log('No authentication found (neither demo user nor Supabase user)')
         return
       }
       
       if (response && response.ok) {
         const data = await response.json()
-        console.log('GitHubRepositoryConnector: Repositories fetched successfully:', data)
         setRepositories(data.repositories || [])
       } else if (response) {
         const error = await response.json()
-        console.error('GitHubRepositoryConnector: Failed to fetch repositories:', error)
+        console.error('Failed to fetch repositories:', error)
         // If it's a 401, show a message to connect GitHub
         if (response.status === 401) {
           setRepositories([])
         }
-      } else {
-        console.log('GitHubRepositoryConnector: No response received')
       }
     } catch (error) {
       console.error('Failed to fetch repositories:', error)
@@ -391,11 +350,8 @@ const GitHubRepositoryConnector = () => {
   }
 
   if (!hasAuth) {
-    console.log('GitHubRepositoryConnector: No authentication found, hiding component')
     return null // Don't show if user is not authenticated
   }
-  
-  console.log('GitHubRepositoryConnector: Authentication found, showing component')
 
   // If user doesn't have GitHub connected, show Connect GitHub button
   if (!hasGitHubToken) {
@@ -455,7 +411,6 @@ const GitHubRepositoryConnector = () => {
             <h3 className="text-sm font-medium text-gray-900 dark:text-white">Connected Repositories</h3>
             <button
               onClick={() => {
-                console.log('GitHubRepositoryConnector: Manual refresh triggered')
                 hasFetchedRepos.current = false
                 isFetching.current = false
                 
