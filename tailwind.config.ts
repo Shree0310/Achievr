@@ -91,5 +91,25 @@ export default {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+	require("tailwindcss-animate"),
+function({ addUtilities }: any) {
+    const newUtilities = {
+      '.mask-r-from-50': {
+        '-webkit-mask-image': 'linear-gradient(to right, transparent 50%, black 50%)',
+        'mask-image': 'linear-gradient(to right, transparent 50%, black 50%)',
+      },
+      '.mask-b-from-50': {
+        '-webkit-mask-image': 'linear-gradient(to bottom, transparent 50%, black 50%)',
+        'mask-image': 'linear-gradient(to bottom, transparent 50%, black 50%)',
+      },
+	  '.mask-rb-from-50': {
+        '-webkit-mask-image': 'linear-gradient(to right, transparent 50%, black 50%), linear-gradient(to bottom, transparent 50%, black 50%)',
+        'mask-image': 'linear-gradient(to right, transparent 50%, black 50%), linear-gradient(to bottom, transparent 50%, black 50%)',
+        '-webkit-mask-composite': 'source-in',
+        'mask-composite': 'intersect',
+      },
+    }
+    addUtilities(newUtilities)
+  }],
 } satisfies Config;

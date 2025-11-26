@@ -76,11 +76,6 @@ export const ThemeProvider = ({ children }) => {
         applyTheme(systemTheme);
     };
 
-    // Don't render until mounted to avoid hydration mismatch
-    if (!mounted) {
-        return <div style={{ visibility: 'hidden' }}>{children}</div>;
-    }
-
     const value = {
         theme,
         applyTheme,
@@ -91,9 +86,13 @@ export const ThemeProvider = ({ children }) => {
         mounted
     }
 
+    const content = mounted
+        ? children
+        : <div style={{ visibility: 'hidden' }}>{children}</div>;
+
     return (
         <ThemeContext.Provider value={value}>
-            {children}
+            {content}
         </ThemeContext.Provider>
-    )
+    );
 }
