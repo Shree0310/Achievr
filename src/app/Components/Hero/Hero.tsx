@@ -9,8 +9,8 @@ import SubHeading from "./SubHeading";
 const Hero = () => {
     return <div>
         <Container className="dark:bg-gradient-to-t from-neutral-950 via-neutral-950 bg-white  to-sky-900 bg-transparent flex flex-col items-center justify-center">
-                <Heading className="">
-                    Achievr- A tool to empower your Daily task managment and productivity
+                <Heading delay={0.2} className="">
+                    Achievr - A tool to empower your Daily task managment and productivity
                 </Heading>
             <SubHeading>
                 Say goodbye to the outdated financial tools. Every small business owner, regardless of the background, 
@@ -32,8 +32,9 @@ const Hero = () => {
                 </button>
 
             </div>
-            <LandingImages/>
-
+            <div className="my-24 flex w-full max-w-[800px] justify-center items-center">
+                <LandingImages/>
+            </div>
         </Container>
     </div>
 }

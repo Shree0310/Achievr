@@ -4,26 +4,71 @@ import hero from "../../../utils/Images/hero.png"
 import { cn } from "@/lib/utils";
 
 const LandingImages = () => {
-    return <div className="relative min-h-140 w-full flex pt-20 perspective-distant transform-3d justify-center">
-        <motion.div className="perspective-[4000px]">
-            <Image src={hero} 
-                        alt="Hero illustration" 
-                        width={1820} 
-                        height={820}
-                        className={cn("absolute rounded-lg shadow-2xl mt-64")}
-                        style={{
-                            transform: "rotateY(20deg) rotateX(30deg) rotateZ(50deg)"
-                        }}
-                 />
-        </motion.div>
-        <motion.div className="perspective-[4000px]">
-            <Image src={hero} 
-                    alt="Hero illustration" 
-                    width={1820} 
+    return (
+        <div className="relative w-full min-h-140 perspective-distant flex items-center justify-center pt-20 mt-56">
+            {/* Back card - rotated */}
+            <motion.div
+                className="absolute translate-x-20"
+                initial= {{
+                    opacity:0,
+                    y: -100
+                }}
+                animate={{
+                    opacity:1,
+                    y: 0
+                }}
+                 transition={{
+                    duration:0.3,
+                    ease:"easeOut"
+                }}
+                >
+                <Image
+                    src={hero}
+                    alt="Hero illustration background"
+                    width={1820}
                     height={820}
-                    className="absolute rounded-lg shadow-2xl mt-24"
+                    className={cn(
+                        "rounded-lg shadow-2xl inset-0",
+                        "blur-[1px] brightness-90 dark:brightness-75",
+                    )}
+                    style={{
+                        transform: 'rotateY(20deg) rotateX(30deg) rotateZ(-20deg)'
+                    }}
                 />
-        </motion.div>
-    </div>
+            </motion.div>
+
+            {/* Front card - on top */}
+            <motion.div
+                className="absolute translate-x-20 -translate-y-40"
+                initial= {{
+                    opacity:0,
+                    y: -200
+                }}
+                animate={{
+                    opacity:1,
+                    y:-100,
+                }}
+                transition={{
+                    delay:0.5,
+                    duration:0.4,
+                    ease:"easeOut"
+                }}
+            >
+                <Image
+                    src={hero}
+                    alt="Hero illustration foreground"
+                    width={1820}
+                    height={820}
+                    className={cn("rounded-2xl shadow-2xl inset-0 ", 
+                                  "[mask-image:linear-gradient(to_bottom,black_0%,transparent_100%",
+                                  "linear-gradient(to_right,black_0%,transparent_100%)] [mask-image:linear-gradient(to_right,black_0%,transparent_100%)]"
+                                )}
+                    style={{
+                        transform: 'rotateY(20deg) rotateX(30deg) rotateZ(-20deg)'
+                    }}
+                />
+            </motion.div>
+        </div>
+    );
 }
 export default LandingImages;
