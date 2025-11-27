@@ -4,12 +4,12 @@ import { motion } from "motion/react";
 
 const Heading = ({ children, className, delay = 0, as }: { children: string; className?: string;delay?: number;
  as?: "h1" | "h2"; }) => {
-    const Tag: ElementType = as ?? "h1";
+    const Tag: ElementType = as ?? "h2";
 
     return (
-                <Tag className={cn("text-6xl font-semibold tracking-tight mb-4 max-w-3xl" ,
-                    "text-center leading-tighter",
-                    " dark:text-neutral-200 text-left"
+                <Tag className={cn("text-6xl font-semibold tracking-tight mb-4" ,
+                    "leading-tight",
+                    "dark:text-neutral-200 text-left"
                     , className)}>
 
             {children.split(" ").map((word,idx)=>(

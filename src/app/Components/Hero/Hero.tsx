@@ -2,6 +2,7 @@
 
 import Button from "./Button";
 import Container from "./Container";
+import Features from "./Features/Features";
 import Heading from "./Heading";
 import LandingImages from "./LandingImages";
 import SubHeading from "./SubHeading";
@@ -9,12 +10,13 @@ import SubHeading from "./SubHeading";
 const Hero = () => {
     return <div>
         <Container className="dark:bg-gradient-to-t from-neutral-950 via-neutral-950 bg-white  to-sky-900 bg-transparent flex flex-col items-center justify-center">
-                <Heading delay={0.2} className="">
+                <Heading delay={0.2} className="text-center max-w-4xl">
                     Achievr - A tool to empower your Daily task managment and productivity
                 </Heading>
             <SubHeading>
-                Say goodbye to the outdated financial tools. Every small business owner, regardless of the background, 
+                <div>Say goodbye to the outdated financial tools. Every small business owner, regardless of the background, 
                 can now manage their business like a pro. Simple. Intuitive. And never boring.
+                </div>
             </SubHeading>
             <div className="my-10 flex w-full max-w-lg justify-center">
                 <Button>
@@ -35,6 +37,7 @@ const Hero = () => {
             <div className="my-24 flex w-full max-w-[800px] justify-center items-center">
                 <LandingImages/>
             </div>
+            <Features/>
         </Container>
     </div>
 }
