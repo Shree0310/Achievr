@@ -22,13 +22,15 @@ export const CardCTA = ({className, children, ...rest}: React.ComponentProps<"bu
 }
 
 export const CardTitle = ({children, className}:{children?: React.ReactNode, className?:string}) => {
-    return <div className={cn("text-lg font-bold ", className)}>
+    return <div className={cn("text-lg font-bold mt-6 ", className)}>
         {children}
     </div>
 }
 
 export const CardSkeleton = ({className, children}:{className?:string; children?:React.ReactNode}) => {
      return <div className={cn("relative md:h-60 h-40 overflow-hidden perspective-distant mask-radial-from-50%", className)}>
-        {children}
+        <div className="absolute inset-0 h-full w-full z-40">
+            {children}
+        </div>
     </div>
 }

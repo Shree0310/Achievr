@@ -4,9 +4,11 @@ import SubHeading from "../SubHeading";
 import Card, { CardContent, CardCTA, CardSkeleton, CardTitle } from "./Card";
 import { IconPlus } from '@tabler/icons-react';
 import { SkeletonOne } from "./Skeletons/first";
+import SkeletonThree from "./Skeletons/third";
+import SkeletonTwo from "./Skeletons/second";
 
 const Features = () => {
-    return <Container className="mt-36 md:pt-4">
+    return <Container className="mt-48 md:pt-4">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 max-w-6xl mx-auto">
             <div className="flex-1 min-w-0">
                 <Heading className="max-w-2xl">
@@ -36,7 +38,9 @@ const Features = () => {
                     </CardContent>
                 </Card>
                 <Card className="">
-                    <CardSkeleton></CardSkeleton>
+                    <CardSkeleton>
+                        <SkeletonTwo/>
+                    </CardSkeleton>
                     <CardContent>
                         <CardTitle className="flex justify-between gap-1">
                             Entire Worflow at one place
@@ -47,7 +51,9 @@ const Features = () => {
                     </CardContent>
                 </Card>
                 <Card className="rounded-tr-3xl rounded-br-3xl">
-                    <CardSkeleton></CardSkeleton>
+                    <CardSkeleton>
+                        <SkeletonThree/>
+                    </CardSkeleton>
                     <CardContent>
                         <CardTitle className="flex justify-between gap-1">
                             Never loose track with real time updates

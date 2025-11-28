@@ -6,11 +6,11 @@ import { IconClock } from '@tabler/icons-react';
 import { IconRipple } from '@tabler/icons-react';
 
 export const SkeletonOne = () => {
-    return <div className="perspective-distant h-full w-full -translate-x-10 " style={{
-        transform: "rotateX(30deg) rotateY(-20deg) rotateZ(15deg) scale(1.2) "
+    return <div className="perspective-distant h-full w-full mt-3 -translate-x-10 " style={{
+        transform: "rotateX(35deg) rotateY(-20deg) rotateZ(30deg) scale(1.2) "
     }}>
         <SkeletonCard 
-            className="bottom-0 left-12 z-30 max-w-[90%] absolute"
+            className="-bottom-2 left-12 z-30 max-w-[90%] absolute"
             icon={ <IconCircleDashedCheck className='size-5' stroke={2} />} 
             badge={<Badge text="1205" variant='danger'/>} 
             title='Task Planner'
@@ -30,15 +30,15 @@ export const SkeletonOne = () => {
 }
 
 const SkeletonCard = ({className, icon, title, description, badge}:{className:string; icon: React.ReactNode, title: string, description: string, badge: React.ReactNode}) => {
-    return <div className={cn("max-w-[80%] mx-auto w-full p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-lg", className)}>
+    return <div className={cn("max-w-[80%] h-fit my-auto mx-auto w-full p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-2xl", className)}>
         <div className="flex gap-3 items-center">
             {icon}
-            <p className='text-sm font-bold text-black dark:text-white'>
+            <p className='text-sm font-normal text-black dark:text-neutral-300/70'>
                 {title}
             </p>
             {badge}
         </div>
-        <p className='text-sm text-neutral-500 dark:text-neutral-400 font-medium mt-3'>{description}</p>
+        <p className='text-sm text-neutral-500 dark:text-neutral-400/60 font-medium'>{description}</p>
         <div className="flex items-center gap-2 py-3">
             <Tag text='Google Ads'/>
             <Tag text='Saas'/>
@@ -49,7 +49,7 @@ const SkeletonCard = ({className, icon, title, description, badge}:{className:st
 export default SkeletonCard;
 
 const Tag = ({text}:{text:string}) => {
-    return <div className="text-xs px-1 py-0.5 rounded-sm bg-neutral-200 dark:bg-neutral-500">
+    return <div className="text-xs px-1 py-0.5 rounded-sm bg-neutral-200 dark:bg-neutral-700 text-black dark:text-neutral-200">
                {text}
             </div>
 }

@@ -30,10 +30,10 @@ const LandingImages = () => {
                     height={800}
                     className={cn(
                         "rounded-lg shadow-2xl inset-0",
-                        "blur-[1px] brightness-90 dark:brightness-75",
+                        "blur-[2px] brightness-80 dark:brightness-65",
                     )}
                     style={{
-                        transform: 'rotateY(20deg) rotateX(30deg) rotateZ(-20deg)',
+                        transform: 'rotateY(20deg) rotateX(40deg) rotateZ(-20deg)',
                         width: '1600px',
                         height: '800px'
                     }}
@@ -42,7 +42,7 @@ const LandingImages = () => {
 
             {/* Front card - on top */}
             <motion.div
-                className="absolute translate-x-96 -translate-y-60"
+                className="absolute translate-x-80 -translate-y-70"
                 initial= {{
                     opacity:0,
                     y: -200
@@ -67,7 +67,7 @@ const LandingImages = () => {
                                   "linear-gradient(to_right,black_0%,transparent_100%)] [mask-image:linear-gradient(to_right,black_0%,transparent_100%)]"
                                 )}
                     style={{
-                        transform: 'rotateY(20deg) rotateX(30deg) rotateZ(-20deg)',
+                        transform: 'rotateY(20deg) rotateX(40deg) rotateZ(-20deg)',
                         width: '1600px',
                         height: '800px',
                         opacity: 0.7
