@@ -12,7 +12,7 @@ const SubHeading = ({children, className, as}: {children?: React.ReactNode; clas
                 opacity:0,
                 y:10,  
             }}
-            whileInView={{
+            animate={{
                 opacity:1,
                 y:0
             }}

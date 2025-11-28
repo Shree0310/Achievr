@@ -1,7 +1,9 @@
 import Container from "../Container";
 import Heading from "../Heading";
 import SubHeading from "../SubHeading";
-import Card, { CardContent, CardTitle } from "./Card";
+import Card, { CardContent, CardCTA, CardSkeleton, CardTitle } from "./Card";
+import { IconPlus } from '@tabler/icons-react';
+import { SkeletonOne } from "./Skeletons/first";
 
 const Features = () => {
     return <Container className="mt-36 md:pt-4">
@@ -20,24 +22,38 @@ const Features = () => {
             </div>
         </div>
         <div className="grid grid-cols-3 gap-6 mt-8 max-w-6xl mx-auto">
-                <Card className="">
+                <Card className="rounded-tl-3xl rounded-bl-3xl">
+                    <CardSkeleton>
+                        <SkeletonOne/>
+                    </CardSkeleton>
                     <CardContent>
-                        <CardTitle>
+                        <CardTitle className="flex justify-between gap-1">
                             Developer first app with, clear ownership & progress transparency
+                            <CardCTA>
+                                <IconPlus stroke={2} />
+                            </CardCTA>
                         </CardTitle>
                     </CardContent>
                 </Card>
                 <Card className="">
+                    <CardSkeleton></CardSkeleton>
                     <CardContent>
-                        <CardTitle>
+                        <CardTitle className="flex justify-between gap-1">
                             Entire Worflow at one place
+                            <CardCTA>
+                                <IconPlus stroke={2} />
+                            </CardCTA>
                         </CardTitle>
                     </CardContent>
                 </Card>
-                <Card className="">
+                <Card className="rounded-tr-3xl rounded-br-3xl">
+                    <CardSkeleton></CardSkeleton>
                     <CardContent>
-                        <CardTitle>
-                            Never loose track with real time updates & branch tracking
+                        <CardTitle className="flex justify-between gap-1">
+                            Never loose track with real time updates
+                            <CardCTA>
+                                <IconPlus stroke={2} />
+                            </CardCTA>
                         </CardTitle>
                     </CardContent>
                 </Card>

@@ -34,7 +34,7 @@ const Hero = () => {
                 </button>
 
             </div>
-            <div className="my-24 flex w-full max-w-[800px] justify-center items-center">
+            <div className="my-24 flex w-full justify-center items-center">
                 <LandingImages/>
             </div>
             <Features/>

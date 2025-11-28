@@ -14,8 +14,21 @@ export const CardContent = ({children, className}:{children:React.ReactNode; cla
     </div>
 }
 
+export const CardCTA = ({className, children, ...rest}: React.ComponentProps<"button">) => {
+    return <button className={cn("border border-neutral-700 rounded-full shrink-0 size-5 flex items-center justify-center active:scale-[0.98] transition duration-200", className)}
+                    {...rest}>
+                {children}
+            </button>
+}
+
 export const CardTitle = ({children, className}:{children?: React.ReactNode, className?:string}) => {
-    return <div className={cn("text-lg font-bold", className)}>
+    return <div className={cn("text-lg font-bold ", className)}>
+        {children}
+    </div>
+}
+
+export const CardSkeleton = ({className, children}:{className?:string; children?:React.ReactNode}) => {
+     return <div className={cn("relative min-h-40", className)}>
         {children}
     </div>
 }
