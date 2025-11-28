@@ -6,21 +6,23 @@ import { IconClock } from '@tabler/icons-react';
 import { IconRipple } from '@tabler/icons-react';
 
 export const SkeletonOne = () => {
-    return <div className="div">
+    return <div className="perspective-distant h-full w-full -translate-x-10 " style={{
+        transform: "rotateX(30deg) rotateY(-20deg) rotateZ(15deg) scale(1.2) "
+    }}>
         <SkeletonCard 
-            className="inset-0 absolute"
+            className="bottom-0 left-12 z-30 max-w-[90%] absolute"
             icon={ <IconCircleDashedCheck className='size-5' stroke={2} />} 
             badge={<Badge text="1205" variant='danger'/>} 
             title='Task Planner'
             description='From idea to code in one view, Never lose track of "why"'/>
         <SkeletonCard
-            className="inset-0 absolute"
+            className="bottom-10 left-8 z-20 absolute"
             icon={ <IconExclamationCircle 
             className='size-5' stroke={2} />} 
             badge={<Badge text="455" variant='success'/>} 
             title='Issue Tracker'description='Decision Documentation, with Clear Ownership'/>
         <SkeletonCard
-            className='inset-0 absolute'
+            className='bottom-20 left-4 z-10 absolute'
             icon={ <IconChartAreaLine className='size-5' stroke={2} />} 
             badge={<Badge text="905" variant='warning'/>} 
             title='PR Visibility'description='Real-Time Updates, Branch Tracking & Code-Task Linking '/>
@@ -28,7 +30,7 @@ export const SkeletonOne = () => {
 }
 
 const SkeletonCard = ({className, icon, title, description, badge}:{className:string; icon: React.ReactNode, title: string, description: string, badge: React.ReactNode}) => {
-    return <div className="max-w-[80%] mx-auto w-full p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 ">
+    return <div className={cn("max-w-[80%] mx-auto w-full p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-lg", className)}>
         <div className="flex gap-3 items-center">
             {icon}
             <p className='text-sm font-bold text-black dark:text-white'>

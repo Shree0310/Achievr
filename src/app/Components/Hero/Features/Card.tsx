@@ -28,7 +28,7 @@ export const CardTitle = ({children, className}:{children?: React.ReactNode, cla
 }
 
 export const CardSkeleton = ({className, children}:{className?:string; children?:React.ReactNode}) => {
-     return <div className={cn("relative min-h-40", className)}>
+     return <div className={cn("relative md:h-60 h-40 overflow-hidden perspective-distant mask-radial-from-50%", className)}>
         {children}
     </div>
 }
