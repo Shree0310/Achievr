@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const LandingImages = () => {
     return (
-        <div className="relative w-full min-h-140 perspective-distant flex items-center justify-center pt-32 mt-80 mb-40">
+        <div className="relative w-full min-h-140 perspective-distant flex items-center justify-center pt-32 mt-48 mb-40">
             {/* Back card - rotated */}
             <motion.div
                 className="absolute translate-x-60 -translate-y-20"
@@ -26,16 +26,16 @@ const LandingImages = () => {
                 <Image
                     src={hero}
                     alt="Hero illustration background"
-                    width={1600}
-                    height={800}
+                    width={1000}
+                    height={600}
                     className={cn(
                         "rounded-lg shadow-2xl inset-0",
                         "blur-[2px] brightness-80 dark:brightness-65",
                     )}
                     style={{
                         transform: 'rotateY(20deg) rotateX(40deg) rotateZ(-20deg)',
-                        width: '1600px',
-                        height: '800px'
+                        width: '1000px',
+                        height: '600px'
                     }}
                 />
             </motion.div>
@@ -68,8 +68,8 @@ const LandingImages = () => {
                                 )}
                     style={{
                         transform: 'rotateY(20deg) rotateX(40deg) rotateZ(-20deg)',
-                        width: '1600px',
-                        height: '800px',
+                        width: '1000px',
+                        height: '600px',
                         opacity: 0.7
                     }}
                 />

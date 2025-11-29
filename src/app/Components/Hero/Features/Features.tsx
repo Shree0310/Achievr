@@ -43,7 +43,7 @@ const Features = () => {
                     </CardSkeleton>
                     <CardContent>
                         <CardTitle className="flex justify-between gap-1">
-                            Entire Worflow at one place
+                            Entire Worflow at one place & Comment where the work happens.
                             <CardCTA>
                                 <IconPlus stroke={2} />
                             </CardCTA>

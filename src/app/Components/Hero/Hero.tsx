@@ -35,7 +35,7 @@ const Hero = () => {
 
             </div>
             <div className="my-12 flex w-full justify-center items-center translate-x-10 -translate-y-15">
-                {/* <LandingImages/> */}
+                <LandingImages/>
             </div>
             <Features/>
         </Container>

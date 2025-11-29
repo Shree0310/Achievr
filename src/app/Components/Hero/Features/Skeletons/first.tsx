@@ -33,7 +33,7 @@ const SkeletonCard = ({className, icon, title, description, badge}:{className:st
     return <div className={cn("max-w-[80%] h-fit my-auto mx-auto w-full p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-2xl", className)}>
         <div className="flex gap-3 items-center">
             {icon}
-            <p className='text-sm font-normal text-black dark:text-neutral-300/70'>
+            <p className='text-md font-normal text-black dark:text-neutral-200/80'>
                 {title}
             </p>
             {badge}
