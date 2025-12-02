@@ -7,7 +7,7 @@ const Heading = ({ children, className, delay = 0, as }: { children: string; cla
     const Tag: ElementType = as ?? "h2";
 
     return (
-                <Tag className={cn("text-6xl font-bold tracking-tighter mb-4 items-center" ,
+                <Tag className={cn("text-[56px] font-bold tracking-tighter mb-4 " ,
                     "leading-tight",
                     "dark:text-neutral-200 text-left",
                     "bg-clip-text text-transparent bg-gradient-to-r from-neutral-50 via-neutral-200 to-neutral-500 px-6 py-2"

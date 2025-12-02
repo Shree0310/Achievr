@@ -5,12 +5,13 @@ import Container from "./Container";
 import Features from "./Features/Features";
 import Heading from "./Heading";
 import LandingImages from "./LandingImages";
+import ProductDirection from "./ProductDirection/ProductDirection";
 import SubHeading from "./SubHeading";
 
 const Hero = () => {
     return <div>
         <Container className="dark:bg-gradient-to-t from-neutral-950 via-neutral-950 bg-white  to-sky-900 bg-transparent flex flex-col items-center justify-center">
-                <Heading delay={0.2} className="max-w-4xl">
+                <Heading delay={0.2} className="max-w-4xl items-center">
                     Achievr - A tool to empower your daily task managment and productivity
                 </Heading>
             <SubHeading className="ml-10">
@@ -28,6 +29,7 @@ const Hero = () => {
                 <LandingImages/>
             </div>
             <Features/>
+            <ProductDirection/>
         </Container>
     </div>
 }
