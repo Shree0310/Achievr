@@ -64,6 +64,15 @@ const Features = () => {
                     </CardContent>
                 </Card>
             </div>
+                        {/* <div className="my-2 flex w-full max-w-lg justify-center">
+                <input className="h-10 flex flex-1 dark:bg-neutral-900 mx-4 rounded-lg border border-neutral-600 focus:outline-none placeholder:text-neutral-300 p-2 focus:ring-1 transition  focus:ring-sky-500" 
+                    placeholder="Enter your Email here..."/>
+                <button className="dark:text-neutral-400 text-neutral-600 relative border border-neutral-600 border-b-4s shadow-xl rounded-3xl p-2 cursor-pointer">
+                    Join the waitlist
+                    <div className="absolute bg-gradient-to-r from-transparent via-cyan-300 to-transparent inset-x-0 -bottom-px w-full h-px rounded-3xl"></div>
+                </button>
+
+            </div> */}
     </Container>
 }
 export default Features;
