@@ -7,6 +7,8 @@ import Heading from "./Heading";
 import LandingImages from "./LandingImages";
 import ProductDirection from "./ProductDirection/ProductDirection";
 import SubHeading from "./SubHeading";
+import index from "./Features-secondary/FeaturesSecondary";
+import FeaturesSecondary from "./Features-secondary/FeaturesSecondary";
 
 const Hero = () => {
     return <div>
@@ -30,6 +32,7 @@ const Hero = () => {
             </div>
             <Features/>
             <ProductDirection/>
+            <FeaturesSecondary/>
         </Container>
     </div>
 }
