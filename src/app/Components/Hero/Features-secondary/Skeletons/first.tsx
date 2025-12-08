@@ -1,25 +1,36 @@
-import { GitHubIcon, MetaIcon, SlackIcon } from "@/app/icons";
+import { GitHubIcon, GoogleSheetsIcon, MetaIcon, SlackIcon } from "@/app/icons";
 import { cn } from "@/lib/utils";
 import SkeletonTwo, { CardTwo } from "../../Features/Skeletons/second";
 import { CardSkeleton } from "../../Features/Card";
+import { IconCircleDashedCheck, IconClock, IconRipple } from "@tabler/icons-react";
 
 const SkeletonOne = () => {
-    return <div className="flex-1 rounded-t-3xl gap-2 mt-6 flex items-center justify-center bg-neutral-200 dark:bg-gradient-to-br from-neutral-800 via-neutral-900 to-black mx-auto w-full h-full absolute inset-0 p-2"
+    return <div className="flex-1 rounded-t-3xl gap-2 mt-6 flex items-center justify-center mx-auto w-full h-full absolute inset-0 p-2"
+            style={{
+                transform: "rotateY(20deg) rotateX(20deg) rotateZ(-20deg)"
+            }}
            >
         <Circle className="flex items-center justify-center shadow-sm">
-            <div className="size-10 absolute inset-0 flex items-center justify-center border border-transparent rounded-sm ring-1 shadow-white/70 ring-white/70 shadow-sm animate-orbit [--translate-position:120px] [--orbit-duration:10s]">
+            <RevolvingCard className="[--translate-position:120px] [--orbit-duration:30s]">
                 <SlackIcon className="size-8"/>
-            </div>
-            <div className="size-10 absolute inset-0 flex items-center justify-center border border-transparent rounded-sm ring-1 shadow-white/70 ring-white/70 shadow-sm animate-orbit [--translate-position:160px] [--orbit-duration:20s]">
+            </RevolvingCard>
+            <RevolvingCard className="[--translate-position:160px] [--orbit-duration:40s]">
                 <MetaIcon className="size-8"/>
-            </div>
-            <div className="size-10 absolute inset-0 flex items-center justify-center border border-transparent rounded-sm ring-1 shadow-white/70 ring-white/70 shadow-sm animate-orbit [--translate-position:180px] [--orbit-duration:30s]">
+            </RevolvingCard>
+            <RevolvingCard className="[--translate-position:180px] [--orbit-duration:30s]">
                 <GitHubIcon className="size-8"/>
-            </div>
-            {/* <div className="absolute inset-0 flex items-center justify-center border border-transparent rounded-sm ring-1 shadow-white/70 ring-white/70 shadow-sm animate-orbit [--translate-position:220px] [--orbit-duration:60s]">
-                 <CardTwo className="absolute top-14 left-7 translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:-translate-y-0 scale-x-110 group-hover:scale-100
-                    transition-all duration-300  "/>
-            </div> */}
+            </RevolvingCard>
+            <RevolvingCard className="[--translate-position:200px] [--orbit-duration:30s] ring-0 shadow-nono bg-transparent w-60">
+                <SkeletonCard
+                    className="-bottom-2 left-12 z-30 max-w-[90%] absolute"
+                    icon={ <IconCircleDashedCheck className='size-5' stroke={2} />} 
+                    badge={<Badge text="1205" variant='danger'/>} 
+                    title='Task Planner'
+                    description='From idea to code in one view, Never lose track of "why"'/>
+            </RevolvingCard>
+             <RevolvingCard className="[--translate-position:220px] [--orbit-duration:30s]">
+                <GoogleSheetsIcon className="size-8"/>
+            </RevolvingCard>
         </Circle>
         <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-60 bg-neutral-200 dark:bg-neutral-800/80 z-[9] relative">
         </Circle>
@@ -33,5 +44,36 @@ export default SkeletonOne;
 const Circle = ({className, children} : {className: string, children?: React.ReactNode}) => {
     return <div className={cn("size-40 z-[10] border border-transparent bg-neutral-200 dark:bg-neutral-700 rounded-full inset-0 m-auto absolute", className)}>
         {children}
+    </div>
+}
+
+const RevolvingCard = ({children, className}: {children: React.ReactNode, className: string}) => {
+    return <div className={cn("size-10 absolute inset-0 m-auto flex items-center justify-center border border-transparent rounded-sm ring-1 shadow-white/70 ring-white/70 shadow-sm animate-orbit ", className)}>
+        {children}
+    </div>
+}
+
+export const SkeletonCard = ({className, icon, title, description, badge}:{className:string; icon: React.ReactNode, title: string, description: string, badge: React.ReactNode}) => {
+    return <div className={cn("max-w-[80%] h-fit my-auto mx-auto w-full p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-2xl", className)}>
+        <div className="flex gap-3 items-center">
+            {icon}
+            <p className='text-md font-normal text-black dark:text-neutral-200/80'>
+                {title}
+            </p>
+            {badge}
+        </div>
+        <p className='text-sm text-neutral-500 dark:text-neutral-400/60 font-medium'>{description}</p>
+    </div>
+}
+
+const Badge = ({ variant, text }: {variant?: "danger" | "success" | "warning"; text: string}) => {
+    return <div className={cn("px-1 py-0.5 rounded-full flex items-center gap-1 w-fit",
+                variant === "danger" && 'bg-red-500/50 border border-red-400 text-red-300',
+                variant === "success" && 'bg-green-500/50 border border-green-600 text-green-300',
+                variant === "warning" && 'bg-yellow-300/50 border border-yellow-500 text-yellow-200'
+    )}>
+        <IconClock className='size-3' stroke={2} />
+        <IconRipple className='size-3' stroke={2} />
+        <p className='text-xs font-bold'>{text}</p>
     </div>
 }

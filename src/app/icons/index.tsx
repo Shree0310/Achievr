@@ -61,3 +61,33 @@ export const GitHubIcon = (props: React.SVGProps<SVGSVGElement>) => {
     );
 };
 
+export const GoogleSheetsIcon = (props: React.SVGProps<SVGSVGElement>) => {
+    return (
+        <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            {...props}
+        >
+            {/* Main green background */}
+            <rect x="3" y="2" width="14" height="20" rx="1.5" fill="#0F9D58"/>
+            
+            {/* Folded corner */}
+            <path d="M17 2L17 6.5C17 7.32843 17.6716 8 18.5 8H21L17 2Z" fill="#0C8043"/>
+            
+            {/* White grid lines */}
+            <rect x="5" y="9" width="10" height="1" fill="white" opacity="0.8"/>
+            <rect x="5" y="12" width="10" height="1" fill="white" opacity="0.8"/>
+            <rect x="5" y="15" width="10" height="1" fill="white" opacity="0.8"/>
+            <rect x="5" y="18" width="10" height="1" fill="white" opacity="0.8"/>
+            
+            <rect x="8" y="9" width="1" height="10" fill="white" opacity="0.8"/>
+            <rect x="12" y="9" width="1" height="10" fill="white" opacity="0.8"/>
+            
+            {/* Outer border */}
+            <rect x="3" y="2" width="14" height="20" rx="1.5" stroke="#0C8043" strokeWidth="0.5" fill="none"/>
+        </svg>
+    );
+};
