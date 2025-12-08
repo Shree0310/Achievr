@@ -9,8 +9,7 @@ const FeaturesSecondary = () => {
                         <h2 className="text-2xl font-semibold text-neutral-800 dark:text-neutral-300">Manage incoming work with Triage</h2>
                         <p className="text-neutral-600 dark:text-neutral-500 text-balance">Review and assign incoming bug reports, feature requests, and other unplanned work.</p>
                         <CardSkeleton>
-                            <SkeletonOne>
-                            </SkeletonOne>
+                            <SkeletonOne/>
                         </CardSkeleton>
                     </div>
                     <div className="p-4 mx-auto">

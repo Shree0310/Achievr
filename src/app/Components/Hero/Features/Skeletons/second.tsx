@@ -51,7 +51,7 @@ const GradientHr = () => {
     return <div className="h-px w-full bg-gradient-to-r from transparent via-neutral-200 dark:via-neutral-500 to transparent"></div>
 }
 
-const CardTwo = ({className}:{className: string}) => {
+export const CardTwo = ({className}:{className: string}) => {
     return <div className={cn("max-w-[90%] h-full my-auto mx-auto w-full p-3 rounded-lg border",
                               "border-neutral-200 dark:border-neutral-700 bg-white", 
                               "dark:bg-neutral-800 shadow-2xl relative", className)}>

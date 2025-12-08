@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
   	extend: {
+		animation: {
+    		orbit: 'orbit var(--orbit-duration) linear infinite',
+      	},
   		colors: {
   			background: 'hsl(var(--background))',
   			surface: 'var(--surface)',

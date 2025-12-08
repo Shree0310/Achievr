@@ -150,6 +150,7 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
   }
   body {
     @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
@@ -162,5 +163,14 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translate(var(--translate-position)) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translate(var(--translate-position)) rotate(-360deg);
   }
 }
