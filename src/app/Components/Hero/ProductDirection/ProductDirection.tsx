@@ -9,7 +9,7 @@ import SkeletonSecond from "./Skeletons/second";
 
 const ProductDirection = () => {
     return <Container className="mt-10 md:pt-4 ">
-        <div className="flex flex-col p-0  mt-12 justify-center items-center mx-auto">
+        <div className="flex flex-col p-0  mt-12 mb-36 justify-center items-center mx-auto">
                 <Heading className="">
                     Set the development flow
                 </Heading>

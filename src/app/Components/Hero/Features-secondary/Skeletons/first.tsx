@@ -1,14 +1,16 @@
 import { cn } from "@/lib/utils";
 
 const SkeletonOne = () => {
-    return <div className="flex-1 rounded-t-3xl gap-2 flex flex-col bg-neutral-200 dark:bg-gradient-to-br from-neutral-800 via-neutral-900 to-black  border dark:border-neutral-600 border-neutral-200 mx-auto w-full h-full absolute inset-0 p-2">
-        Skeleton One
+    return <div className="flex-1 rounded-t-3xl gap-2 mt-6 flex flex-col bg-neutral-200 dark:bg-gradient-to-br from-neutral-800 via-neutral-900 to-black mx-auto w-full h-full absolute inset-0 p-2"
+            style={{
+                transform: "rotateY(20deg) rotateX(20deg) rotateZ(-20deg)"
+            }}>
         <Circle className="flex items-center justify-center shadow-sm">
         </Circle>
         <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-48 bg-neutral-200 dark:bg-neutral-800/60 z-[9]"></Circle>
         <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-56 bg-neutral-200 dark:bg-neutral-800/80 z-[9]"></Circle>
-        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-60 bg-neutral-200 dark:bg-neutral-900/80 z-[9]"></Circle>
-        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-72 bg-neutral-200 dark:bg-neutral-900/60 z-[9]"></Circle>
+        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-60 bg-neutral-200 dark:bg-neutral-900/60 z-[9]"></Circle>
+        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-72 bg-neutral-200 dark:bg-neutral-900/80 z-[9]"></Circle>
     </div>
 }
 export default SkeletonOne;

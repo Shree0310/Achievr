@@ -3,9 +3,9 @@ import Image from "next/image";
 import hero from "../../../utils/Images/hero.png"
 import { cn } from "@/lib/utils";
 
-const LandingImages = () => {
+const LandingImages = ({className}:{className?:React.ReactNode}) => {
     return (
-        <div className="relative w-full min-h-140 perspective-distant flex items-center justify-center pt-32 mt-48 mb-40">
+        <div className={cn("relative w-full min-h-140 perspective-distant flex items-center justify-center pt-32 mt-48 mb-40",className)}>
             {/* Back card - rotated */}
             <motion.div
                 className="absolute translate-x-60 -translate-y-2 left-12"

@@ -32,6 +32,7 @@ const Hero = () => {
             </div>
             <Features/>
             <ProductDirection/>
+            <LandingImages className="opacity-40 m-24 p-24 ml-24"/>
             <FeaturesSecondary/>
         </Container>
     </div>
