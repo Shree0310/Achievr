@@ -13,8 +13,8 @@ const FeaturesSecondary = () => {
                         </CardSkeleton>
                     </div>
                     <div className="p-4 mx-auto">
-                        <h2 className="text-2xl font-semibold text-neutral-800 dark:text-neutral-300">Project updates</h2>
-                        <p className="text-neutral-600 dark:text-neutral-500 text-balance">Communicate progress and project health with built-in project updates.</p>
+                        <h2 className="text-2xl font-semibold text-neutral-800 dark:text-neutral-300">Build momentum with Cycles</h2>
+                        <p className="text-neutral-600 dark:text-neutral-500 text-balance">Create healthy routines and focus your team on what work should happen next.</p>
                          <CardSkeleton>
                         </CardSkeleton>
                     </div>

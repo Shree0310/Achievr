@@ -10,11 +10,11 @@ const SkeletonOne = () => {
                 transform: "rotateY(20deg) rotateX(20deg) rotateZ(-20deg)"
             }}
            >
-        <Circle className="flex items-center justify-center shadow-sm">
+        <Circle className="flex items-center justify-center shadow-lg">
             <RevolvingCard className="[--translate-position:120px] [--orbit-duration:30s]">
                 <SlackIcon className="size-8"/>
             </RevolvingCard>
-            <RevolvingCard className="[--translate-position:160px] [--orbit-duration:40s]">
+            <RevolvingCard className="[--translate-position:160px] [--orbit-duration:20s]">
                 <MetaIcon className="size-8"/>
             </RevolvingCard>
             <RevolvingCard className="[--translate-position:180px] [--orbit-duration:30s]">
@@ -32,11 +32,11 @@ const SkeletonOne = () => {
                 <GoogleSheetsIcon className="size-8"/>
             </RevolvingCard>
         </Circle>
-        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-60 bg-neutral-200 dark:bg-neutral-800/80 z-[9] relative">
+        <Circle className="border-neutral-200 dark:border-neutral-700 shadow-md size-60 bg-neutral-200/10 dark:bg-neutral-800/80 z-[9] relative">
         </Circle>
-        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-80 bg-neutral-200 dark:bg-neutral-800/60 z-[8]"></Circle>
-        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-80 bg-neutral-200 dark:bg-neutral-900/40 z-[7]"></Circle>
-        <Circle className="border-neutral-200 dark:border-neutral-600 shadow-sm size-96 bg-neutral-200 dark:bg-neutral-900/20 z-[6]"></Circle>
+        <Circle className="border-neutral-200 dark:border-neutral-700 shadow-md size-80 bg-neutral-200/20 dark:bg-neutral-800/60 z-[8]"></Circle>
+        <Circle className="border-neutral-200 dark:border-neutral-700 shadow-md size-80 bg-neutral-200/30 dark:bg-neutral-800/40 z-[7]"></Circle>
+        <Circle className="border-neutral-200 dark:border-neutral-700 shadow-md size-96 bg-neutral-200/40 dark:bg-neutral-800/30 z-[6]"></Circle>
     </div>
 }
 export default SkeletonOne;
