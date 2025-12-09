@@ -11,7 +11,7 @@ const FeaturesSecondary = () => {
                     <div className="p-4 mx-16">
                         <h2 className="text-2xl font-semibold text-neutral-800 dark:text-neutral-300 my-4">Manage incoming work with Triage</h2>
                         <p className="text-neutral-600 dark:text-neutral-500 text-balance">Review and assign incoming bug reports, feature requests, and other unplanned work.</p>
-                        <CardSkeleton>
+                        <CardSkeleton className="">
                             <SkeletonOne/>
                         </CardSkeleton>
                     </div>
