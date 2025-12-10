@@ -33,7 +33,7 @@ const FeaturesSecondary = () => {
                         </CardSkeleton>
                     </div>
                 </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mx-16 p-4 mt-5 md:mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mx-16 my-5 md:mt-10">
             <Card icon={<LocationPinIcon className="size-4 flex items-center rounded-sm"/>} title="Initiatives" description="Coordinate strategic product efforts."/>
             <Card icon={<PackageIcon className="size-4 flex items-center rounded-sm"/>} title="Cross-team projects" description="Collaborate across teams and departments."/>
             <Card icon={<DiamondIcon className="size-4 flex items-center rounded-sm"/>} title="Milestones" description="Break projects down into concrete phases."/>
