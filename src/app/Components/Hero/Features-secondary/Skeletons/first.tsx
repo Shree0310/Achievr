@@ -11,16 +11,13 @@ const SkeletonOne = () => {
             }}
            >
         <Circle className="flex items-center justify-center shadow-lg">
-            <RevolvingCard className="[--translate-position:120px] [--orbit-duration:30s]">
+            <RevolvingCard className="[--translate-position:120px] [--orbit-duration:10s]">
                 <SlackIcon className="size-8"/>
-            </RevolvingCard>
-            <RevolvingCard className="[--translate-position:160px] [--orbit-duration:20s]">
-                <MetaIcon className="size-8"/>
             </RevolvingCard>
             <RevolvingCard className="[--translate-position:180px] [--orbit-duration:30s]">
                 <GitHubIcon className="size-8"/>
             </RevolvingCard>
-            <RevolvingCard className="[--translate-position:200px] [--orbit-duration:30s] ring-0 shadow-nono bg-transparent w-60">
+            <RevolvingCard className="[--translate-position:200px] [--orbit-duration:50s] ring-0 shadow-nono bg-transparent w-60">
                 <SkeletonCard
                     className="-bottom-2 left-12 z-30 max-w-[90%] absolute"
                     icon={ <IconCircleDashedCheck className='size-5' stroke={2} />} 
@@ -28,7 +25,7 @@ const SkeletonOne = () => {
                     title='Task Planner'
                     description='From idea to code in one view, Never lose track of "why"'/>
             </RevolvingCard>
-             <RevolvingCard className="[--translate-position:220px] [--orbit-duration:30s]">
+             <RevolvingCard className="[--translate-position:220px] [--orbit-duration:60s]">
                 <GoogleSheetsIcon className="size-8"/>
             </RevolvingCard>
         </Circle>
