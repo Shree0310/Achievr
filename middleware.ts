@@ -57,24 +57,8 @@ export async function middleware(request: NextRequest) {
   // Refresh session if expired - required for Server Components
   const { data: { session } } = await supabase.auth.getSession()
 
-  // If user is authenticated and trying to access auth page, redirect to board
-  if (session && request.nextUrl.pathname === '/auth') {
-    console.log('Authenticated user accessing auth page, redirecting to board')
-    return NextResponse.redirect(new URL('/board', request.url))
-  }
-
-  // If user is not authenticated and trying to access protected pages, redirect to auth
-  if (!session && (request.nextUrl.pathname === '/board' || request.nextUrl.pathname === '/cycles-list' || request.nextUrl.pathname === '/task-queue')) {
-    console.log('Unauthenticated user accessing protected page, redirecting to auth')
-    return NextResponse.redirect(new URL('/auth', request.url))
-  }
-
-  // If user is authenticated and accessing root page, redirect to board
-  if (session && request.nextUrl.pathname === '/') {
-    console.log('Authenticated user accessing root page, redirecting to board')
-    return NextResponse.redirect(new URL('/board', request.url))
-  }
-
+  // Temporarily disable server-side auth redirects; rely on client session
+  // to avoid loops when cookies aren't set (e.g., Supabase returning tokens via hash).
   return supabaseResponse
 }
 
