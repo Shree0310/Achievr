@@ -9,12 +9,21 @@ export default function AuthCallback() {
   let redirected = false
 
   useEffect(() => {
+    // Clean the hash from the URL so we don't get stuck re-processing it
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const cleanUrl = `${window.location.origin}/auth/callback`
+      history.replaceState(null, '', cleanUrl)
+    }
+
     const redirectToBoard = () => {
       if (redirected) return
       redirected = true
       // Force a hard navigation so any new auth cookies are included
       if (typeof window !== 'undefined') {
-        window.location.href = '/board'
+        window.location.replace('/board')
+        // Failsafe retries in case the first navigation is blocked
+        setTimeout(() => window.location.replace('/board'), 1500)
+        setTimeout(() => window.location.replace('/board'), 4000)
       } else {
         router.replace('/board')
       }
