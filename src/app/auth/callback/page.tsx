@@ -90,8 +90,14 @@ export default function AuthCallback() {
           console.log('User authenticated in callback, checking for GitHub data...')
           await applyTemporaryGitHubData(data.session.user)
           
-          // Redirect with a small delay to allow metadata updates to settle
-          setTimeout(redirectToBoard, 500)
+          // Redirect quickly and keep retrying as a failsafe
+          setTimeout(redirectToBoard, 200)
+          setTimeout(redirectToBoard, 1200)
+          setTimeout(() => {
+            if (typeof window !== 'undefined') {
+              window.location.href = `/board?ts=${Date.now()}`
+            }
+          }, 3500)
         } else {
           // No session, redirect to auth page
           console.log('No session found in callback, redirecting to auth')
