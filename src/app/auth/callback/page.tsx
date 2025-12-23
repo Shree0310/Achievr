@@ -1,23 +1,17 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/utils/supabase/client'
 
 export default function AuthCallback() {
   const router = useRouter()
-  let redirected = false
+  const redirected = useRef(false)
 
   useEffect(() => {
-    // Clean the hash from the URL so we don't get stuck re-processing it
-    if (typeof window !== 'undefined' && window.location.hash) {
-      const cleanUrl = `${window.location.origin}/auth/callback`
-      history.replaceState(null, '', cleanUrl)
-    }
-
     const redirectToBoard = () => {
-      if (redirected) return
-      redirected = true
+      if (redirected.current) return
+      redirected.current = true
       // Force a hard navigation so any new auth cookies are included
       if (typeof window !== 'undefined') {
         window.location.replace('/board')
@@ -88,7 +82,12 @@ export default function AuthCallback() {
         if (data.session) {
           // User is authenticated, check for temporary GitHub data
           console.log('User authenticated in callback, checking for GitHub data...')
-          await applyTemporaryGitHubData(data.session.user)
+          await applyTemporaryGitHubData()
+          
+          // Now that we have the session, strip the hash to avoid reprocessing
+          if (typeof window !== 'undefined' && window.location.hash) {
+            history.replaceState(null, '', `${window.location.origin}/auth/callback`)
+          }
           
           // Redirect quickly and keep retrying as a failsafe
           setTimeout(redirectToBoard, 200)
@@ -98,6 +97,12 @@ export default function AuthCallback() {
               window.location.href = `/board?ts=${Date.now()}`
             }
           }, 3500)
+          // Last-resort hard reload if still on callback
+          setTimeout(() => {
+            if (typeof window !== 'undefined' && window.location.pathname === '/auth/callback') {
+              window.location.reload()
+            }
+          }, 5000)
         } else {
           // No session, redirect to auth page
           console.log('No session found in callback, redirecting to auth')
