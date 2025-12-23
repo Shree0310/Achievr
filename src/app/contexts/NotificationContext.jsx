@@ -7,6 +7,7 @@ import {
   useCallback,
   useEffect,
 } from "react";
+import { supabase } from "@/utils/supabase/client";
 
 const NotificationContext = createContext();
 
@@ -24,11 +25,6 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPushNotification, setShowPushNotification] = useState(null);
-
-  const getSupabase = useCallback(async () => {
-    const { supabase } = await import("@/utils/supabase/client");
-    return supabase;
-  }, []);
 
   // Load push notification functionality only on client side
   useEffect(() => {

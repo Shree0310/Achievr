@@ -13,9 +13,14 @@ export default function AuthCallback() {
         console.log('🚀 Auth callback started, current URL:', window.location.href)
         
         // Check for auth error in URL
-        const urlParams = new URLSearchParams(window.location.search)
-        const error = urlParams.get('error')
-        const errorDescription = urlParams.get('error_description')
+         const searchParams = new URLSearchParams(window.location.search)
+        const hashString = typeof window !== 'undefined' && window.location.hash.startsWith('#') ? window.location.hash.slice(1) : ''
+        const hashParams = new URLSearchParams(hashString)
+        const getParam = (key: string) => searchParams.get(key) ?? hashParams.get(key)
+        
+         // Check for auth error in URL
+        const error = getParam('error')
+        const errorDescription = getParam('error_description')
         
         if (error) {
           console.error('OAuth error in callback:', error, errorDescription)
@@ -23,9 +28,9 @@ export default function AuthCallback() {
           return
         }
         
-        // Check if we're coming from Supabase callback (has access_token in URL)
-        const accessToken = urlParams.get('access_token')
-        const refreshToken = urlParams.get('refresh_token')
+        /// Check if we're coming from Supabase callback (has access_token in URL or hash)
+        const accessToken = getParam('access_token')
+        const refreshToken = getParam('refresh_token')
         
         if (accessToken && refreshToken) {
           console.log('Detected Supabase callback with tokens, setting session...')
@@ -89,7 +94,7 @@ export default function AuthCallback() {
     }
 
     // Function to apply temporary GitHub data after authentication
-    const applyTemporaryGitHubData = async (user) => {
+    const applyTemporaryGitHubData = async () => {
       try {
         // Check for pending GitHub data first (from Google OAuth flow)
         let tempData = localStorage.getItem('pending_github_data')

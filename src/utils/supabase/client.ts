@@ -11,3 +11,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Expose to window to avoid "ReferenceError: supabase is not defined" from non-module chunks
+if (typeof window !== 'undefined') {
+  // @ts-ignore - intentionally attach for legacy/global usage
+  window.supabase = supabase
+}

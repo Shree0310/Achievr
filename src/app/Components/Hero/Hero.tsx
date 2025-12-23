@@ -22,7 +22,7 @@ const Hero = () => {
             </SubHeading>
             <div className="my-6 mt-10 flex w-full max-w-lg justify-center items-start">
                 <Button>
-                    Start building
+                    <a href="/">Start building</a>
                 </Button>   
                 <p className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-50 via-neutral-200 to-neutral-500 px-6 py-2 text-lg">New Agent for Slack</p>
  
