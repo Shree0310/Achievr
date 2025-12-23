@@ -6,8 +6,20 @@ import { supabase } from '@/utils/supabase/client'
 
 export default function AuthCallback() {
   const router = useRouter()
+  let redirected = false
 
   useEffect(() => {
+    const redirectToBoard = () => {
+      if (redirected) return
+      redirected = true
+      // Force a hard navigation so any new auth cookies are included
+      if (typeof window !== 'undefined') {
+        window.location.href = '/board'
+      } else {
+        router.replace('/board')
+      }
+    }
+
     const handleAuthCallback = async () => {
       try {
         console.log('🚀 Auth callback started, current URL:', window.location.href)
@@ -69,15 +81,8 @@ export default function AuthCallback() {
           console.log('User authenticated in callback, checking for GitHub data...')
           await applyTemporaryGitHubData(data.session.user)
           
-          // Wait a moment for the GitHub data to be applied
-          setTimeout(() => {
-            // Force redirect to localhost board if running locally
-            if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-              window.location.href = 'http://localhost:3000/board'
-            } else {
-              router.push('/board')
-            }
-          }, 1000)
+          // Redirect with a small delay to allow metadata updates to settle
+          setTimeout(redirectToBoard, 500)
         } else {
           // No session, redirect to auth page
           console.log('No session found in callback, redirecting to auth')
