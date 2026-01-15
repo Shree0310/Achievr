@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/utils/supabase/client'
 
 const GitHubRepositoryConnector = () => {
-  console.log('GitHubRepositoryConnector: Component rendered')
   
   const [repositories, setRepositories] = useState([])
   const [loading, setLoading] = useState(false)

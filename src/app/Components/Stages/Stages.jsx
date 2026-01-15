@@ -47,6 +47,7 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
             const { data, error } = await supabase
                 .from('tasks')
                 .select('*')
+                .eq('user_id', userId)
 
             if (error) {
                 throw error;
