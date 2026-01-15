@@ -355,7 +355,7 @@ const GitHubRepositoryConnector = () => {
   // If user doesn't have GitHub connected, show Connect GitHub button
   if (!hasGitHubToken) {
     return (
-      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-900 dark:hover:bg-gray-700 w-full">
+      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-200 dark:hover:bg-gray-700 w-full">
         <svg
           className="mr-3 h-5 w-5 text-gray-400 dark:text-white group-hover:text-gray-900 dark:group-hover:text-gray-900"
           fill="currentColor"
@@ -381,10 +381,10 @@ const GitHubRepositoryConnector = () => {
     <div className="relative">
       <button
         onClick={handleDropdownToggle}
-        className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-900 dark:hover:bg-gray-700 w-full"
+        className="group flex items-center px-2 py-2 mt-10 my-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-200 dark:hover:bg-gray-700 w-full"
       >
         <svg
-          className="mr-3 h-5 w-5 text-gray-400 dark:text-white group-hover:text-gray-900 dark:group-hover:text-gray-900"
+          className="mr-3 h-5 w-5 text-gray-400 dark:text-white hover:text-gray-900 dark:hover:text-gray-200"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
