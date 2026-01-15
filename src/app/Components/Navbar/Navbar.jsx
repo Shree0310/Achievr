@@ -3,9 +3,6 @@
 import { supabase } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from 'next/navigation';
-import SummitIcon from "./SummitIcon";
-import CreateTaskButton from "../CreateTask/CreateTaskButton";
-import GitHubRepositoryConnector from "../GitHubConnect/GitHubRepositoryConnector";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 
