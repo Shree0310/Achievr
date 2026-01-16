@@ -245,7 +245,7 @@ const CreateTask = ({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
         className={`bg-white dark:bg-gray-800 dark:border dark:border-blue-700 rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
-          isEditMode ? "h-full" : "h-auto"
+          isEditMode ? "h-3/4" : "h-auto"
         }`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-3 border-b border-gray-200 dark:border-gray-700">
@@ -346,7 +346,7 @@ const CreateTask = ({
             <div className="space-y-4">
               {/* Title Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
                   Title
                 </label>
                 <Input
@@ -360,7 +360,7 @@ const CreateTask = ({
 
               {/* Description Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
                   Description
                 </label>
                 <textarea
@@ -375,7 +375,7 @@ const CreateTask = ({
               {/* Priority and Effort Selection */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
                     Priority
                   </label>
                   <select
@@ -392,7 +392,7 @@ const CreateTask = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
                     Story Points
                   </label>
                   <select
@@ -413,7 +413,7 @@ const CreateTask = ({
 
               {/* Cycle Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
                   Cycle
                 </label>
                 <select
