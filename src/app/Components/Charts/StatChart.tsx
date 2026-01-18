@@ -2,10 +2,32 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from "@/utils/supabase/client";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, Legend } from 'recharts';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart"
+import { ChartBarLabel } from '../Dashboard/dashboardComponents/NewChart';
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "#3b82f6", // Blue color
+  },
+} satisfies ChartConfig
 
 const StatChart = () => {
 
-    const [tasks, setTasks] = useState(null);
+    const [tasks, setTasks] = useState<any[] | null>(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -40,7 +62,7 @@ const StatChart = () => {
         },{});
 
         //Convert to chart with proper label & graph
-        const statusConfig = {
+        const statusConfig: Record<string, {label: string; color: string}> = {
             'not started' : {label:'To Do', color: '#6B7280'},
             'in progress' : {label:'In Progress', color: '#3B82F6'},
             'under review' : {label:'Under Review', color: '#10B981'},
@@ -67,39 +89,48 @@ const StatChart = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-10">
                 {/* Bar Chart */}
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">Tasks by Status (Bar)</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <BarChart data={statusChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-600" />
-                            <XAxis 
-                                dataKey="status" 
-                                tick={{ fontSize: 12, fill: '#6B7280' }}
-                                className="dark:text-white"
-                                angle={-45}
-                                textAnchor="end"
-                                height={80}
-                            />
-                            <YAxis 
-                                label={{ value: 'Number of Tasks', angle: -90, position: 'insideLeft' }}
-                                tick={{ fontSize: 12, fill: '#6B7280' }}
-                                className="dark:text-white"
-                            />
-                            <Tooltip 
-                                formatter={(value) => [value, 'Tasks']}
-                                labelStyle={{ color: '#374151' }}
-                                contentStyle={{ 
-                                    backgroundColor: '#F9FAFB', 
-                                    border: '1px solid #E5E7EB',
-                                    borderRadius: '8px'
-                                }}
-                            />
-                            <Bar 
-                                dataKey="count" 
-                                radius={[4, 4, 0, 0]}
-                                fill="#3B82F6"
-                            />
-                        </BarChart>
-                    </ResponsiveContainer>
+                    <Card>
+                        <CardHeader>
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">Tasks by Status (Bar)</h3>
+                                <CardDescription>January - June 2024</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ChartContainer config={chartConfig}>
+                                <ResponsiveContainer width="100%" height={400}>
+                                    <BarChart data={statusChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:stroke-gray-600" />
+                                        <XAxis 
+                                            dataKey="status" 
+                                            tick={{ fontSize: 12, fill: '#6B7280' }}
+                                            className="dark:text-white"
+                                            angle={-45}
+                                            textAnchor="end"
+                                            height={80}
+                                        />
+                                        <YAxis 
+                                            label={{ value: 'Number of Tasks', angle: -90, position: 'insideLeft' }}
+                                            tick={{ fontSize: 12, fill: '#6B7280' }}
+                                            className="dark:text-white"
+                                        />
+                                        <Tooltip 
+                                            formatter={(value) => [value, 'Tasks']}
+                                            labelStyle={{ color: '#374151' }}
+                                            contentStyle={{ 
+                                                backgroundColor: '#F9FAFB', 
+                                                border: '1px solid #E5E7EB',
+                                                borderRadius: '8px'
+                                            }}
+                                        />
+                                        <Bar 
+                                            dataKey="count" 
+                                            radius={[4, 4, 0, 0]}
+                                            fill="#3B82F6"
+                                        />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </ChartContainer>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {/* Line Chart */}
