@@ -23,6 +23,7 @@ const CreateTask = ({
 }) => {
   const [title, setTitle] = useState(taskToEdit?.title || "");
   const [description, setDescription] = useState(taskToEdit?.description || "");
+  const [status, setStatus] = useState(taskToEdit?.status || "");
   const [priority, setPriority] = useState(
     taskToEdit?.priority?.toString() || ""
   );
@@ -43,6 +44,7 @@ const CreateTask = ({
     if (isEditMode && taskToEdit) {
       setTitle(taskToEdit.title || "");
       setDescription(taskToEdit.description || "");
+      setStatus(taskToEdit.status || "");
       setPriority(taskToEdit.priority?.toString() || "");
       setEfforts(taskToEdit.efforts?.toString() || "");
       setSelectedCycle(taskToEdit.cycle_id || "");
@@ -126,6 +128,7 @@ const CreateTask = ({
             {
               title: title,
               description: description,
+              status: status === null ? "" : status,
               priority: priority === null ? "" : priority,
               efforts: efforts === null ? "" : efforts,
               cycle_id: selectedCycle,
@@ -200,6 +203,7 @@ const CreateTask = ({
   const resetForm = () => {
     if (!isEditMode) {
       setTitle("");
+      setStatus("");
       setDescription("");
       setPriority("");
       setEfforts("");
@@ -371,6 +375,25 @@ const CreateTask = ({
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 dark:focus:border-blue-700 focus:ring-primary-500 focus:border-primary-500 resize-none dark:bg-gray-700"
                 />
               </div>
+
+              {/* Status Change */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
+                    Satus
+                  </label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:focus:border-blue-700">
+                    <option value="" disabled>
+                       Status
+                    </option>
+                    <option value="1">Not started</option>
+                    <option value="2">In Progress</option>
+                    <option value="3">Under Review</option>
+                    <option value="4">Completed</option>
+                  </select>
+                </div>
 
               {/* Priority and Effort Selection */}
               <div className="grid grid-cols-2 gap-4">

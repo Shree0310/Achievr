@@ -72,7 +72,7 @@ const StatChart = () => {
         return Object.entries(statusCount).map(([status, count]) => ({
             status: statusConfig[status]?.label || status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
             count,
-            fill: statusConfig[status]?.color || '#6B7280'
+            fill: statusConfig[status]?.color || '#6366f1'
         }));
     },[tasks]);
 
