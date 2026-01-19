@@ -3,6 +3,10 @@
 import { useState } from "react";
 import CreateTask from "../CreateTask/CreateTask";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IconCircleDashed } from '@tabler/icons-react';
+import { IconCircleHalf2 } from '@tabler/icons-react';
+import { IconPercentage75 } from '@tabler/icons-react';
+import { IconCircleCheck } from '@tabler/icons-react';
 
 const { useDraggable } = require("@dnd-kit/core");
 const { CSS } = require("@dnd-kit/utilities");
@@ -52,15 +56,23 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                 {...attributes}
                 onClick={handleClick}
                 className='group bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-primary-400 dark:hover:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md dark:shadow-gray-900/20 dark:hover:shadow-gray-900/30 cursor-move'>
-                <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1">
+                <div className="flex items-start gap-4 mb-3">
+                    {task.status && (
+                    <span className={`px-2.5 py-2 rounded-full text-xs font-medium`}>
+                        {task.status === 'not started' ? <IconCircleDashed stroke={2} height={15} width={15} className="text-gray-500"  /> : 
+                          task.satus === 'in progress' ? <IconCircleHalf2 stroke={2} hheight={15} width={15} className="text-yellow-500" /> :
+                          task.status === 'under review' ? <IconPercentage75 stroke={2} height={15} width={15} className="text-teal-700"/>:
+                          <IconCircleCheck stroke={2} height={15} width={15} className="text-green-600" /> || <IconCircleDashed stroke={2} height={15} width={15} className="text-gray-500"/>}
+                    </span>
+                    )}
+                    <div className="py-1">
                         <h3 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-blue-400 transition-colors">
                             {task.title || 'Untitled Task'}
                         </h3>
                     </div>
                     {/* Priority Badge */}
                     {task.priority && (
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium
+                        <span className={`px-2.5 py-2 rounded-full text-xs font-medium
                             ${task.priority === '1' ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
                             task.priority === '2' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400' :
                             'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'}`}>
@@ -68,10 +80,6 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                         </span>
                     )}
                 </div>
-                
-                <p className='text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2'>
-                    {task.description || 'No Description'}
-                </p>
                 <div className="flex justify-between space-y-2">
                     <div className="flex items-center space-x-3 text-sm">
                     {task.efforts && (
