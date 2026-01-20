@@ -248,41 +248,41 @@ const CreateTask = ({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
-        className={`bg-white dark:bg-gray-800 dark:border dark:border-blue-700 rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
+        className={`bg-white dark:bg-gray-800 no-scrollbar dark:border  dark:border-blue-700 rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
           isEditMode ? "h-3/4" : "h-auto"
         }`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-3 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between px-6 pt-1 border-b border-gray-200 dark:border-gray-700">
           {!isEditMode && isCreateMode ? (
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+            <h2 className="text-xl font-normal py-1 text-gray-800 dark:text-white">
               Create New Task
             </h2>
           ) : (
             <div>
               <ul className="flex justify-between space-x-2">
                 <li
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-white"
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400"
                   onClick={() => handleEditTaskTab()}>
                   Edit task
                 </li>
                 <span className="text-gray-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleAddComments()}
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-white">
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400">
                   Updates 
                   <span className="px-2">({commentCount})</span>
                 </li>
                 <span className="text-gray-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleSubtasksTab()}
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-white">
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400">
                     Subtasks 
                     <span className="px-2">({subTasksCount})</span>
                 </li>
                 <span className="text-gray-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleGithubTab()}
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-white">
+                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400">
                   GITHUB
                 </li>
               </ul>
@@ -350,78 +350,61 @@ const CreateTask = ({
             <div className="space-y-4">
               {/* Title Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
-                  Title
-                </label>
                 <Input
                   type="text"
                   placeholder="Enter task title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:border-blue-700 dark:bg-gray-700"
+                  className="w-full px-2 py-4 placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
               </div>
 
               {/* Description Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
-                  Description
-                </label>
                 <textarea
                   placeholder="Enter task description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 dark:focus:border-blue-700 focus:ring-primary-500 focus:border-primary-500 resize-none dark:bg-gray-700"
+                  rows={2}
+                  className="w-full px-2 py-2 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-800"
                 />
               </div>
-
+            <div className="flex">
               {/* Status Change */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
-                    Satus
-                  </label>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:focus:border-blue-700">
-                    <option value="" disabled>
+                    className="w-24 px-4 py-2 bg-white dark:bg-gray-800  ">
+                    <option value={status} disabled>
                        Status
                     </option>
-                    <option value="1">Not started</option>
-                    <option value="2">In Progress</option>
-                    <option value="3">Under Review</option>
-                    <option value="4">Completed</option>
+                    <option value="Not started">Not started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Completed">Completed</option>
                   </select>
                 </div>
-
-              {/* Priority and Effort Selection */}
-              <div className="grid grid-cols-2 gap-4">
+                {/* Priority and Effort Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
-                    Priority
-                  </label>
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:focus:border-blue-700">
-                    <option value="" disabled>
+                    className="w-24 px-4 py-2 bg-white dark:bg-gray-800  ">                    
+                    <option value={priority} disabled>
                       Select Priority
                     </option>
-                    <option value="1">High Priority (P1)</option>
-                    <option value="2">Medium Priority (P2)</option>
-                    <option value="3">Low Priority (P3)</option>
+                    <option value="high">High Priority (P1)</option>
+                    <option value="medium">Medium Priority (P2)</option>
+                    <option value="low">Low Priority (P3)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
-                    Story Points
-                  </label>
                   <select
                     value={efforts}
                     onChange={(e) => setEfforts(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white dark:focus:border-blue-700">
+                    className="w-24 px-4 py-2 bg-white dark:bg-gray-800  ">                    
                     <option value=" " disabled>
                       Select Points
                     </option>
@@ -432,17 +415,13 @@ const CreateTask = ({
                     <option value="8">8 Points</option>
                   </select>
                 </div>
-              </div>
 
-              {/* Cycle Selection */}
+                {/* Cycle Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
-                  Cycle
-                </label>
                 <select
                   value={selectedCycle}
                   onChange={(e) => setSelectedCycle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:focus:border-blue-700">
+                    className="w-32 px-4 py-2 bg-white dark:bg-gray-800  ">                    
                   <option value="" disabled>
                     Select Cycle
                   </option>
@@ -453,6 +432,8 @@ const CreateTask = ({
                   ))}
                 </select>
               </div>
+                
+            </div>
             </div>
           ) : isSubtasksMode ? (
             <SubtasksTab 
@@ -472,7 +453,7 @@ const CreateTask = ({
             <CommentBox taskToEdit={taskToEdit} userId={userId} />
           )}
           {/* Footer Actions */}
-          <div className="mt-[100px] py-4 rounded-b-xl flex justify-end space-x-3 ">
+          <div className="mt-[100px] rounded-b-xl flex justify-end space-x-3 divide-x divide-gray-300 dark:divide-gray-800 ">
             <button
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">

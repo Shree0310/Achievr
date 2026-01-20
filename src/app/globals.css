@@ -49,6 +49,23 @@
   --info-500: #1A73E8;    /* Same as primary */
 }
 
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* IE and Edge */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+  }
+
+  /* Firefox */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
+
 @theme {
   --color-secondary: #EA4335;
 }
