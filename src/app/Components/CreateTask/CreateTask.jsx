@@ -249,7 +249,7 @@ const CreateTask = ({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
         className={`bg-white dark:bg-gray-800 no-scrollbar dark:border  dark:border-blue-700 rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
-          isEditMode ? "h-3/4" : "h-auto"
+          isEditMode ? "h-auto" : "h-auto"
         }`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-1 border-b border-gray-200 dark:border-gray-700">
@@ -369,14 +369,14 @@ const CreateTask = ({
                   className="w-full px-2 py-2 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-800"
                 />
               </div>
-            <div className="flex">
+            <div className="flex flex-row gap-3">
               {/* Status Change */}
                 <div>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-24 px-4 py-2 bg-white dark:bg-gray-800  ">
-                    <option value={status} disabled>
+                    className="w-30 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none ">
+                    <option value="" disabled>
                        Status
                     </option>
                     <option value="Not started">Not started</option>
@@ -390,13 +390,13 @@ const CreateTask = ({
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className="w-24 px-4 py-2 bg-white dark:bg-gray-800  ">                    
-                    <option value={priority} disabled>
+                    className="w-30 px-2 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
+                    <option value="" disabled>
                       Select Priority
                     </option>
-                    <option value="high">High Priority (P1)</option>
-                    <option value="medium">Medium Priority (P2)</option>
-                    <option value="low">Low Priority (P3)</option>
+                    <option value="1">High Priority (P1)</option>
+                    <option value="2">Medium Priority (P2)</option>
+                    <option value="3">Low Priority (P3)</option>
                   </select>
                 </div>
 
@@ -404,7 +404,7 @@ const CreateTask = ({
                   <select
                     value={efforts}
                     onChange={(e) => setEfforts(e.target.value)}
-                    className="w-24 px-4 py-2 bg-white dark:bg-gray-800  ">                    
+                    className="w-24 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
                     <option value=" " disabled>
                       Select Points
                     </option>
@@ -421,7 +421,7 @@ const CreateTask = ({
                 <select
                   value={selectedCycle}
                   onChange={(e) => setSelectedCycle(e.target.value)}
-                    className="w-32 px-4 py-2 bg-white dark:bg-gray-800  ">                    
+                    className="w-32 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none ">                    
                   <option value="" disabled>
                     Select Cycle
                   </option>
@@ -453,7 +453,7 @@ const CreateTask = ({
             <CommentBox taskToEdit={taskToEdit} userId={userId} />
           )}
           {/* Footer Actions */}
-          <div className="mt-[100px] rounded-b-xl flex justify-end space-x-3 divide-x divide-gray-300 dark:divide-gray-800 ">
+          <div className="mt-[100px] rounded-b-xl flex justify-end space-x-3 ">
             <button
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
