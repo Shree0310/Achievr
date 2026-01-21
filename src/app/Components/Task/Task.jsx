@@ -7,10 +7,14 @@ import { IconCircleDashed } from '@tabler/icons-react';
 import { IconCircleHalf2 } from '@tabler/icons-react';
 import { IconPercentage75 } from '@tabler/icons-react';
 import { IconCircleCheck } from '@tabler/icons-react';
+import EditTask from "../EditTask/EditTask";
+import { useRouter } from "next/navigation";
+
 
 const { useDraggable } = require("@dnd-kit/core");
 const { CSS } = require("@dnd-kit/utilities");
 const { transform } = require("typescript");
+
 
 const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, showSubtasks, subTasksCount,subTasks  }) => {
     const [isEditMode, setIsEditMode] = useState(false);
@@ -21,6 +25,8 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
             task
         }
     });
+
+    const router = useRouter();
 
     const style = transform ? {
         transform: CSS.Translate.toString(transform),
@@ -54,7 +60,7 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                 style={style}
                 {...listeners}
                 {...attributes}
-                onClick={handleClick}
+                onClick={() => router.push('/editTask')}
                 className='group bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-primary-400 dark:hover:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md dark:shadow-gray-900/20 dark:hover:shadow-gray-900/30 cursor-move'>
                 <div className="flex items-start gap-4 mb-3">
                     {task.status && (
@@ -124,16 +130,17 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
             </Card>
 
             {isEditMode && (
-                <CreateTask
-                    isEditMode={true}
-                    taskToEdit={task}
-                    userId={task.user_id}
-                    onClose={() => { setIsEditMode(false) }}
-                    onTaskUpdate={handleTaskUpdate}
-                    commentCount={commentCount}
-                    subTasksCount={subTasksCount}
-                    subTasks={subTasks}
-                />
+                <EditTask taskToEdit={task}></EditTask>
+                // <CreateTask
+                //     isEditMode={true}
+                //     taskToEdit={task}
+                //     userId={task.user_id}
+                //     onClose={() => { setIsEditMode(false) }}
+                //     onTaskUpdate={handleTaskUpdate}
+                //     commentCount={commentCount}
+                //     subTasksCount={subTasksCount}
+                //     subTasks={subTasks}
+                // />
             )}
         </>
     )

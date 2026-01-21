@@ -1,11 +1,7 @@
-'use client'
-
-const EditTask =()=>{
-return (
-    <div>
-        
+const EditTask = ({taskToEdit}) => {
+    return <div>
+        Edit Task
     </div>
-)
 }
 
 export default EditTask;
