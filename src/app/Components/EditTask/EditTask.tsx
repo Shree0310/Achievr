@@ -55,11 +55,24 @@ const EditTask = ({taskId}:EditTaskProps) => {
     },[taskId, router])
 
     return (
-        <div className="div">
-            <Navbar></Navbar>
-            {/* <EditTask taskToEdit></EditTask> */}
-            <div className="flex justify-center">
-                {task && <h3>{task.title}</h3>}
+        <div className="flex min-h-screen ">
+            <div className="left-0 top-0 h-full w-40">
+                <Navbar/>
+            </div>
+            <div className="flex-1 ml-40 p-8">
+                <div className="mx-auto max-w-4xl">
+                    <button onClick={() => router.back()}
+                        className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 flex items-center gap-2"
+                    >
+                        ← Back to Board
+                    </button>
+                </div>
+                {task && 
+                    <div className="pr-24">
+                        <h3 className="p-4 m-4 inset-y-0 inset-x-0">{task.title}</h3>
+                        <p>{task.description}</p>
+                    </div>
+                    }
             </div>
         </div>
     )
