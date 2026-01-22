@@ -59,8 +59,8 @@ const EditTask = ({taskId}:EditTaskProps) => {
             <div className="left-0 top-0 h-full w-40">
                 <Navbar/>
             </div>
-            <div className="flex-1 ml-40 p-8">
-                <div className="mx-auto max-w-4xl">
+            <div className="flex-1 ml-32 p-8">
+                <div className=" max-w-4xl">
                     <button onClick={() => router.back()}
                         className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 flex items-center gap-2"
                     >
@@ -68,8 +68,8 @@ const EditTask = ({taskId}:EditTaskProps) => {
                     </button>
                 </div>
                 {task && 
-                    <div className="pr-24">
-                        <h3 className="p-4 m-4 inset-y-0 inset-x-0">{task.title}</h3>
+                    <div className="">
+                        <h3 className="py-4 inset-y-0 inset-x-0 text-2xl font-semibold">{task.title}</h3>
                         <p>{task.description}</p>
                     </div>
                     }
