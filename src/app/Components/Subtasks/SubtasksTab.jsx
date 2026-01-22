@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 
-const SubtasksTab = ({ subTasks, createSubtaskMode, taskToEdit, userId, onSubtaskCreated, onToggleCreateMode }) => {
+const SubtasksTab = ({ subTasks = [], createSubtaskMode = false, taskToEdit, userId, onSubtaskCreated, onToggleCreateMode }) => {
     const [subtaskTitle, setSubtaskTitle] = useState("");
     const [subtaskDescription, setSubtaskDescription] = useState("");
     const [subtaskStatus, setSubtaskStatus] = useState("");
