@@ -25,8 +25,9 @@ interface EditTaskProps {
 const EditTask = ({taskId}:EditTaskProps) => {
     const [task, setTask] = useState<Task | null>(null);
     const [subTasks, setSubTasks] = useState<Task[]>([]);
-    const [addSubTaskMode, setAddSubtaskMode] = useState(true);
+    const [addSubTaskMode, setAddSubtaskMode] = useState(false);
     const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
+    const [newSubtaskDes, setNewSubtaskDes] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const [title, setTitle] = useState("");
@@ -111,7 +112,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
         }
     }
 
-    const handleAddSubtask = async (taskTitle: string) => {
+    const handleAddSubtask = async (taskTitle: string, taskDescription: string) => {
         if (!task) return;
         try {
             const {data, error} = await supabase
@@ -119,7 +120,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                 .insert([
                     {
                         title: taskTitle.trim(),
-                        description: "",
+                        description: taskDescription,
                         priority: "3", // Default to low priority
                         efforts: "1", // Default to 1 story point
                         status: "not_started", // Default status
@@ -134,6 +135,9 @@ const EditTask = ({taskId}:EditTaskProps) => {
 
                 await fetchSubTask();
                 setNewSubtaskTitle("");
+                setNewSubtaskDes("");
+                setAddSubtaskMode(false);
+                
         }
         catch(error){
             console.error("Error in adding subtasks", error)
@@ -255,18 +259,28 @@ const EditTask = ({taskId}:EditTaskProps) => {
                                 userId={userId} 
                                 onSubtaskCreated={fetchSubTask} // Better than window.location.reload()
                             />
-                            {addSubTaskMode && <div>
-                                <input 
-                                    type="text"
-                                    className="w-full py-2 px-3 text-center h-10 text-gray-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100" 
-                                    placeholder="+ Add sub-tasks"
-                                    value={newSubtaskTitle}
-                                    onChange={(e) => setNewSubtaskTitle(e.target.value)}
-                                />
-                                <button onClick={() => handleAddSubtask(newSubtaskTitle)}
-                                    className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 flex items-center gap-2">Add subtask
-                                </button>
-                                </div>}
+                            {addSubTaskMode && <div className="div">
+                                <div className="dark:bg-gray-800 my-4 rounded-md">
+                                    <input 
+                                        type="text"
+                                        className="w-full pt-2 px-3 mt-2 h-10 text-gray-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-gray-500 text-sm bg-gray-100 dark:bg-gray-800 placeholder:text-sm" 
+                                        placeholder="Sub task title"
+                                        value={newSubtaskTitle}
+                                        onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                                    />
+                                    <input 
+                                        type="text"
+                                        className="w-full px-3 h-10 text-gray-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-gray-500 text-sm bg-gray-100 dark:bg-gray-800 placeholder:text-sm"  
+                                        placeholder="Add Description"
+                                        value={newSubtaskDes}
+                                        onChange={(e) => setNewSubtaskDes(e.target.value)}
+                                    />
+                                </div>
+                                    <button onClick={() => handleAddSubtask(newSubtaskTitle, newSubtaskDes)}
+                                        className="px-3 text-gray-600 hover:text-gray-900 dark:bg-gray-900 dark:text-gray-400 dark:hover:text-gray-100 flex items-center gap-2">Add subtask
+                                    </button>
+                            </div>
+                            }
                         </div>
                         
                         <div className="py-4 px-4 mt-8">
