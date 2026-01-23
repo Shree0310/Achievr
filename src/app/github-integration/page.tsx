@@ -91,7 +91,7 @@ function RepositoryManager() {
       {loading ? (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading repositories...</p>
+          <p className="mt-2 text-neutral-600">Loading repositories...</p>
         </div>
       ) : (
         <div className="grid gap-4">
@@ -113,9 +113,9 @@ function RepositoryManager() {
                     )}
                   </div>
                   {repo.description && (
-                    <p className="text-sm text-gray-600 mt-1">{repo.description}</p>
+                    <p className="text-sm text-neutral-600 mt-1">{repo.description}</p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-neutral-500 mt-1">
                     Default branch: {repo.default_branch}
                   </p>
                 </div>
@@ -125,7 +125,7 @@ function RepositoryManager() {
                     href={repo.html_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                    className="px-3 py-1 text-sm border rounded hover:bg-neutral-50"
                   >
                     View on GitHub
                   </a>
@@ -236,10 +236,10 @@ function BranchCreator() {
             value={taskId}
             onChange={handleTaskIdChange}
             placeholder="e.g., 123 or paste a UUID"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
-          <p className="text-xs text-gray-500 mt-1">Current value: &quot;{taskId}&quot;</p>
+          <p className="text-xs text-neutral-500 mt-1">Current value: &quot;{taskId}&quot;</p>
         </div>
 
         <div>
@@ -252,10 +252,10 @@ function BranchCreator() {
             value={taskTitle}
             onChange={handleTaskTitleChange}
             placeholder="e.g., Add user authentication"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
-          <p className="text-xs text-gray-500 mt-1">Current value: &quot;{taskTitle}&quot;</p>
+          <p className="text-xs text-neutral-500 mt-1">Current value: &quot;{taskTitle}&quot;</p>
         </div>
 
         <div>
@@ -268,10 +268,10 @@ function BranchCreator() {
             value={repositoryFullName}
             onChange={handleRepositoryChange}
             placeholder="e.g., Shree0310/Achievr"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
-          <p className="text-xs text-gray-500 mt-1">Current value: &quot;{repositoryFullName}&quot;</p>
+          <p className="text-xs text-neutral-500 mt-1">Current value: &quot;{repositoryFullName}&quot;</p>
         </div>
 
         <div>
@@ -284,7 +284,7 @@ function BranchCreator() {
             value={baseBranch}
             onChange={(e) => setBaseBranch(e.target.value)}
             placeholder="main"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
         </div>
@@ -299,7 +299,7 @@ function BranchCreator() {
         </button>
 
         {/* Debug info */}
-        <div className="text-xs text-gray-500 p-2 bg-gray-50 rounded">
+        <div className="text-xs text-neutral-500 p-2 bg-neutral-50 rounded">
           <strong>Debug Info:</strong><br/>
           {result && (
             <div className={`p-4 rounded border ${
@@ -337,7 +337,7 @@ export default function GitHubIntegrationPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
       </div>
     )
@@ -345,12 +345,12 @@ export default function GitHubIntegrationPage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-4">
             Authentication Required
           </h1>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             Please sign in to manage GitHub integration.
           </p>
         </div>
@@ -359,13 +359,13 @@ export default function GitHubIntegrationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-neutral-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">
             GitHub Integration Management
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-neutral-600 mb-8">
             Connect repositories and create branches for your tasks.
           </p>
           

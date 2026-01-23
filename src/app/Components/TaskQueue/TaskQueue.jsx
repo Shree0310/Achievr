@@ -347,13 +347,13 @@ const TaskQueue = ({ userId }) => {
                     </Button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent className="w-56 p-1 bg-white rounded-lg shadow-lg border border-gray-200 z-10 ">
+                <DropdownMenuContent className="w-56 p-1 bg-white rounded-lg shadow-lg border border-neutral-200 z-10 ">
                     <DropdownMenuItem
                         onClick={handleAddTask}
-                        className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
+                        className="flex items-center px-3 py-2 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
                     >
                         <svg
-                            className="mr-2 h-4 w-4 text-gray-400 group-hover:text-primary-500"
+                            className="mr-2 h-4 w-4 text-neutral-400 group-hover:text-primary-500"
                             fill="none"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -367,10 +367,10 @@ const TaskQueue = ({ userId }) => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                        className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
+                        className="flex items-center px-3 py-2 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
                     >
                         <svg
-                            className="mr-2 h-4 w-4 text-gray-400 group-hover:text-primary-500"
+                            className="mr-2 h-4 w-4 text-neutral-400 group-hover:text-primary-500"
                             fill="none"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -389,7 +389,7 @@ const TaskQueue = ({ userId }) => {
                     <Input
                         value={searchInput}
                         placeholder="Search tasks..."
-                        className="rounded-md w-64 h-8 border-gray-200 pl-8 bg-primary-200"
+                        className="rounded-md w-64 h-8 border-neutral-200 pl-8 bg-primary-200"
                         onChange={(e) => setSearchInput(e.target.value)}
                         autoFocus
                         onBlur={() => {
@@ -401,10 +401,10 @@ const TaskQueue = ({ userId }) => {
                 ) : (
                     <div
                         onClick={() => setShowResults(true)}
-                        className="flex items-center cursor-pointer px-3 py-1.5 rounded-md hover:bg-gray-100"
+                        className="flex items-center cursor-pointer px-3 py-1.5 rounded-md hover:bg-neutral-100"
                     >
                         <svg
-                            className="h-4 w-4 text-gray-500"
+                            className="h-4 w-4 text-neutral-500"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -412,18 +412,18 @@ const TaskQueue = ({ userId }) => {
                         >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <span className="ml-2 text-sm text-gray-600">Search</span>
+                        <span className="ml-2 text-sm text-neutral-600">Search</span>
                     </div>
                 )}
             </div>
             <div className="relative">
-                <div className="flex text-gray-500 cursor-pointer z-10" onClick={() => setShowSortDialog(true)}>
+                <div className="flex text-neutral-500 cursor-pointer z-10" onClick={() => setShowSortDialog(true)}>
                     <svg
                         className="h-4 w-4"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
                     </svg>
-                    <span className="text-sm text-gray-500 mx-1">Sort</span>
+                    <span className="text-sm text-neutral-500 mx-1">Sort</span>
                 </div>
 
                 {showSortDialog && (
@@ -431,31 +431,31 @@ const TaskQueue = ({ userId }) => {
                         <h1 className="px-4 font-medium py-4">Sort By</h1>
                         <div className="flex gap-2 p-4">
                             <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50">
                                     <span>{sortColumn.charAt(0).toUpperCase() +sortColumn.slice(1)}</span>
                                     <svg className="zw-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent  className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
-                                    <DropdownMenuItem onClick={sortTask("title")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Title</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={sortTask("status")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Status</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={sortTask("priority")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Priority</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={sortTask("efforts")} className="px-4 py-2 hover:bg-gray-50 cursor-pointer">Efforts</DropdownMenuItem>
+                                <DropdownMenuContent  className="bg-white rounded-md shadow-lg border w-48 border-neutral-200">
+                                    <DropdownMenuItem onClick={sortTask("title")} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer">Title</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={sortTask("status")} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer">Status</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={sortTask("priority")} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer">Priority</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={sortTask("efforts")} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer">Efforts</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
 
                             <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50">
                                     <span>{sortOrder == 'asc'? "Ascending" : "Descending"}</span>
                                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-40 border-gray-200">
+                                <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-40 border-neutral-200">
                                     <DropdownMenuItem
                                         onClick={() => handleSortOrderChange('asc')}
-                                        className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                                        className="flex items-center px-4 py-2 hover:bg-neutral-50 cursor-pointer"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
@@ -464,7 +464,7 @@ const TaskQueue = ({ userId }) => {
                                     </DropdownMenuItem>
                                     <DropdownMenuItem 
                                         onClick={() => handleSortOrderChange('desc')}
-                                        className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                                        className="flex items-center px-4 py-2 hover:bg-neutral-50 cursor-pointer"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
@@ -479,13 +479,13 @@ const TaskQueue = ({ userId }) => {
             </div>
         </div>
 
-        <div className="rounded-md border border-gray-400 dark:border-gray-600 m-4 bg-white dark:bg-gray-800">
-            <Table className="border border-gray-400 dark:border-gray-600">
+        <div className="rounded-md border border-neutral-400 dark:border-neutral-600 m-4 bg-white dark:bg-neutral-800">
+            <Table className="border border-neutral-400 dark:border-neutral-600">
                 <TableHeader className="">
                     <TableRow className="bg-primary-300 dark:bg-primary-700">
                         <TableHead 
                             onClick={sortTask("title")} 
-                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors group"
+                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors group"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Title</span>
@@ -503,7 +503,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("status")} 
-                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
+                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Status</span>
@@ -521,7 +521,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("priority")} 
-                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
+                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Priority</span>
@@ -539,7 +539,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("efforts")} 
-                            className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
+                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Efforts</span>
@@ -555,10 +555,10 @@ const TaskQueue = ({ userId }) => {
                                 )}
                             </div>
                         </TableHead>
-                        <TableHead className="border border-gray-400 dark:border-gray-600 text-black dark:text-white text-center">Cycle</TableHead>
+                        <TableHead className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center">Cycle</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody className="bg-primary-50 dark:bg-gray-900">
+                <TableBody className="bg-primary-50 dark:bg-neutral-900">
                     {loading ? (
                         <TableRow>
                             <TableCell colSpan={5} className="text-center py-4">
@@ -575,7 +575,7 @@ const TaskQueue = ({ userId }) => {
                         filterTasks(tasks).slice(start, end).map((task) => (
                             editingTaskId === task.id ? (
                                 <TableRow key={task.id}>
-                                    <TableCell className="border-r border-l border-gray-400">
+                                    <TableCell className="border-r border-l border-neutral-400">
                                         <Input
                                             name="title"
                                             value={editTask.title}
@@ -583,7 +583,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task title"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-gray-400">
+                                    <TableCell className="border-r border-neutral-400">
                                         <Input
                                             name="status"
                                             value={editTask.status}
@@ -591,7 +591,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task status"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-gray-400">
+                                    <TableCell className="border-r border-neutral-400">
                                         <Input
                                             name="priority"
                                             value={editTask.priority}
@@ -599,7 +599,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task Priority"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-gray-400">
+                                    <TableCell className="border-r border-neutral-400">
                                         <Input
                                             name="efforts"
                                             value={editTask.efforts}
@@ -607,7 +607,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task Efforts"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-gray-400">
+                                    <TableCell className="border-r border-neutral-400">
                                         <Select
                                             value={editTask.cycle_id}
                                             onValueChange={handleEditTaskCycleChange}
@@ -622,12 +622,12 @@ const TaskQueue = ({ userId }) => {
                                             </SelectContent>
                                         </Select>
                                     </TableCell>
-                                    <TableCell colSpan={5} className="border-r border-gray-400 bg-gray-50 p-3">
+                                    <TableCell colSpan={5} className="border-r border-neutral-400 bg-neutral-50 p-3">
                                         <div className="flex justify-end space-x-3">
                                             <Button
                                                 onClick={handleCancelEditTask}
                                                 variant="outline"
-                                                className="px-4 py-2 border border-gray-300 hover:bg-gray-100 transition-colors">
+                                                className="px-4 py-2 border border-neutral-300 hover:bg-neutral-100 transition-colors">
                                                 Cancel
                                             </Button>
                                             <Button
@@ -644,19 +644,19 @@ const TaskQueue = ({ userId }) => {
                                     className="text-center cursor-pointer hover:bg-primary-100"
                                     onClick={() => handleEditTask(task)}
                                 >
-                                    <TableCell className="border-r border-l border-gray-400">{task.title} </TableCell>
-                                    <TableCell className="border-r border-gray-400">{task.status}</TableCell>
+                                    <TableCell className="border-r border-l border-neutral-400">{task.title} </TableCell>
+                                    <TableCell className="border-r border-neutral-400">{task.status}</TableCell>
                                     {task.priority ? (
-                                        <TableCell className="border-r border-gray-400">{task.priority}</TableCell>
+                                        <TableCell className="border-r border-neutral-400">{task.priority}</TableCell>
                                     ) : (
-                                        <TableCell className="border-r border-gray-400">priority is not set</TableCell>
+                                        <TableCell className="border-r border-neutral-400">priority is not set</TableCell>
                                     )}
                                     {task.efforts ? (
-                                        <TableCell className="border-r border-gray-400">{task.efforts}</TableCell>
+                                        <TableCell className="border-r border-neutral-400">{task.efforts}</TableCell>
                                     ) : (
-                                        <TableCell className="border-r border-gray-400">efforts not set</TableCell>
+                                        <TableCell className="border-r border-neutral-400">efforts not set</TableCell>
                                     )}
-                                    <TableCell className="border-r border-gray-400">
+                                    <TableCell className="border-r border-neutral-400">
                                         {task.cycles ? task.cycles.title : "cycle not set"}
                                     </TableCell>
                                 </TableRow>
@@ -666,35 +666,35 @@ const TaskQueue = ({ userId }) => {
                     {isAddingtask && (
                         <>
                             <TableRow>
-                                <TableCell className="border-r border-l border-gray-400">
+                                <TableCell className="border-r border-l border-neutral-400">
                                     <Input
                                         name="title"
                                         value={newTask.title}
                                         onChange={handleInputChange}
                                         placeholder="Task title" />
                                 </TableCell>
-                                <TableCell className="border-r border-gray-400">
+                                <TableCell className="border-r border-neutral-400">
                                     <Input
                                         name="status"
                                         value={newTask.status}
                                         onChange={handleInputChange}
                                         placeholder="Task status" />
                                 </TableCell>
-                                <TableCell className="border-r border-gray-400">
+                                <TableCell className="border-r border-neutral-400">
                                     <Input
                                         name="priority"
                                         value={newTask.priority}
                                         onChange={handleInputChange}
                                         placeholder="Task Priority" />
                                 </TableCell>
-                                <TableCell className="border-r border-gray-400">
+                                <TableCell className="border-r border-neutral-400">
                                     <Input
                                         name="efforts"
                                         value={newTask.efforts}
                                         onChange={handleInputChange}
                                         placeholder="Task Efforts" />
                                 </TableCell>
-                                <TableCell className="border-r border-gray-400">
+                                <TableCell className="border-r border-neutral-400">
                                     <Select
                                         defaultValue={selectedCycle}
                                         onValueChange={(value) => setSelectedCycle(value)}>
@@ -711,12 +711,12 @@ const TaskQueue = ({ userId }) => {
                             </TableRow>
 
                             <TableRow>
-                                <TableCell colSpan={5} className="border-r border-gray-400 bg-gray-50 p-3">
+                                <TableCell colSpan={5} className="border-r border-neutral-400 bg-neutral-50 p-3">
                                     <div className="flex justify-end space-x-3">
                                         <Button
                                             onClick={handleCancel}
                                             variant="outline"
-                                            className="px-4 py-2 border border-gray-300 hover:bg-gray-100 transition-colors">
+                                            className="px-4 py-2 border border-neutral-300 hover:bg-neutral-100 transition-colors">
                                             Cancel
                                         </Button>
                                         <Button
@@ -739,8 +739,8 @@ const TaskQueue = ({ userId }) => {
                 disabled={currPage === 0}
                 onClick={() => handlePrevPage()}
                 className={`px-3 py-1 rounded-md text-sm font-medium 
-                            bg-white border border-gray-300 
-                            hover:bg-gray-50 hover:border-blue-500
+                            bg-white border border-neutral-300 
+                            hover:bg-neutral-50 hover:border-blue-500
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                             transition-colors duration-200
                             ${currPage === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -756,8 +756,8 @@ const TaskQueue = ({ userId }) => {
                             onClick={() => handlePageChange(p)}
                             className={`px-3 py-1 rounded-md text-sm font-medium 
                                         ${currPage === p ? 'bg-blue-500 text-white' : 'bg-white'} 
-                                        border border-gray-300 
-                                        hover:bg-gray-50 hover:border-blue-500
+                                        border border-neutral-300 
+                                        hover:bg-neutral-50 hover:border-blue-500
                                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                         transition-colors duration-200`}
                         >
@@ -775,8 +775,8 @@ const TaskQueue = ({ userId }) => {
                 disabled={currPage === totalPages - 1}
                 onClick={() => handleNextPage()}
                 className={`px-3 py-1 rounded-md text-sm font-medium 
-                            bg-white border border-gray-300 
-                            hover:bg-gray-50 hover:border-blue-500
+                            bg-white border border-neutral-300 
+                            hover:bg-neutral-50 hover:border-blue-500
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                             transition-colors duration-200
                             ${currPage === totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}

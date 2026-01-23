@@ -334,9 +334,9 @@ const GitHubRepositoryConnector = () => {
   // Show loading state while checking authentication
   if (isCheckingAuth) {
     return (
-      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 dark:text-white w-full">
+      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-neutral-600 dark:text-white w-full">
         <svg
-          className="mr-3 h-5 w-5 text-gray-400 dark:text-white animate-spin"
+          className="mr-3 h-5 w-5 text-neutral-400 dark:text-white animate-spin"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -355,9 +355,9 @@ const GitHubRepositoryConnector = () => {
   // If user doesn't have GitHub connected, show Connect GitHub button
   if (!hasGitHubToken) {
     return (
-      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-200 dark:hover:bg-gray-700 w-full">
+      <div className="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-white dark:hover:text-neutral-200 dark:hover:bg-neutral-700 w-full">
         <svg
-          className="mr-3 h-5 w-5 text-gray-400 dark:text-white group-hover:text-gray-900 dark:group-hover:text-gray-900"
+          className="mr-3 h-5 w-5 text-neutral-400 dark:text-white group-hover:text-neutral-900 dark:group-hover:text-neutral-900"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -381,10 +381,10 @@ const GitHubRepositoryConnector = () => {
     <div className="relative">
       <button
         onClick={handleDropdownToggle}
-        className="group flex items-center px-2 py-2 mt-10 my-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-white dark:hover:text-gray-200 dark:hover:bg-gray-700 w-full"
+        className="group flex items-center px-2 py-2 mt-10 my-3 text-sm font-medium rounded-lg transition-colors text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-white dark:hover:text-neutral-200 dark:hover:bg-neutral-700 w-full"
       >
         <svg
-          className="mr-3 h-5 w-5 text-gray-400 dark:text-white hover:text-gray-900 dark:hover:text-gray-200"
+          className="mr-3 h-5 w-5 text-neutral-400 dark:text-white hover:text-neutral-900 dark:hover:text-neutral-200"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -405,9 +405,9 @@ const GitHubRepositoryConnector = () => {
       </button>
 
       {showDropdown && (
-        <div className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-          <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white">Connected Repositories</h3>
+        <div className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+          <div className="p-3 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
+            <h3 className="text-sm font-medium text-neutral-900 dark:text-white">Connected Repositories</h3>
             <button
               onClick={() => {
                 hasFetchedRepos.current = false
@@ -434,7 +434,7 @@ const GitHubRepositoryConnector = () => {
           {loading ? (
             <div className="p-4 text-center">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="text-sm text-gray-500 mt-2">Loading repositories...</p>
+              <p className="text-sm text-neutral-500 mt-2">Loading repositories...</p>
             </div>
           ) : (
             <div className="max-h-64 overflow-y-auto">
@@ -442,9 +442,9 @@ const GitHubRepositoryConnector = () => {
               {connectedRepos.length > 0 && (
                 <div className="p-2">
                   {connectedRepos.map((repo) => (
-                    <div key={repo.id} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded">
+                    <div key={repo.id} className="flex items-center justify-between p-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 rounded">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        <p className="text-sm font-medium text-neutral-900 dark:text-white truncate">
                           {repo.full_name}
                         </p>
                         {repo.private && (
@@ -465,12 +465,12 @@ const GitHubRepositoryConnector = () => {
 
               {/* Unconnected Repositories */}
               {unconnectedRepos.length > 0 && (
-                <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-xs text-gray-500 mb-2 px-2">Available to connect:</p>
+                <div className="p-2 border-t border-neutral-200 dark:border-neutral-700">
+                  <p className="text-xs text-neutral-500 mb-2 px-2">Available to connect:</p>
                   {unconnectedRepos.slice(0, 5).map((repo) => (
-                    <div key={repo.id} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded">
+                    <div key={repo.id} className="flex items-center justify-between p-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 rounded">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                        <p className="text-sm text-neutral-600 dark:text-neutral-300 truncate">
                           {repo.full_name}
                         </p>
                       </div>
@@ -485,7 +485,7 @@ const GitHubRepositoryConnector = () => {
                     </div>
                   ))}
                   {unconnectedRepos.length > 5 && (
-                    <p className="text-xs text-gray-400 px-2 py-1">
+                    <p className="text-xs text-neutral-400 px-2 py-1">
                       +{unconnectedRepos.length - 5} more repositories
                     </p>
                   )}
@@ -493,7 +493,7 @@ const GitHubRepositoryConnector = () => {
               )}
 
               {repositories.length === 0 && !loading && (
-                <div className="p-4 text-center text-gray-500">
+                <div className="p-4 text-center text-neutral-500">
                   <p className="text-sm">No repositories found</p>
                   <p className="text-xs mt-1">Connect your GitHub account to see repositories</p>
                   <a 
@@ -507,7 +507,7 @@ const GitHubRepositoryConnector = () => {
             </div>
           )}
 
-          <div className="p-3 border-t border-gray-200 dark:border-gray-700">
+          <div className="p-3 border-t border-neutral-200 dark:border-neutral-700">
             <button
               onClick={fetchRepositories}
               className="text-xs text-blue-500 hover:text-blue-700 w-full text-left"

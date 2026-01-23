@@ -152,7 +152,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
     if (loading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <div className="text-gray-600 dark:text-gray-400">Loading task...</div>
+                <div className="text-neutral-600 dark:text-neutral-400">Loading task...</div>
             </div>
         );
     }
@@ -165,13 +165,13 @@ const EditTask = ({taskId}:EditTaskProps) => {
             <div className="flex-1 ml-32 p-8">
                 <div className="flex justify-between max-w-4xl">
                     <button onClick={() => router.back()}
-                        className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 flex items-center gap-2"
+                        className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-center gap-2"
                     >
                         ← Back to Board
                     </button>
                     <button
                         onClick={handleSave}
-                        className="px-4 py-2 ml-14 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                        className="px-4 py-2 ml-14 bg-neutral-600 text-white rounded-md hover:bg-neutral-700"
                     >
                         Save Changes
                     </button>
@@ -184,7 +184,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                                 placeholder="Enter task title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full px-2 py-8 text-3xl placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-900"
+                                className="w-full px-2 py-8 text-3xl placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-900"
                             />
                         </div>
                 
@@ -195,7 +195,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                               value={description}
                               onChange={(e) => setDescription(e.target.value)}
                               rows={2}
-                              className="w-full px-2 py-2 h-28 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-900 placeholder:text-gray-400"
+                              className="w-full px-2 py-2 h-28 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-900 placeholder:text-neutral-400"
                             />
                         </div>
                         
@@ -205,7 +205,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                               <select
                                 value={status}
                                 onChange={(e) => setStatus(e.target.value)}
-                                className="w-30 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">
+                                className="w-30 px-4 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">
                                 <option value="" disabled>
                                    Status
                                 </option>
@@ -221,7 +221,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                               <select
                                 value={priority}
                                 onChange={(e) => setPriority(e.target.value)}
-                                className="w-30 px-2 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
+                                className="w-30 px-2 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">                    
                                 <option value="" disabled>
                                   Select Priority
                                 </option>
@@ -235,7 +235,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                               <select
                                 value={efforts}
                                 onChange={(e) => setEfforts(e.target.value)}
-                                className="w-24 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
+                                className="w-24 px-4 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">                    
                                 <option value="" disabled>
                                   Select Points
                                 </option>
@@ -260,24 +260,24 @@ const EditTask = ({taskId}:EditTaskProps) => {
                                 onSubtaskCreated={fetchSubTask} // Better than window.location.reload()
                             />
                             {addSubTaskMode && <div className="div">
-                                <div className="dark:bg-gray-800 my-4 rounded-md">
+                                <div className="dark:bg-neutral-800 my-4 rounded-md">
                                     <input 
                                         type="text"
-                                        className="w-full pt-2 px-3 mt-2 h-10 text-gray-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-gray-500 text-sm bg-gray-100 dark:bg-gray-800 placeholder:text-sm" 
+                                        className="w-full pt-2 px-3 mt-2 h-10 text-neutral-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-neutral-500 text-sm bg-neutral-100 dark:bg-neutral-800 placeholder:text-sm" 
                                         placeholder="Sub task title"
                                         value={newSubtaskTitle}
                                         onChange={(e) => setNewSubtaskTitle(e.target.value)}
                                     />
                                     <input 
                                         type="text"
-                                        className="w-full px-3 h-10 text-gray-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-gray-500 text-sm bg-gray-100 dark:bg-gray-800 placeholder:text-sm"  
+                                        className="w-full px-3 h-10 text-neutral-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-neutral-500 text-sm bg-neutral-100 dark:bg-neutral-800 placeholder:text-sm"  
                                         placeholder="Add Description"
                                         value={newSubtaskDes}
                                         onChange={(e) => setNewSubtaskDes(e.target.value)}
                                     />
                                 </div>
                                     <button onClick={() => handleAddSubtask(newSubtaskTitle, newSubtaskDes)}
-                                        className="px-3 text-gray-600 hover:text-gray-900 dark:bg-gray-900 dark:text-gray-400 dark:hover:text-gray-100 flex items-center gap-2">Add subtask
+                                        className="px-3 text-neutral-600 hover:text-neutral-900 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-center gap-2">Add subtask
                                     </button>
                             </div>
                             }

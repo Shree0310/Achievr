@@ -46,8 +46,8 @@ const DeleteTask = ({ taskToDelete, onClose, onTaskDelete }) => {
         <>
         {deleteModal ? (
             <div className="absolute top-10 right-0 z-50">
-                <div className="w-72 px-4 py-3 bg-white dark:bg-gray-800 rounded-md shadow-lg dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700">
-                    <h2 className="text-sm font-medium text-gray-700 dark:text-white mb-3">Are you sure you want to delete this task?</h2>
+                <div className="w-72 px-4 py-3 bg-white dark:bg-neutral-800 rounded-md shadow-lg dark:shadow-neutral-900/50 border border-neutral-200 dark:border-neutral-700">
+                    <h2 className="text-sm font-medium text-neutral-700 dark:text-white mb-3">Are you sure you want to delete this task?</h2>
                     
                     {error && (
                         <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-2 mb-3 rounded text-xs">
@@ -58,7 +58,7 @@ const DeleteTask = ({ taskToDelete, onClose, onTaskDelete }) => {
                     <div className="flex justify-end space-x-3">
                         <Button 
                             onClick={cancelDelete}
-                            className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded transition-colors border border-gray-300 dark:border-gray-600"
+                            className="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 text-sm font-medium rounded transition-colors border border-neutral-300 dark:border-neutral-600"
                         >
                             Cancel
                         </Button>
@@ -72,11 +72,11 @@ const DeleteTask = ({ taskToDelete, onClose, onTaskDelete }) => {
                 </div>
             </div>
         ) : (
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg dark:shadow-gray-900/50 z-10 border border-gray-200 dark:border-gray-700">
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg dark:shadow-neutral-900/50 z-10 border border-neutral-200 dark:border-neutral-700">
                 <ul className="py-1">
                     <li 
                         onClick={handleDelete}
-                        className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                        className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-neutral-50 dark:hover:bg-neutral-700 cursor-pointer transition-colors"
                     >
                         Delete Task
                     </li>

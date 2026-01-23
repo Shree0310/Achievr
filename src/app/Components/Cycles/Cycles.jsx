@@ -344,7 +344,7 @@ const Cycles = ({ userId }) => {
                     <Input
                         value={searchInput}
                         placeholder="Search cycles..."
-                        className="rounded-md w-64 h-8 border-gray-200 my-2 bg-primary-200"
+                        className="rounded-md w-64 h-8 border-neutral-200 my-2 bg-primary-200"
                         onChange={(e) => setSearchInput(e.target.value)}
                         autoFocus
                         onBlur={() => {
@@ -358,15 +358,15 @@ const Cycles = ({ userId }) => {
                         className="flex cursor-pointer"
                         onClick={() => setIsSearchActive(true)}
                     >
-                        <svg className="h-4 w-4 my-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <svg className="h-4 w-4 my-2 text-neutral-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
-                        <span className="h-3 w-3 my-1 mx-1 text-gray-500">Search</span>
+                        <span className="h-3 w-3 my-1 mx-1 text-neutral-500">Search</span>
                     </div>
                 )}
 
                 <div className="relative">
-                    <div className="flex text-gray-500 cursor-pointer z-10 mx-8 my-1"
+                    <div className="flex text-neutral-500 cursor-pointer z-10 mx-8 my-1"
                         onClick={() => setShowSortDialog(true)}
                        >
                         <svg
@@ -374,7 +374,7 @@ const Cycles = ({ userId }) => {
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
                         </svg>
-                        <span className="text-sm text-gray-500 mx-1">Sort</span>
+                        <span className="text-sm text-neutral-500 mx-1">Sort</span>
 
                     </div>
                     {showSortDialog && (
@@ -382,21 +382,21 @@ const Cycles = ({ userId }) => {
                             <h1 className="px-4 font-medium py-4">Sort By</h1>
                             <div className="flex gap-2 p-4">
                                 <DropdownMenu>
-                                    <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                    <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2 h-10 w-52 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50">
                                         <span>{sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1)}</span>
                                         <svg className="zw-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                         </svg>
 
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-48 border-gray-200">
+                                    <DropdownMenuContent className="bg-white rounded-md shadow-lg border w-48 border-neutral-200">
                                         <DropdownMenuItem onClick={sortCycles("title")}>Title</DropdownMenuItem>
                                         <DropdownMenuItem onClick={sortCycles("start_at")}>Start date</DropdownMenuItem>
                                         <DropdownMenuItem onClick={sortCycles("end_at")}>End date</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                                 <DropdownMenu>
-                                    <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-gray-200 rounded-md hover:bg-gray-50">
+                                    <DropdownMenuTrigger className="flex items-center justify-between px-4 py-2  h-10 w-44 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50">
                                         <span>{sortOrder == 'asc' ? 'Ascending' : 'Descending'}</span>
                                         <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -435,16 +435,16 @@ const Cycles = ({ userId }) => {
         <Table>
                     <TableHeader className="bg-primary-200">
                 <TableRow>
-                            <TableHead className="border border-gray-300 text-black">Title</TableHead>
-                            <TableHead className="border border-gray-300 text-black">Start date</TableHead>
-                            <TableHead className="border border-gray-300 text-black">End Date</TableHead>
+                            <TableHead className="border border-neutral-300 text-black">Title</TableHead>
+                            <TableHead className="border border-neutral-300 text-black">Start date</TableHead>
+                            <TableHead className="border border-neutral-300 text-black">End Date</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                         {filterCycles(cycles).map((cycle) => (
                     editingCycleId === cycle.id ? (
                         <TableRow key={cycle.id}>
-                            <TableCell className="border border-gray-300">
+                            <TableCell className="border border-neutral-300">
                                 <Input
                                     name="title"
                                     value={editCycle.title}
@@ -453,26 +453,26 @@ const Cycles = ({ userId }) => {
                                     className="w-full"
                                 />
                             </TableCell>
-                            <TableCell className="border border-gray-300">
+                            <TableCell className="border border-neutral-300">
                                 <DatePicker
                                     selected={editCycle.start_at}
                                     onChange={(date) => handleEditDateChange(date, 'start_at')}
                                     dateFormat="MMM d, yyyy"
                                     placeholderText="Start Date"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    className="w-full px-3 py-2 border border-neutral-300 rounded-md"
                                 />
                             </TableCell>
-                            <TableCell className="border border-gray-300">
+                            <TableCell className="border border-neutral-300">
                                 <DatePicker
                                     selected={editCycle.end_at}
                                     onChange={(date) => handleEditDateChange(date, 'end_at')}
                                     dateFormat="MMM d, yyyy"
                                     placeholderText="End Date"
                                     minDate={editCycle.start_at}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    className="w-full px-3 py-2 border border-neutral-300 rounded-md"
                                 />
                             </TableCell>
-                            <TableCell className="border border-gray-300 bg-gray-50" colSpan={3}>
+                            <TableCell className="border border-neutral-300 bg-neutral-50" colSpan={3}>
                                 <div className="flex justify-end space-x-3">
                                     <Button onClick={handleCancelEdit} variant="outline" className="px-4 py-2">Cancel</Button>
                                     <Button onClick={handleSaveEditCycle} className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white">Save</Button>
@@ -481,15 +481,15 @@ const Cycles = ({ userId }) => {
                         </TableRow>
                     ) : (
                         <TableRow key={cycle.id} onClick={() => handleEditCycle(cycle)} className="cursor-pointer hover:bg-primary-100">
-                            <TableCell className="border border-gray-300">{cycle.title}</TableCell>
-                            <TableCell className="border border-gray-300">{formatDate(cycle.start_at)}</TableCell>
-                            <TableCell className="border border-gray-300">{formatDate(cycle.end_at)}</TableCell>
+                            <TableCell className="border border-neutral-300">{cycle.title}</TableCell>
+                            <TableCell className="border border-neutral-300">{formatDate(cycle.start_at)}</TableCell>
+                            <TableCell className="border border-neutral-300">{formatDate(cycle.end_at)}</TableCell>
                         </TableRow>
                     )
                 ))}
                         {isAddingCycle && (
                             <TableRow>
-                                <TableCell className="border border-gray-300">
+                                <TableCell className="border border-neutral-300">
                                     <Input
                                         name="title"
                                         value={newCycle.title}
@@ -498,23 +498,23 @@ const Cycles = ({ userId }) => {
                                         className="w-full"
                                     />
                                 </TableCell>
-                                <TableCell className="border border-gray-300">
+                                <TableCell className="border border-neutral-300">
                                     <DatePicker
                                         selected={newCycle.start_at}
                                         onChange={(date) => handleDateChange(date, 'start_at')}
                                         dateFormat="MMM d, yyyy"
                                         placeholderText="Start Date"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                        className="w-full px-3 py-2 border border-neutral-300 rounded-md"
                                     />
                                 </TableCell>
-                                <TableCell className="border border-gray-300">
+                                <TableCell className="border border-neutral-300">
                                     <DatePicker
                                         selected={newCycle.end_at}
                                         onChange={(date) => handleDateChange(date, 'end_at')}
                                         dateFormat="MMM d, yyyy"
                                         placeholderText="End Date"
                                         minDate={newCycle.start_at}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                        className="w-full px-3 py-2 border border-neutral-300 rounded-md"
                                     />
                                 </TableCell>
                             </TableRow>
@@ -522,7 +522,7 @@ const Cycles = ({ userId }) => {
             </TableBody>
         </Table>
                 {isAddingCycle && (
-                    <div className="p-3 bg-gray-50 border-t border-gray-200">
+                    <div className="p-3 bg-neutral-50 border-t border-neutral-200">
                         <div className="flex justify-end space-x-3">
                             <Button
                                 onClick={handleCancel}

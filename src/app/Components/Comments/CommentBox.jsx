@@ -135,21 +135,21 @@ const CommentBox = ({ taskToEdit, userId }) => {
           className="p-2 m-2 h-auto"
           style={{ marginLeft: `${indentLevel}px` }}>
           <div
-            className={`bg-gray-100 dark:bg-gray-800 rounded-md shadow-md dark:shadow-gray-900/20 border border-transparent dark:border-blue-300/60 ${
+            className={`bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-md dark:shadow-neutral-900/20 border border-transparent dark:border-blue-300/60 ${
               comment.parent_comment_id
                 ? "border-l-4"
                 : ""
             }`}>
-            <div className="relative w-full h-auto p-4 text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border-gray-700 dark:border-gray-600 ">
-              <div className="flex justify-end gap-4 absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+            <div className="relative w-full h-auto p-4 text-neutral-600 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 border-neutral-700 dark:border-neutral-600 ">
+              <div className="flex justify-end gap-4 absolute top-2 right-2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors">
                 {updateCommentMode !== comment.id && (
                   <div className="flex items-center gap-2">
                 <p className="text-xs">{formatDateTime(comment.created_at)}</p>
                 <button
                   onClick={() => setOpenMenuId(openMenuId === comment.id ? null: comment.id)}
-                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                  className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors">
                   <svg
-                    className="w-3 h-3 text-gray-500 dark:text-white"
+                    className="w-3 h-3 text-neutral-500 dark:text-white"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -182,10 +182,10 @@ const CommentBox = ({ taskToEdit, userId }) => {
                     value={newUpdatedComment}
                     onChange={(e) => setNewUpdatedComment(e.target.value)}
                     placeholder={comment.content}
-                    className="w-full h-20 p-3 text-gray-600 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full h-20 p-3 text-neutral-600 dark:text-neutral-200 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-md outline-none resize-none placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   />
                   <div className="flex justify-between items-center mt-2">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
                       <span>{newUpdatedComment.length} characters</span>
                       <span>•</span>
                       <span>{newUpdatedComment.trim() === comment.content ? 'No changes' : 'Modified'}</span>
@@ -196,7 +196,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
                           setUpdateCommentMode(null);
                           setNewUpdatedComment("");
                         }}
-                        className="px-3 py-1.5 bg-gray-500 dark:bg-gray-600 text-white text-sm rounded hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors">
+                        className="px-3 py-1.5 bg-neutral-500 dark:bg-neutral-600 text-white text-sm rounded hover:bg-neutral-600 dark:hover:bg-neutral-700 transition-colors">
                         Cancel
                       </button>
                       <button
@@ -212,17 +212,17 @@ const CommentBox = ({ taskToEdit, userId }) => {
                 <div className="py-2">
                   <p>{comment.content}</p>
                   {comment.updated_at && comment.updated_at !== comment.created_at && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 italic">
                       (edited)
                     </p>
                   )}
                 </div>
               )}
-              <hr className="w-full border-gray-300 dark:border-gray-600"></hr>
-              <div className="flex bg-gray-100 dark:bg-gray-800 pt-2">
+              <hr className="w-full border-neutral-300 dark:border-neutral-600"></hr>
+              <div className="flex bg-neutral-100 dark:bg-neutral-800 pt-2">
                 <button
                   onClick={() => onReplyClicked(comment)}
-                  className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 px-2 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                  className="flex items-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400 px-2 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors">
                   <svg
                     className="h-4 w-4"
                     viewBox="0 0 24 24"
@@ -245,11 +245,11 @@ const CommentBox = ({ taskToEdit, userId }) => {
                   <span>Reply</span>
                 </button>
                 {comment.updated_at && comment.updated_at !== comment.created_at && (
-                  <p className="text-xs text-gray-500 dark:text-gray-200 px-4">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-200 px-4">
                     Updated: {formatDateTime(comment.updated_at)}
                   </p>
                 )}
-                <button className="text-xs text-gray-500 dark:text-gray-200 hover:text-blue-400"
+                <button className="text-xs text-neutral-500 dark:text-neutral-200 hover:text-blue-400"
                         onClick={() => setOpenCommentHistory(openCommentHistory === comment.id ? null : comment.id )}>Show History</button>
               </div>
               
@@ -270,19 +270,19 @@ const CommentBox = ({ taskToEdit, userId }) => {
           <div
             className="p-2 m-2 h-auto"
             style={{ marginLeft: `${indentLevel}px` }}>
-                                  <div className="bg-gray-50 dark:bg-gray-700 overflow-hidden rounded-md shadow-md dark:shadow-gray-900/20 border border-transparent dark:border-blue-300/60 border-l-4 border-l-green-300 dark:border-l-green-500">
+                                  <div className="bg-neutral-50 dark:bg-neutral-700 overflow-hidden rounded-md shadow-md dark:shadow-neutral-900/20 border border-transparent dark:border-blue-300/60 border-l-4 border-l-green-300 dark:border-l-green-500">
                         <textarea
                           value={newReply}
                           onChange={(e) => setNewReply(e.target.value)}
                           placeholder="write a reply..."
-                          className="w-full h-14 p-4 text-gray-600 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 border-none outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400"
+                          className="w-full h-14 p-4 text-neutral-600 dark:text-neutral-200 bg-neutral-50 dark:bg-neutral-700 border-none outline-none resize-none placeholder-neutral-500 dark:placeholder-neutral-400"
                         />
                         <div className="flex justify-between space-x-24 p-2">
-                          <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 px-2 bg-gray-50 dark:bg-gray-700">
-                            <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                          <div className="flex items-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400 px-2 bg-neutral-50 dark:bg-neutral-700">
+                            <button className="flex items-center space-x-1 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors">
                               <span>@ Mention</span>
                             </button>
-                            <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                            <button className="flex items-center space-x-1 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors">
                               <svg
                                 width="16"
                                 height="16"
@@ -307,7 +307,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
                                 setParentCommentId(null);
                                 setNewReply("");
                               }}
-                              className="px-3 py-1 bg-gray-500 dark:bg-gray-600 text-white text-sm rounded hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors">
+                              className="px-3 py-1 bg-neutral-500 dark:bg-neutral-600 text-white text-sm rounded hover:bg-neutral-600 dark:hover:bg-neutral-700 transition-colors">
                               Cancel
                             </button>
                             <button
@@ -505,24 +505,24 @@ const CommentBox = ({ taskToEdit, userId }) => {
     <>
       <div>
         <div className="p-2 m-2 w-full ">
-          <div className="bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-md shadow-md border border-transparent dark:border-blue-300/60">
+          <div className="bg-neutral-100 dark:bg-neutral-800 overflow-hidden rounded-md shadow-md border border-transparent dark:border-blue-300/60">
             <textarea
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="write an update and start with @ to mention others"
-              className="w-full h-14 p-4 text-gray-600 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border-none outline-none resize-none placeholder-gray-500 dark:placeholder-gray-400"
+              className="w-full h-14 p-4 text-neutral-600 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 border-none outline-none resize-none placeholder-neutral-500 dark:placeholder-neutral-400"
             />
             <div className="flex justify-between space-x-24 p-2">
               {/* Footer   */}
-              <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 px-2 bg-gray-100 dark:bg-gray-800">
+              <div className="flex items-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400 px-2 bg-neutral-100 dark:bg-neutral-800">
                 {/* Mention button */}
-                <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                <button className="flex items-center space-x-1 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors">
                   <span>@ Mention</span>
                 </button>
 
                 {/* Attach button */}
-                <button className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                <button className="flex items-center space-x-1 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path
                       d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"

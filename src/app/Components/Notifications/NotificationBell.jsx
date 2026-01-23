@@ -15,16 +15,16 @@ const NotificationBell = () => {
   };
 
   return (
-    <div className="absolute top-10 right-0 w-96 max-h-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg dark:shadow-gray-900/30 z-50 overflow-hidden">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Notifications</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{unreadCount} unread</p>
+    <div className="absolute top-10 right-0 w-96 max-h-96 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg dark:shadow-neutral-900/30 z-50 overflow-hidden">
+      <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
+        <h3 className="text-lg font-semibold text-neutral-800 dark:text-white">Notifications</h3>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">{unreadCount} unread</p>
       </div>
       <div className="max-h-80 overflow-y-auto">
         {notifications.length === 0 ? (
-          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
+          <div className="p-6 text-center text-neutral-500 dark:text-neutral-400">
             <svg
-              className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600"
+              className="w-12 h-12 mx-auto mb-3 text-neutral-300 dark:text-neutral-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">
@@ -39,24 +39,24 @@ const NotificationBell = () => {
           </div>
         ) : (
           notifications.map((notification) => (
-            <div key={notification.id} className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+            <div key={notification.id} className={`p-4 border-b border-neutral-100 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors ${
               notification.isRead 
-                ? 'bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400' 
+                ? 'bg-neutral-50 dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400' 
                 : 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-blue-400 dark:border-l-blue-500'
             }`}>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h4 className={`text-sm font-medium mb-1 ${
-                    notification.isRead ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-white'
+                    notification.isRead ? 'text-neutral-500 dark:text-neutral-400' : 'text-neutral-900 dark:text-white'
                   }`}>
                     {notification.title || "Notification"}
                   </h4>
                   <p className={`text-sm mb-2 ${
-                    notification.isRead ? 'text-gray-400 dark:text-gray-500' : 'text-gray-600 dark:text-gray-300'
+                    notification.isRead ? 'text-neutral-400 dark:text-neutral-500' : 'text-neutral-600 dark:text-neutral-300'
                   }`}>
                     {notification.message || notification.description || "You have a new notification"}
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
                     {new Date(notification.timestamp).toLocaleTimeString()}
                   </p>
                 </div>
@@ -95,7 +95,7 @@ const NotificationBell = () => {
         )}
       </div>
       {/* {notifications.length > 0 && ( */}
-      <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+      <div className="p-3 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
         <button
           className="w-full text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
           onClick={() => markAllAsRead()}>

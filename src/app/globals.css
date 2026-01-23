@@ -186,7 +186,7 @@ body {
 
   }
   body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
+    @apply bg-neutral-50 dark:bg-neutral-900 text-gray-900 dark:text-white transition-colors duration-300;
   }
 }
 

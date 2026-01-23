@@ -9,15 +9,15 @@ const ToggleTheme = () => {
         onClick={toggleTheme}
         className="
           relative p-2 rounded-full
-          bg-gray-100 dark:bg-gray-800
-          border-2 border-gray-200 dark:border-gray-700
-          text-gray-800 dark:text-gray-200
-          hover:bg-gray-200 dark:hover:bg-gray-700
+          bg-neutral-100 dark:bg-neutral-800
+          border-2 border-neutral-200 dark:border-neutral-700
+          text-neutral-800 dark:text-neutral-200
+          hover:bg-neutral-200 dark:hover:bg-neutral-700
           hover:border-blue-400 dark:hover:border-blue-500
           transition-all duration-300 ease-in-out
           transform hover:scale-105 active:scale-95
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-          dark:focus:ring-offset-gray-800
+          dark:focus:ring-offset-neutral-800
         "
         aria-label="Toggle dark/light mode"
       >

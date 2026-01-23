@@ -29,7 +29,7 @@ export default function UserName({ user, position = "left" }) {
 
     if (!user) {
         return (
-            <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-neutral-200 animate-pulse flex items-center justify-center">
                 <div className="w-6 h-6"></div>
             </div>
         );

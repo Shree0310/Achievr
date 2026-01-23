@@ -41,17 +41,17 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
 };
 
   return (
-    <div className="absolute -top-2 -left-2 -right-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-blue-600 p-4 z-50 shadow-2xl">
+    <div className="absolute -top-2 -left-2 -right-2 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm rounded-lg border border-neutral-200 dark:border-blue-600 p-4 z-50 shadow-2xl">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+        <h3 className="text-lg font-semibold text-neutral-800 dark:text-white">
           Comment History
         </h3>
         <button
           onClick={onClose}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
         >
-          <svg className="w-5 h-5 text-gray-500 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-neutral-500 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -59,22 +59,22 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
       
             {/* History Content */}
       <div className="space-y-2">
-        <div className="text-sm text-gray-600 dark:text-gray-300">
+        <div className="text-sm text-neutral-600 dark:text-neutral-300">
           {/* Comment History */}
           <div className="mb-3">
-            <h4 className="font-medium text-gray-800 dark:text-white mb-2">Version History:</h4>
+            <h4 className="font-medium text-neutral-800 dark:text-white mb-2">Version History:</h4>
             
             {isLoading ? (
               <div className="text-center py-4">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="text-gray-500 dark:text-gray-400 mt-2">Loading history...</p>
+                <p className="text-neutral-500 dark:text-neutral-400 mt-2">Loading history...</p>
               </div>
             ) : error ? (
               <div className="text-red-500 dark:text-red-400 text-center py-4">
                 {error}
               </div>
             ) : commentHistoryData.length === 0 ? (
-              <div className="text-gray-500 dark:text-gray-400 text-center py-4">
+              <div className="text-neutral-500 dark:text-neutral-400 text-center py-4">
                 No history available for this comment
               </div>
             ) : (
@@ -89,17 +89,17 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
                       {formatDateTime(new Date())}
                     </span>
                   </div>
-                  <p className="text-gray-800 dark:text-gray-200">{comment.content}</p>
+                  <p className="text-neutral-800 dark:text-neutral-200">{comment.content}</p>
                 </div>
                 
                 {/* Historical Versions */}
                 {commentHistoryData.map((commentHistory, index) => (
-                  <div key={commentHistory.id} className="p-3 border border-gray-200 dark:border-gray-600 rounded-md">
+                  <div key={commentHistory.id} className="p-3 border border-neutral-200 dark:border-neutral-600 rounded-md">
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         Version {commentHistory.version_no}
                       </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         {formatDateTime(commentHistory.changed_at)}
                       </span>
                     </div>
@@ -107,7 +107,7 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
                     {/* Show diff if there's a previous version */}
                     {index < commentHistoryData.length - 1 ? (
                       <div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Changes from previous version:</p>
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Changes from previous version:</p>
                         <DiffChecker
                           oldText={commentHistoryData[index + 1].content}
                           newText={commentHistory.content}
@@ -115,8 +115,8 @@ const CommentHistoryDialog = ({ comment, isOpen, onClose, formatDateTime }) => {
                       </div>
                     ) : (
                       <div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Version content:</p>
-                        <p className="text-gray-800 dark:text-gray-200">{commentHistory.content}</p>
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Version content:</p>
+                        <p className="text-neutral-800 dark:text-neutral-200">{commentHistory.content}</p>
                       </div>
                     )}
                   </div>

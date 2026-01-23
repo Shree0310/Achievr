@@ -264,10 +264,10 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
 
     // TaskCard for the drag overlay
     const TaskCard = ({ task }) => (
-        <Card className='bg-white/90 dark:bg-gray-800 backdrop-blur-sm rounded-lg p-4 border border-primary-200 dark:border-blue-500 shadow-lg dark:shadow-gray-900/30 cursor-grabbing min-w-[200px]'>
+        <Card className='bg-white/90 dark:bg-neutral-800 backdrop-blur-sm rounded-lg p-4 border border-primary-200 dark:border-blue-500 shadow-lg dark:shadow-neutral-900/30 cursor-grabbing min-w-[200px]'>
             <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
-                    <h3 className="font-medium text-gray-900 dark:text-white">
+                    <h3 className="font-medium text-neutral-900 dark:text-white">
                         {task.title || 'Untitled Task'}
                     </h3>
                 </div>
@@ -281,13 +281,13 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                 )}
             </div>
             
-            <p className='text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2'>
+            <p className='text-neutral-600 dark:text-neutral-300 text-sm mb-3 line-clamp-2'>
                 {task.description || 'No Description'}
             </p>
             
             <div className="flex items-center space-x-3 text-sm">
                 {task.efforts && (
-                    <div className="flex items-center text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center text-neutral-500 dark:text-neutral-400">
                         <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -321,9 +321,9 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
-                            <p className="text-center text-gray-500 p-4">loading..</p>
+                            <p className="text-center text-neutral-500 p-4">loading..</p>
                         ) : notStarted.length === 0 ? (
-                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                            <p className="text-center text-neutral-500 p-4">No Tasks..</p>
                         ) : (
                             notStarted.map((task) => {
                                 return (
@@ -359,9 +359,9 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
-                            <p className="text-center text-gray-500 p-4">loading..</p>
+                            <p className="text-center text-neutral-500 p-4">loading..</p>
                         ) : inProgress.length === 0 ? (
-                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                            <p className="text-center text-neutral-500 p-4">No Tasks..</p>
                         ) : (
                             inProgress.map((task) => (
                                 <div key={`task-${task.id}`}>
@@ -394,9 +394,9 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
-                            <p className="text-center text-gray-500 p-4">loading..</p>
+                            <p className="text-center text-neutral-500 p-4">loading..</p>
                         ) : underReview.length === 0 ? (
-                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                            <p className="text-center text-neutral-500 p-4">No Tasks..</p>
                         ) : (
                             underReview.map((task) => (
                                 <div key={`task-${task.id}`}>
@@ -429,9 +429,9 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
-                            <p className="text-center text-gray-500 p-4">loading..</p>
+                            <p className="text-center text-neutral-500 p-4">loading..</p>
                         ) : completed.length === 0 ? (
-                            <p className="text-center text-gray-500 p-4">No Tasks..</p>
+                            <p className="text-center text-neutral-500 p-4">No Tasks..</p>
                         ) : (
                             completed.map((task) => (
                                 <div key={`task-${task.id}`}>

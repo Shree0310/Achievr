@@ -28,7 +28,7 @@ const PermissionPrompt = ({ onPermissionGranted, onDismiss }) => {
   }
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg dark:shadow-gray-900/30 p-4 max-w-md">
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg dark:shadow-neutral-900/30 p-4 max-w-md">
       <div className="flex items-start space-x-3">
         <div className="flex-shrink-0">
           <svg
@@ -39,10 +39,10 @@ const PermissionPrompt = ({ onPermissionGranted, onDismiss }) => {
           </svg>
         </div>
         <div className="flex-1">
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+          <h3 className="text-sm font-medium text-neutral-900 dark:text-white">
             Enable Push Notifications
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+          <p className="text-sm text-neutral-600 dark:text-neutral-300 mt-1">
             Get notified instantly when new comments are added to your tasks,
             even when the app is closed.
           </p>
@@ -55,14 +55,14 @@ const PermissionPrompt = ({ onPermissionGranted, onDismiss }) => {
             </button>
             <button
               onClick={handleDismiss}
-              className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 text-sm rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+              className="bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 px-3 py-1.5 text-sm rounded hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">
               Not Now
             </button>
           </div>
         </div>
         <button
           onClick={handleDismiss}
-          className="flex-shrink-0 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+          className="flex-shrink-0 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"

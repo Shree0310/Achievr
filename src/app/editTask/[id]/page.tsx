@@ -5,7 +5,7 @@ import {use} from "react";
 export default function EditTaskPage ({params}: {params: Promise<{id: string}>}) {
     const resolveParams = use(params);
     return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
                 <EditTask taskId={resolveParams.id}/>
             </div>
     )

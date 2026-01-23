@@ -88,10 +88,10 @@ const Header = ({ user }) => {
   };
 
   return (
-    <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex-shrink-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+          <h1 className="text-xl font-semibold text-neutral-800 dark:text-white">
             {currentMonth} {currentYear}
           </h1>
           <ToggleTheme />
@@ -102,7 +102,7 @@ const Header = ({ user }) => {
               className="relative"
               onClick={isNotificationDropdownVisible}>
               <svg
-                className="w-6 h-6 text-gray-600 dark:text-white"
+                className="w-6 h-6 text-neutral-600 dark:text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -125,10 +125,10 @@ const Header = ({ user }) => {
             <button
               onClick={handleLogout}
               disabled={isLoading}
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors">
+              className="flex items-center px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-neutral-800 transition-colors">
               {isLoading ? (
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700 dark:text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-neutral-700 dark:text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24">
@@ -146,7 +146,7 @@ const Header = ({ user }) => {
                 </svg>
               ) : (
                 <svg
-                  className="w-4 h-4 mr-2 text-gray-700 dark:text-white"
+                  className="w-4 h-4 mr-2 text-neutral-700 dark:text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -164,7 +164,7 @@ const Header = ({ user }) => {
           )}
           {isDemoMode ? (
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600 dark:text-white">Demo Mode</span>
+              <span className="text-sm text-neutral-600 dark:text-white">Demo Mode</span>
               <UserName user={user} position="right" />
             </div>
           ) : (

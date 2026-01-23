@@ -248,41 +248,41 @@ const CreateTask = ({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-10 overflow-y-auto">
       <div
-        className={`bg-white dark:bg-gray-800 no-scrollbar dark:border  dark:border-blue-700 rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
+        className={`bg-white dark:bg-neutral-800 no-scrollbar dark:border  dark:border-blue-700 rounded-xl shadow-xl w-full max-w-4xl transform transition-all overflow-y-auto ${
           isEditMode ? "h-auto" : "h-auto"
         }`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-1 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between px-6 pt-1 border-b border-neutral-200 dark:border-neutral-700">
           {!isEditMode && isCreateMode ? (
-            <h2 className="text-xl font-normal py-1 text-gray-800 dark:text-white">
+            <h2 className="text-xl font-normal py-1 text-neutral-800 dark:text-white">
               Create New Task
             </h2>
           ) : (
             <div>
               <ul className="flex justify-between space-x-2">
                 <li
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400"
+                  className="mx-2 cursor-pointer text-neutral-800 dark:text-neutral-400"
                   onClick={() => handleEditTaskTab()}>
                   Edit task
                 </li>
-                <span className="text-gray-800 dark:text-white"> | </span>
+                <span className="text-neutral-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleAddComments()}
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400">
+                  className="mx-2 cursor-pointer text-neutral-800 dark:text-neutral-400">
                   Updates 
                   <span className="px-2">({commentCount})</span>
                 </li>
-                <span className="text-gray-800 dark:text-white"> | </span>
+                <span className="text-neutral-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleSubtasksTab()}
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400">
+                  className="mx-2 cursor-pointer text-neutral-800 dark:text-neutral-400">
                     Subtasks 
                     <span className="px-2">({subTasksCount})</span>
                 </li>
-                <span className="text-gray-800 dark:text-white"> | </span>
+                <span className="text-neutral-800 dark:text-white"> | </span>
                 <li
                   onClick={() => handleGithubTab()}
-                  className="mx-2 cursor-pointer text-gray-800 dark:text-neutral-400">
+                  className="mx-2 cursor-pointer text-neutral-800 dark:text-neutral-400">
                   GITHUB
                 </li>
               </ul>
@@ -294,9 +294,9 @@ const CreateTask = ({
               <div>
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors">
                   <svg
-                    className="w-5 h-5 text-gray-500 dark:text-white"
+                    className="w-5 h-5 text-neutral-500 dark:text-white"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -310,9 +310,9 @@ const CreateTask = ({
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors">
                   <svg
-                    className="w-5 h-5 text-gray-500 dark:text-white"
+                    className="w-5 h-5 text-neutral-500 dark:text-white"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -366,7 +366,7 @@ const CreateTask = ({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={2}
-                  className="w-full px-2 py-2 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-800"
+                  className="w-full px-2 py-2 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-800"
                 />
               </div>
             <div className="flex flex-row gap-3">
@@ -375,7 +375,7 @@ const CreateTask = ({
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-30 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none ">
+                    className="w-30 px-4 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none ">
                     <option value="" disabled>
                        Status
                     </option>
@@ -390,7 +390,7 @@ const CreateTask = ({
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className="w-30 px-2 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
+                    className="w-30 px-2 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">                    
                     <option value="" disabled>
                       Select Priority
                     </option>
@@ -404,7 +404,7 @@ const CreateTask = ({
                   <select
                     value={efforts}
                     onChange={(e) => setEfforts(e.target.value)}
-                    className="w-24 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
+                    className="w-24 px-4 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">                    
                     <option value=" " disabled>
                       Select Points
                     </option>
@@ -421,7 +421,7 @@ const CreateTask = ({
                 <select
                   value={selectedCycle}
                   onChange={(e) => setSelectedCycle(e.target.value)}
-                    className="w-32 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none ">                    
+                    className="w-32 px-4 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none ">                    
                   <option value="" disabled>
                     Select Cycle
                   </option>
@@ -456,7 +456,7 @@ const CreateTask = ({
           <div className="mt-[100px] rounded-b-xl flex justify-end space-x-3 ">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+              className="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
               Cancel
             </button>
             {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode && !isGithubMode &&

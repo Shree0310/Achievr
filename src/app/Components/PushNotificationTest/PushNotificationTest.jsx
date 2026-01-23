@@ -171,13 +171,13 @@ const PushNotificationTest = () => {
   };
 
   return (
-    <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm max-w-md">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+    <div className="p-6 bg-white border border-neutral-200 rounded-lg shadow-sm max-w-md">
+      <h3 className="text-lg font-semibold text-neutral-800 mb-4">
         Push Notification Test
       </h3>
       
       <div className="space-y-4">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-neutral-600">
           <p><strong>Status:</strong> {status}</p>
         </div>
 
@@ -232,13 +232,13 @@ const PushNotificationTest = () => {
         </div>
 
         <details className="text-xs">
-          <summary className="cursor-pointer text-gray-500">Debug Info</summary>
-          <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto">
+          <summary className="cursor-pointer text-neutral-500">Debug Info</summary>
+          <pre className="mt-2 p-2 bg-neutral-100 rounded text-xs overflow-auto">
             {debugInfo}
           </pre>
         </details>
 
-        <div className="text-xs text-gray-500 mt-4">
+        <div className="text-xs text-neutral-500 mt-4">
           <p><strong>Instructions:</strong></p>
           <ol className="list-decimal list-inside space-y-1 mt-2">
             <li>Click "Check Permission" to see current status</li>
