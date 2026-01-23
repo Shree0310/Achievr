@@ -4,7 +4,6 @@ import { supabase } from "@/utils/supabase/client";
 import Navbar from '../Navbar/Navbar';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import CommentBox from "../Comments/CommentBox";
 import SubtasksTab from "../Subtasks/SubtasksTab";
 
@@ -16,39 +15,37 @@ interface Task {
     description?: string,
     priority?: string,
     efforts?: string,
-    userId?: string
+    user_id?: string 
 }
 
 interface EditTaskProps {
     taskId: string;
 }
 
-
 const EditTask = ({taskId}:EditTaskProps) => {
     const [task, setTask] = useState<Task | null>(null);
     const [subTasks, setSubTasks] = useState<Task[]>([]);
-    const [userId, setUserId] = useState(task?.userId)
+    const [addSubTaskMode, setAddSubtaskMode] = useState(true);
+    const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const [title, setTitle] = useState(task?.title || "");
-    const [description, setDescription] = useState(task?.description || "");
-    const [status, setStatus] = useState(task?.status || "");
-    const [priority, setPriority] = useState(
-        task?.priority?.toString() || ""
-    );
-    const [efforts, setEfforts] = useState(task?.efforts?.toString() || "");
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [status, setStatus] = useState("");
+    const [priority, setPriority] = useState("");
+    const [efforts, setEfforts] = useState("");
+    const [userId, setUserId] = useState<string | undefined>("");
 
-
-    const fectSubTask = async () => {
+    const fetchSubTask = async () => { 
         try{
             const {data, error} = await supabase
                 .from("tasks")
                 .select("*")
-                .not("parent_task_id", 'is', null);
+                .eq("parent_task_id", taskId);
             
-                if(error) throw error;
+            if(error) throw error;
 
-            setSubTasks(data);
+            setSubTasks(data || []); // Handle null case
         }
         catch(error){
             console.error("Error while fetching the subtasks", error);
@@ -87,38 +84,77 @@ const EditTask = ({taskId}:EditTaskProps) => {
         }
     }
 
-    const handleSave = async() => {
+    const handleNewSubtask = () => {
+        setAddSubtaskMode(!addSubTaskMode);
+    }
 
+    const handleSave = async() => {
         try{
-            const {data, error} = await supabase
-            .from("tasks")
-            .update([
-                {
+            const {error} = await supabase
+                .from("tasks")
+                .update({
                     title: title,
                     description: description,
-                    status: status === null ? "" : status,
-                    priority: priority === null ? "" : priority,
-                    efforts: efforts === null ? "" : efforts,
-                }
-            ])
-            .eq('id', taskId)
-            .select();
+                    status: status || null,
+                    priority: priority || null,
+                    efforts: efforts || null,
+                })
+                .eq('id', taskId);
 
             if(error) throw error;
+            
+            // Optional: Show success message or redirect
+            console.log('Task updated successfully');
         }
         catch(error) {
             console.error('error while updating the task', error);              
         }
-        
+    }
+
+    const handleAddSubtask = async (taskTitle: string) => {
+        if (!task) return;
+        try {
+            const {data, error} = await supabase
+                .from("tasks")
+                .insert([
+                    {
+                        title: taskTitle.trim(),
+                        description: "",
+                        priority: "3", // Default to low priority
+                        efforts: "1", // Default to 1 story point
+                        status: "not_started", // Default status
+                        user_id: userId,
+                        parent_task_id: task.id,
+                        cycle_id: task.cycle_id
+                    }
+                ])
+                .select();
+
+                if(error) throw error;
+
+                await fetchSubTask();
+                setNewSubtaskTitle("");
+        }
+        catch(error){
+            console.error("Error in adding subtasks", error)
+        }
     }
 
     useEffect(() => {
         fetchTask();
-        fectSubTask();
+        fetchSubTask(); // Fixed typo
     },[taskId])
 
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-gray-600 dark:text-gray-400">Loading task...</div>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex min-h-screen ">
+        <div className="flex min-h-screen">
             <div className="left-0 top-0 h-full w-40">
                 <Navbar/>
             </div>
@@ -137,112 +173,108 @@ const EditTask = ({taskId}:EditTaskProps) => {
                     </button>
                 </div>
                 {task && 
+                    <div>
                         <div>
+                            <input
+                                type="text"
+                                placeholder="Enter task title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="w-full px-2 py-8 text-3xl placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-900"
+                            />
+                        </div>
+                
+                        {/* Description Input */}
+                        <div>
+                            <textarea
+                              placeholder="Enter task description"
+                              value={description}
+                              onChange={(e) => setDescription(e.target.value)}
+                              rows={2}
+                              className="w-full px-2 py-2 h-28 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-900 placeholder:text-gray-400"
+                            />
+                        </div>
+                        
+                        <div className="flex flex-row gap-3">
+                          {/* Status Change */}
                             <div>
-                                <input
+                              <select
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                                className="w-30 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">
+                                <option value="" disabled>
+                                   Status
+                                </option>
+                                <option value="not started">Not started</option>
+                                <option value="in progress">In Progress</option>
+                                <option value="under review">Under Review</option>
+                                <option value="completed">Completed</option>
+                              </select>
+                            </div>
+                            
+                            {/* Priority and Effort Selection */}
+                            <div>
+                              <select
+                                value={priority}
+                                onChange={(e) => setPriority(e.target.value)}
+                                className="w-30 px-2 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
+                                <option value="" disabled>
+                                  Select Priority
+                                </option>
+                                <option value="1">High Priority (P1)</option>
+                                <option value="2">Medium Priority (P2)</option>
+                                <option value="3">Low Priority (P3)</option>
+                              </select>
+                            </div>
+            
+                            <div>
+                              <select
+                                value={efforts}
+                                onChange={(e) => setEfforts(e.target.value)}
+                                className="w-24 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
+                                <option value="" disabled>
+                                  Select Points
+                                </option>
+                                <option value="1">1 Point</option>
+                                <option value="2">2 Points</option>
+                                <option value="3">3 Points</option>
+                                <option value="5">5 Points</option>
+                                <option value="8">8 Points</option>
+                              </select>
+                            </div>
+                        </div>
+                        
+                        <div className="py-4 px-4 mt-8">
+                            <div className="flex justify-between">
+                                <h1 className="text-lg py-4 font-semibold">Subtasks</h1>
+                                <button className="text-lg py-4 h-6 px-4 font-semibold" onClick={handleNewSubtask}>+</button>
+                            </div>
+                            <SubtasksTab 
+                                subTasks={subTasks}
+                                taskToEdit={task} 
+                                userId={userId} 
+                                onSubtaskCreated={fetchSubTask} // Better than window.location.reload()
+                            />
+                            {addSubTaskMode && <div>
+                                <input 
                                     type="text"
-                                    placeholder="Enter task title"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    className="w-full px-2 py-8 text-3xl placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-900"
+                                    className="w-full py-2 px-3 text-center h-10 text-gray-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-gray-400 text-sm dark:bg-[#374a68] bg-gray-100" 
+                                    placeholder="+ Add sub-tasks"
+                                    value={newSubtaskTitle}
+                                    onChange={(e) => setNewSubtaskTitle(e.target.value)}
                                 />
-                            </div>
-                    
-                            {/* Description Input */}
-                                <div>
-                                    <textarea
-                                      placeholder="Enter task description"
-                                      value={description}
-                                      onChange={(e) => setDescription(e.target.value)}
-                                      rows={2}
-                                      className="w-full px-2 py-2 h-28 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-gray-900 placeholder:text-gray-400"
-                                    />
-                                </div>
-                                <div className="flex flex-row gap-3">
-                                  {/* Status Change */}
-                                    <div>
-                                      <select
-                                        value={status}
-                                        onChange={(e) => setStatus(e.target.value)}
-                                        className="w-30 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none ">
-                                        <option value="" disabled>
-                                           Status
-                                        </option>
-                                        <option value="Not started">Not started</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Under Review">Under Review</option>
-                                        <option value="Completed">Completed</option>
-                                      </select>
-                                    </div>
-                                    {/* Priority and Effort Selection */}
-                                    <div>
-                                      <select
-                                        value={priority}
-                                        onChange={(e) => setPriority(e.target.value)}
-                                        className="w-30 px-2 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
-                                        <option value="" disabled>
-                                          Select Priority
-                                        </option>
-                                        <option value="1">High Priority (P1)</option>
-                                        <option value="2">Medium Priority (P2)</option>
-                                        <option value="3">Low Priority (P3)</option>
-                                      </select>
-                                    </div>
-                    
-                                    <div>
-                                      <select
-                                        value={efforts}
-                                        onChange={(e) => setEfforts(e.target.value)}
-                                        className="w-24 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none">                    
-                                        <option value=" " disabled>
-                                          Select Points
-                                        </option>
-                                        <option value="1">1 Point</option>
-                                        <option value="2">2 Points</option>
-                                        <option value="3">3 Points</option>
-                                        <option value="5">5 Points</option>
-                                        <option value="8">8 Points</option>
-                                      </select>
-                                    </div>                                    
-                    
-                                    {/* Cycle Selection */}
-                                  {/* <div>
-                                    <select
-                                      value={selectedCycle}
-                                      onChange={(e) => setSelectedCycle(e.target.value)}
-                                        className="w-32 px-4 py-2 bg-white dark:bg-gray-700 rounded-md appearance-none ">                    
-                                      <option value="" disabled>
-                                        Select Cycle
-                                      </option>
-                                      {cycles.map((cycle) => (
-                                        <option key={cycle.id} value={cycle.id}>
-                                          {cycle.title}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </div> */}
-                                    
-                                </div>
-                                <div className="py-4 px-4 mt-8 ">
-                                    <h1 className="text-lg font-semibold">Siubtasks</h1>
-
-                                    {subTasks &&  <SubtasksTab 
-                                        subTasks={subTasks}
-                                        taskToEdit={task} 
-                                        userId={userId} 
-                                        onSubtaskCreated={() => {
-                                            // Refresh subtasks by reloading the page
-                                            window.location.reload();
-                                        }}
-                                    /> }
-                                </div>
-                                <div className="py-4 px-4 mt-8 ">
-                                    <h1 className="text-lg font-semibold">Activity</h1>
-                                    <CommentBox taskToEdit={task} userId={userId}/>
-                                </div>
-
-                            </div>
-                    }
+                                <button onClick={() => handleAddSubtask(newSubtaskTitle)}
+                                    className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 flex items-center gap-2">Add subtask
+                                </button>
+                                </div>}
+                        </div>
+                        
+                        <div className="py-4 px-4 mt-8">
+                            <h1 className="text-lg font-semibold">Activity</h1>
+                            <CommentBox taskToEdit={task} userId={userId}/>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     )

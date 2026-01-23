@@ -3,16 +3,12 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 
-const SubtasksTab = ({ subTasks = [], createSubtaskMode = false, taskToEdit, userId, onSubtaskCreated, onToggleCreateMode }) => {
+const SubtasksTab = ({ subTasks, createSubtaskMode = false, taskToEdit, userId, onSubtaskCreated }) => {
     const [subtaskTitle, setSubtaskTitle] = useState("");
     const [subtaskDescription, setSubtaskDescription] = useState("");
     const [subtaskStatus, setSubtaskStatus] = useState("");
     const [subtaskPriority, setSubtaskPriority] = useState("");
     const [subtaskEffort, setSubtaskEffort] = useState("");
-
-    // Debug logging
-    console.log('SubtasksTab received subtasks:', subTasks);
-    console.log('SubtasksTab taskToEdit:', taskToEdit);
 
     const handleInsertSubtask = async() => {
         if (!subtaskTitle.trim()) {
