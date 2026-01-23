@@ -88,7 +88,7 @@ const Header = ({ user }) => {
   };
 
   return (
-    <div className="flex-shrink-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+    <div className="flex-shrink-0 bg-white dark:bg-neutral-800 border-b dark:border-neutral-600 border-neutral-200">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-4">
           <h1 className="text-xl font-semibold text-neutral-800 dark:text-white">
@@ -125,7 +125,7 @@ const Header = ({ user }) => {
             <button
               onClick={handleLogout}
               disabled={isLoading}
-              className="flex items-center px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-neutral-800 transition-colors">
+              className="flex items-center px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-neutral-800 transition-colors">
               {isLoading ? (
                 <svg
                   className="animate-spin -ml-1 mr-2 h-4 w-4 text-neutral-700 dark:text-white"

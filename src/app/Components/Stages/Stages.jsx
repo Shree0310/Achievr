@@ -317,7 +317,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="notStarted"
                         title="Not Started"
-                        headerColor="bg-blue-500"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
@@ -355,7 +354,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="inProgress"
                         title="In Progress"
-                        headerColor="bg-amber-500"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
@@ -390,7 +388,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="underReview"
                         title="Under Review"
-                        headerColor="bg-slate-500"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
@@ -425,7 +422,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="completed"
                         title="Completed"
-                        headerColor="bg-emerald-500"
                         onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (

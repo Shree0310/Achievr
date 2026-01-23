@@ -479,13 +479,13 @@ const TaskQueue = ({ userId }) => {
             </div>
         </div>
 
-        <div className="rounded-md border border-neutral-400 dark:border-neutral-600 m-4 bg-white dark:bg-neutral-800">
-            <Table className="border border-neutral-400 dark:border-neutral-600">
+        <div className="rounded-md border dark:border-neutral-600 border-neutral-200 m-4 bg-white dark:bg-neutral-800">
+            <Table className="border dark:border-neutral-600 border-neutral-200">
                 <TableHeader className="">
                     <TableRow className="bg-primary-300 dark:bg-primary-700">
                         <TableHead 
                             onClick={sortTask("title")} 
-                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors group"
+                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors group"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Title</span>
@@ -503,7 +503,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("status")} 
-                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
+                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Status</span>
@@ -521,7 +521,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("priority")} 
-                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
+                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Priority</span>
@@ -539,7 +539,7 @@ const TaskQueue = ({ userId }) => {
                         </TableHead>
                         <TableHead 
                             onClick={sortTask("efforts")} 
-                            className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
+                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
                         >
                             <div className="flex items-center justify-center space-x-1">
                                 <span>Efforts</span>
@@ -555,7 +555,7 @@ const TaskQueue = ({ userId }) => {
                                 )}
                             </div>
                         </TableHead>
-                        <TableHead className="border border-neutral-400 dark:border-neutral-600 text-black dark:text-white text-center">Cycle</TableHead>
+                        <TableHead className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center">Cycle</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className="bg-primary-50 dark:bg-neutral-900">
@@ -575,7 +575,7 @@ const TaskQueue = ({ userId }) => {
                         filterTasks(tasks).slice(start, end).map((task) => (
                             editingTaskId === task.id ? (
                                 <TableRow key={task.id}>
-                                    <TableCell className="border-r border-l border-neutral-400">
+                                    <TableCell className="border-r border-l dark:border-neutral-600 border-neutral-200">
                                         <Input
                                             name="title"
                                             value={editTask.title}
@@ -583,7 +583,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task title"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-neutral-400">
+                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
                                         <Input
                                             name="status"
                                             value={editTask.status}
@@ -591,7 +591,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task status"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-neutral-400">
+                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
                                         <Input
                                             name="priority"
                                             value={editTask.priority}
@@ -599,7 +599,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task Priority"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-neutral-400">
+                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
                                         <Input
                                             name="efforts"
                                             value={editTask.efforts}
@@ -607,7 +607,7 @@ const TaskQueue = ({ userId }) => {
                                             placeholder="Task Efforts"
                                         />
                                     </TableCell>
-                                    <TableCell className="border-r border-neutral-400">
+                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
                                         <Select
                                             value={editTask.cycle_id}
                                             onValueChange={handleEditTaskCycleChange}
@@ -622,12 +622,12 @@ const TaskQueue = ({ userId }) => {
                                             </SelectContent>
                                         </Select>
                                     </TableCell>
-                                    <TableCell colSpan={5} className="border-r border-neutral-400 bg-neutral-50 p-3">
+                                    <TableCell colSpan={5} className="border-r dark:border-neutral-600 border-neutral-200 bg-neutral-50 p-3">
                                         <div className="flex justify-end space-x-3">
                                             <Button
                                                 onClick={handleCancelEditTask}
                                                 variant="outline"
-                                                className="px-4 py-2 border border-neutral-300 hover:bg-neutral-100 transition-colors">
+                                                className="px-4 py-2 border border-neutral-200 hover:bg-neutral-100 transition-colors">
                                                 Cancel
                                             </Button>
                                             <Button
@@ -644,19 +644,19 @@ const TaskQueue = ({ userId }) => {
                                     className="text-center cursor-pointer hover:bg-primary-100"
                                     onClick={() => handleEditTask(task)}
                                 >
-                                    <TableCell className="border-r border-l border-neutral-400">{task.title} </TableCell>
-                                    <TableCell className="border-r border-neutral-400">{task.status}</TableCell>
+                                    <TableCell className="border-r border-l dark:border-neutral-600 border-neutral-200">{task.title} </TableCell>
+                                    <TableCell className="border-r border-neutral-600">{task.status}</TableCell>
                                     {task.priority ? (
-                                        <TableCell className="border-r border-neutral-400">{task.priority}</TableCell>
+                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">{task.priority}</TableCell>
                                     ) : (
-                                        <TableCell className="border-r border-neutral-400">priority is not set</TableCell>
+                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">priority is not set</TableCell>
                                     )}
                                     {task.efforts ? (
-                                        <TableCell className="border-r border-neutral-400">{task.efforts}</TableCell>
+                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">{task.efforts}</TableCell>
                                     ) : (
-                                        <TableCell className="border-r border-neutral-400">efforts not set</TableCell>
+                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">efforts not set</TableCell>
                                     )}
-                                    <TableCell className="border-r border-neutral-400">
+                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
                                         {task.cycles ? task.cycles.title : "cycle not set"}
                                     </TableCell>
                                 </TableRow>
@@ -666,35 +666,35 @@ const TaskQueue = ({ userId }) => {
                     {isAddingtask && (
                         <>
                             <TableRow>
-                                <TableCell className="border-r border-l border-neutral-400">
+                                <TableCell className="border-r border-l border-neutral-600">
                                     <Input
                                         name="title"
                                         value={newTask.title}
                                         onChange={handleInputChange}
                                         placeholder="Task title" />
                                 </TableCell>
-                                <TableCell className="border-r border-neutral-400">
+                                <TableCell className="border-r border-neutral-600">
                                     <Input
                                         name="status"
                                         value={newTask.status}
                                         onChange={handleInputChange}
                                         placeholder="Task status" />
                                 </TableCell>
-                                <TableCell className="border-r border-neutral-400">
+                                <TableCell className="border-r border-neutral-600">
                                     <Input
                                         name="priority"
                                         value={newTask.priority}
                                         onChange={handleInputChange}
                                         placeholder="Task Priority" />
                                 </TableCell>
-                                <TableCell className="border-r border-neutral-400">
+                                <TableCell className="border-r border-neutral-600">
                                     <Input
                                         name="efforts"
                                         value={newTask.efforts}
                                         onChange={handleInputChange}
                                         placeholder="Task Efforts" />
                                 </TableCell>
-                                <TableCell className="border-r border-neutral-400">
+                                <TableCell className="border-r border-neutral-600">
                                     <Select
                                         defaultValue={selectedCycle}
                                         onValueChange={(value) => setSelectedCycle(value)}>
@@ -711,12 +711,12 @@ const TaskQueue = ({ userId }) => {
                             </TableRow>
 
                             <TableRow>
-                                <TableCell colSpan={5} className="border-r border-neutral-400 bg-neutral-50 p-3">
+                                <TableCell colSpan={5} className="border-r border-neutral-600 bg-neutral-50 p-3">
                                     <div className="flex justify-end space-x-3">
                                         <Button
                                             onClick={handleCancel}
                                             variant="outline"
-                                            className="px-4 py-2 border border-neutral-300 hover:bg-neutral-100 transition-colors">
+                                            className="px-4 py-2 border border-neutral-200 hover:bg-neutral-100 transition-colors">
                                             Cancel
                                         </Button>
                                         <Button
@@ -739,7 +739,7 @@ const TaskQueue = ({ userId }) => {
                 disabled={currPage === 0}
                 onClick={() => handlePrevPage()}
                 className={`px-3 py-1 rounded-md text-sm font-medium 
-                            bg-white border border-neutral-300 
+                            bg-white border border-neutral-200 
                             hover:bg-neutral-50 hover:border-blue-500
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                             transition-colors duration-200
@@ -756,7 +756,7 @@ const TaskQueue = ({ userId }) => {
                             onClick={() => handlePageChange(p)}
                             className={`px-3 py-1 rounded-md text-sm font-medium 
                                         ${currPage === p ? 'bg-blue-500 text-white' : 'bg-white'} 
-                                        border border-neutral-300 
+                                        border border-neutral-200 
                                         hover:bg-neutral-50 hover:border-blue-500
                                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                         transition-colors duration-200`}
@@ -775,7 +775,7 @@ const TaskQueue = ({ userId }) => {
                 disabled={currPage === totalPages - 1}
                 onClick={() => handleNextPage()}
                 className={`px-3 py-1 rounded-md text-sm font-medium 
-                            bg-white border border-neutral-300 
+                            bg-white border border-neutral-200 
                             hover:bg-neutral-50 hover:border-blue-500
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                             transition-colors duration-200

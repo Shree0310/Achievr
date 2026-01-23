@@ -135,12 +135,12 @@ const CommentBox = ({ taskToEdit, userId }) => {
           className="p-2 m-2 h-auto"
           style={{ marginLeft: `${indentLevel}px` }}>
           <div
-            className={`bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-md dark:shadow-neutral-900/20 border border-transparent dark:border-blue-300/60 ${
+            className={`bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-md dark:shadow-neutral-900/20 border border-transparent dark:border-neutral-600 border-neutral-200 ${
               comment.parent_comment_id
                 ? "border-l-4"
                 : ""
             }`}>
-            <div className="relative w-full h-auto p-4 text-neutral-600 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 border-neutral-700 dark:border-neutral-600 ">
+            <div className="relative w-full h-auto p-4 text-neutral-600 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-600 border-neutral-200 ">
               <div className="flex justify-end gap-4 absolute top-2 right-2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors">
                 {updateCommentMode !== comment.id && (
                   <div className="flex items-center gap-2">
@@ -182,7 +182,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
                     value={newUpdatedComment}
                     onChange={(e) => setNewUpdatedComment(e.target.value)}
                     placeholder={comment.content}
-                    className="w-full h-20 p-3 text-neutral-600 dark:text-neutral-200 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-md outline-none resize-none placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full h-20 p-3 text-neutral-600 dark:text-neutral-200 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-md outline-none resize-none placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   />
                   <div className="flex justify-between items-center mt-2">
                     <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
@@ -218,7 +218,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
                   )}
                 </div>
               )}
-              <hr className="w-full border-neutral-300 dark:border-neutral-600"></hr>
+              <hr className="w-full border-neutral-200 dark:border-neutral-600"></hr>
               <div className="flex bg-neutral-100 dark:bg-neutral-800 pt-2">
                 <button
                   onClick={() => onReplyClicked(comment)}
@@ -270,7 +270,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
           <div
             className="p-2 m-2 h-auto"
             style={{ marginLeft: `${indentLevel}px` }}>
-                                  <div className="bg-neutral-50 dark:bg-neutral-700 overflow-hidden rounded-md shadow-md dark:shadow-neutral-900/20 border border-transparent dark:border-blue-300/60 border-l-4 border-l-green-300 dark:border-l-green-500">
+                                  <div className="bg-neutral-50 dark:bg-neutral-700 overflow-hidden rounded-md shadow-md dark:shadow-neutral-900/20 border border-transparent dark:border-neutral-600 border-l-4 border-l-green-300 dark:border-l-green-500">
                         <textarea
                           value={newReply}
                           onChange={(e) => setNewReply(e.target.value)}
@@ -505,7 +505,7 @@ const CommentBox = ({ taskToEdit, userId }) => {
     <>
       <div>
         <div className="p-2 m-2 w-full ">
-          <div className="bg-neutral-100 dark:bg-neutral-800 overflow-hidden rounded-md shadow-md border border-transparent dark:border-blue-300/60">
+          <div className="bg-neutral-100 dark:bg-neutral-800 overflow-hidden rounded-md shadow-md border border-transparent dark:border-neutral-600 border-neutral-200">
             <textarea
               type="text"
               value={newComment}

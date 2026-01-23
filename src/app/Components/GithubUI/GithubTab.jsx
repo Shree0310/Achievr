@@ -35,7 +35,7 @@ const GithubTab = ({taskToEdit, userId }) => {
     return (
         <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
+            <div className="px-6 py-4 border-b dark:border-neutral-600 border-neutral-200">
                 <div className="flex items-center space-x-3">
                     <div className="p-2 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
                         <svg className="w-6 h-6 text-neutral-600 dark:text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
@@ -50,7 +50,7 @@ const GithubTab = ({taskToEdit, userId }) => {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
+            <div className="px-6 py-4 border-b dark:border-neutral-600 border-neutral-200">
                 <nav className="flex space-x-8">
                     <button
                         onClick={() => handleBranchesClick()}

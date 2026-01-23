@@ -406,7 +406,7 @@ const GitHubRepositoryConnector = () => {
 
       {showDropdown && (
         <div className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-          <div className="p-3 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
+          <div className="p-3 border-b dark:border-neutral-700 border-neutral-200 flex items-center justify-between">
             <h3 className="text-sm font-medium text-neutral-900 dark:text-white">Connected Repositories</h3>
             <button
               onClick={() => {

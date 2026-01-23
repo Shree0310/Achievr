@@ -16,7 +16,7 @@ const NotificationBell = () => {
 
   return (
     <div className="absolute top-10 right-0 w-96 max-h-96 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg dark:shadow-neutral-900/30 z-50 overflow-hidden">
-      <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
+      <div className="p-4 border-b dark:border-neutral-600 border-neutral-200 bg-neutral-50 dark:bg-neutral-900">
         <h3 className="text-lg font-semibold text-neutral-800 dark:text-white">Notifications</h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">{unreadCount} unread</p>
       </div>

@@ -102,7 +102,7 @@ function GithubBranchCreator({taskToEdit, userId}) {
             value={repositoryFullName}
             onChange={handleRepositoryChange}
             placeholder="username/repository-name"
-            className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400 transition-colors"
+            className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400 transition-colors"
             autoComplete="off"
           />
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
@@ -125,7 +125,7 @@ function GithubBranchCreator({taskToEdit, userId}) {
             value={baseBranch}
             onChange={(e) => setBaseBranch(e.target.value)}
             placeholder="main"
-            className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400 transition-colors"
+            className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400 transition-colors"
             autoComplete="off"
           />
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">

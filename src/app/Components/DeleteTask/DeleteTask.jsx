@@ -58,7 +58,7 @@ const DeleteTask = ({ taskToDelete, onClose, onTaskDelete }) => {
                     <div className="flex justify-end space-x-3">
                         <Button 
                             onClick={cancelDelete}
-                            className="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 text-sm font-medium rounded transition-colors border border-neutral-300 dark:border-neutral-600"
+                            className="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 text-sm font-medium rounded transition-colors border border-neutral-200 dark:border-neutral-600"
                         >
                             Cancel
                         </Button>

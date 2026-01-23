@@ -272,7 +272,7 @@ const Login = () => {
                         <button
                             onClick={handleGoogleSignIn}
                             disabled={isLoading}
-                            className={`w-full flex items-center justify-center space-x-3 px-4 py-3 text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            className={`w-full flex items-center justify-center space-x-3 px-4 py-3 text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
                             {isLoading ? (
                                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-neutral-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

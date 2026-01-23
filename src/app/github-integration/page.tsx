@@ -236,7 +236,7 @@ function BranchCreator() {
             value={taskId}
             onChange={handleTaskIdChange}
             placeholder="e.g., 123 or paste a UUID"
-            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
           <p className="text-xs text-neutral-500 mt-1">Current value: &quot;{taskId}&quot;</p>
@@ -252,7 +252,7 @@ function BranchCreator() {
             value={taskTitle}
             onChange={handleTaskTitleChange}
             placeholder="e.g., Add user authentication"
-            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
           <p className="text-xs text-neutral-500 mt-1">Current value: &quot;{taskTitle}&quot;</p>
@@ -268,7 +268,7 @@ function BranchCreator() {
             value={repositoryFullName}
             onChange={handleRepositoryChange}
             placeholder="e.g., Shree0310/Achievr"
-            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
           <p className="text-xs text-neutral-500 mt-1">Current value: &quot;{repositoryFullName}&quot;</p>
@@ -284,7 +284,7 @@ function BranchCreator() {
             value={baseBranch}
             onChange={(e) => setBaseBranch(e.target.value)}
             placeholder="main"
-            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-neutral-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             autoComplete="off"
           />
         </div>

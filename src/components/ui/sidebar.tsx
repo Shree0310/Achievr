@@ -147,7 +147,7 @@ const SidebarProvider = React.forwardRef<
               } as React.CSSProperties
             }
             className={cn(
-              "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:p-6 bg-white h-16 md:h-screen border-r border-neutral-200 dark:border-neutral-500 dark:bg-gradient-to-r from-neutral-900 to-neutral-700",
+              "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:p-6 bg-white h-16 md:h-screen border-r border-neutral-200 dark:border-neutral-500 dark:bg-neutral-900",
               className
             )}
             ref={ref}
@@ -187,7 +187,7 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-white md:h-screen border-r border-neutral-200 dark:border-neutral-500 dark:bg-gradient-to-r from-neutral-900 to-neutral-700",
+            "flex h-full w-[--sidebar-width] flex-col bg-white md:h-screen border-r border-neutral-200 dark:border-neutral-500 dark:bg-neutral-900",
             className
           )}
           ref={ref}
@@ -204,7 +204,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-white md:h-screen border-r border-neutral-200 dark:border-neutral-500 dark:bg-gradient-to-r from-neutral-900 to-neutral-700 p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] bg-white md:h-screen border-r border-neutral-200 dark:border-neutral-500 dark:bg-neutral-900 p-0 text-sidebar-foreground [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -258,7 +258,7 @@ const Sidebar = React.forwardRef<
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-white md:h-screen border-r  dark:border-neutral-700 dark:bg-gradient-to-r from-neutral-900 to-neutral-700 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
+            className="flex h-full w-full flex-col bg-white md:h-screen border-r  dark:border-neutral-700 dark:bg-neutral-900 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
           >
             {children}
           </div>

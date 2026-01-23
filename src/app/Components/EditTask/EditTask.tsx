@@ -158,7 +158,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
     }
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen dark:bg-neutral-800/20">
             <div className="left-0 top-0 h-full w-40">
                 <Navbar/>
             </div>
@@ -199,13 +199,13 @@ const EditTask = ({taskId}:EditTaskProps) => {
                             />
                         </div>
                         
-                        <div className="flex flex-row gap-3">
+                        <div className="flex flex-row gap-3 my-4">
                           {/* Status Change */}
                             <div>
                               <select
                                 value={status}
                                 onChange={(e) => setStatus(e.target.value)}
-                                className="w-30 px-4 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">
+                                className="w-30 px-3 py-2 text-sm bg-white dark:bg-neutral-800 rounded-md appearance-none">
                                 <option value="" disabled>
                                    Status
                                 </option>
@@ -217,11 +217,11 @@ const EditTask = ({taskId}:EditTaskProps) => {
                             </div>
                             
                             {/* Priority and Effort Selection */}
-                            <div>
+                            <div className="flex justify-center items-center">
                               <select
                                 value={priority}
                                 onChange={(e) => setPriority(e.target.value)}
-                                className="w-30 px-2 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">                    
+                                className="w-30 px-2 py-2 text-sm bg-white dark:bg-neutral-800 rounded-md appearance-none">                    
                                 <option value="" disabled>
                                   Select Priority
                                 </option>
@@ -235,7 +235,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                               <select
                                 value={efforts}
                                 onChange={(e) => setEfforts(e.target.value)}
-                                className="w-24 px-4 py-2 bg-white dark:bg-neutral-700 rounded-md appearance-none">                    
+                                className="w-24 px-2 py-2 text-sm bg-white dark:bg-neutral-800 rounded-md appearance-none">                    
                                 <option value="" disabled>
                                   Select Points
                                 </option>

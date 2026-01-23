@@ -71,7 +71,7 @@ const Subtasks = ({subTasks, taskToEdit, userId, onSubtaskCreated}) => {
         <div className="my-2 mx-12">
             <input 
                 type="text"
-                className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-300 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400" 
+                className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-200 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400" 
                 placeholder="+ Add sub-tasks"
                 value={newSubtaskTitle}
                 onChange={(e) => setNewSubtaskTitle(e.target.value)}

@@ -27,7 +27,7 @@ const CardOne = ({className, children}:{className:string; children: React.ReactN
                         Task Planner
                     </p>   
                 </div>
-                <div className="h-40 relative overflow-hidden flex-1 mt-4 border border-neutral-600 rounded-2xl shadow-2xl">
+                <div className="h-40 relative overflow-hidden flex-1 mt-4 border dark:border-neutral-600 border-neutral-200 rounded-2xl shadow-2xl">
                     <div 
                         className="absolute inset-0 opacity-100 dark:opacity-0"
                         style={{

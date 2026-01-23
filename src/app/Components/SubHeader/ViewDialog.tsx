@@ -9,7 +9,7 @@ const ViewDialog = () => {
     const router = useRouter();
 
     return <div className="absolute mt-14 mx-10 right-0 z-10 h-full">
-        <div className="rounded-md dark:bg-neutral-800 bg-white p-4 border border-neutral-300">
+        <div className="rounded-md dark:bg-neutral-800 bg-white p-4 border border-neutral-200">
             <div className="h-14 flex px-2 justify-between gap-2 bg-neutral-200/40 dark:bg-neutral-700 rounded-sm">
                 <div 
                     className="flex flex-col p-1 px-3 m-1 hover:dark:bg-neutral-800 hover:bg-white rounded-md cursor-pointer hover:shadow-sm hover:shadow-neutral-300 dark:hover:shadow-neutral-900"

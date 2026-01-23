@@ -435,16 +435,16 @@ const Cycles = ({ userId }) => {
         <Table>
                     <TableHeader className="bg-primary-200">
                 <TableRow>
-                            <TableHead className="border border-neutral-300 text-black">Title</TableHead>
-                            <TableHead className="border border-neutral-300 text-black">Start date</TableHead>
-                            <TableHead className="border border-neutral-300 text-black">End Date</TableHead>
+                            <TableHead className="border border-neutral-200 text-black">Title</TableHead>
+                            <TableHead className="border border-neutral-200 text-black">Start date</TableHead>
+                            <TableHead className="border border-neutral-200 text-black">End Date</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                         {filterCycles(cycles).map((cycle) => (
                     editingCycleId === cycle.id ? (
                         <TableRow key={cycle.id}>
-                            <TableCell className="border border-neutral-300">
+                            <TableCell className="border border-neutral-200">
                                 <Input
                                     name="title"
                                     value={editCycle.title}
@@ -453,26 +453,26 @@ const Cycles = ({ userId }) => {
                                     className="w-full"
                                 />
                             </TableCell>
-                            <TableCell className="border border-neutral-300">
+                            <TableCell className="border border-neutral-200">
                                 <DatePicker
                                     selected={editCycle.start_at}
                                     onChange={(date) => handleEditDateChange(date, 'start_at')}
                                     dateFormat="MMM d, yyyy"
                                     placeholderText="Start Date"
-                                    className="w-full px-3 py-2 border border-neutral-300 rounded-md"
+                                    className="w-full px-3 py-2 border border-neutral-200 rounded-md"
                                 />
                             </TableCell>
-                            <TableCell className="border border-neutral-300">
+                            <TableCell className="border border-neutral-200">
                                 <DatePicker
                                     selected={editCycle.end_at}
                                     onChange={(date) => handleEditDateChange(date, 'end_at')}
                                     dateFormat="MMM d, yyyy"
                                     placeholderText="End Date"
                                     minDate={editCycle.start_at}
-                                    className="w-full px-3 py-2 border border-neutral-300 rounded-md"
+                                    className="w-full px-3 py-2 border border-neutral-200 rounded-md"
                                 />
                             </TableCell>
-                            <TableCell className="border border-neutral-300 bg-neutral-50" colSpan={3}>
+                            <TableCell className="border border-neutral-200 bg-neutral-50" colSpan={3}>
                                 <div className="flex justify-end space-x-3">
                                     <Button onClick={handleCancelEdit} variant="outline" className="px-4 py-2">Cancel</Button>
                                     <Button onClick={handleSaveEditCycle} className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white">Save</Button>
@@ -481,15 +481,15 @@ const Cycles = ({ userId }) => {
                         </TableRow>
                     ) : (
                         <TableRow key={cycle.id} onClick={() => handleEditCycle(cycle)} className="cursor-pointer hover:bg-primary-100">
-                            <TableCell className="border border-neutral-300">{cycle.title}</TableCell>
-                            <TableCell className="border border-neutral-300">{formatDate(cycle.start_at)}</TableCell>
-                            <TableCell className="border border-neutral-300">{formatDate(cycle.end_at)}</TableCell>
+                            <TableCell className="border border-neutral-200">{cycle.title}</TableCell>
+                            <TableCell className="border border-neutral-200">{formatDate(cycle.start_at)}</TableCell>
+                            <TableCell className="border border-neutral-200">{formatDate(cycle.end_at)}</TableCell>
                         </TableRow>
                     )
                 ))}
                         {isAddingCycle && (
                             <TableRow>
-                                <TableCell className="border border-neutral-300">
+                                <TableCell className="border border-neutral-200">
                                     <Input
                                         name="title"
                                         value={newCycle.title}
@@ -498,23 +498,23 @@ const Cycles = ({ userId }) => {
                                         className="w-full"
                                     />
                                 </TableCell>
-                                <TableCell className="border border-neutral-300">
+                                <TableCell className="border border-neutral-200">
                                     <DatePicker
                                         selected={newCycle.start_at}
                                         onChange={(date) => handleDateChange(date, 'start_at')}
                                         dateFormat="MMM d, yyyy"
                                         placeholderText="Start Date"
-                                        className="w-full px-3 py-2 border border-neutral-300 rounded-md"
+                                        className="w-full px-3 py-2 border border-neutral-200 rounded-md"
                                     />
                                 </TableCell>
-                                <TableCell className="border border-neutral-300">
+                                <TableCell className="border border-neutral-200">
                                     <DatePicker
                                         selected={newCycle.end_at}
                                         onChange={(date) => handleDateChange(date, 'end_at')}
                                         dateFormat="MMM d, yyyy"
                                         placeholderText="End Date"
                                         minDate={newCycle.start_at}
-                                        className="w-full px-3 py-2 border border-neutral-300 rounded-md"
+                                        className="w-full px-3 py-2 border border-neutral-200 rounded-md"
                                     />
                                 </TableCell>
                             </TableRow>

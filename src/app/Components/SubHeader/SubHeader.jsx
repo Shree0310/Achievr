@@ -32,7 +32,7 @@ const SubHeader = () => {
     }
 
     return (
-        <div className="bg-white border-b border-neutral-200 dark:bg-neutral-900  ">
+        <div className="bg-white border-b dark:border-neutral-600 border-neutral-200 dark:bg-neutral-900  ">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between">
                     <nav className="flex space-x-8" aria-label="Tabs">
@@ -45,7 +45,7 @@ const SubHeader = () => {
                                 px-3 py-4 text-sm font-medium border-b-2 transition-colors
                                 ${pathname === item.path
                                     ? 'border-primary-500 text-primary-600'
-                                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-white dark:hover:text-neutral-300'}
+                                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-200 dark:text-white dark:hover:text-neutral-300'}
                             `}
                         >
                             {item.name}

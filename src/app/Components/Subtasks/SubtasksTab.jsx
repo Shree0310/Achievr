@@ -144,27 +144,27 @@ const SubtasksTab = ({ subTasks, createSubtaskMode = false, taskToEdit, userId, 
                     {createSubtaskMode && 
                         <tr className="px-4 py-3 text-sm text-neutral-600 dark:text-neutral-300">
                             <td className="px-4 py-3 text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-300 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-200 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
                                         value={subtaskTitle}
                                         onChange={(e) => setSubtaskTitle(e.target.value)}/>
                             </td>
                             <td className="px-4 py-3 text-sm text-neutral-600 dark:text-neutral-300 max-w-xs truncate">
-                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-300 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-200 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
                                         value={subtaskDescription}
                                         onChange={(e) => setSubtaskDescription(e.target.value)}/>
                             </td>
                             <td  className="px-4 py-3 text-sm"> 
-                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-300 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-200 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
                                         value={subtaskStatus}
                                         onChange={(e) => setSubtaskStatus(e.target.value)}/>
                             </td>
                             <td className="px-4 py-3 text-sm">
-                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-300 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-200 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
                                         value={subtaskPriority}
                                         onChange={(e) => setSubtaskPriority(e.target.value)}/>
                             </td>
                             <td className="px-4 py-3 text-sm text-neutral-600 dark:text-neutral-300">
-                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-300 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+                                <input className="w-full py-2 px-3 text-center h-10 text-neutral-500 dark:text-neutral-400 text-sm dark:bg-[#374a68] bg-neutral-100 rounded-md border border-neutral-200 dark:border-neutral-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
                                         value={subtaskEffort}
                                         onChange={(e) => setSubtaskEffort(e.target.value)}/>
                             </td>
