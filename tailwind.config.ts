@@ -106,7 +106,8 @@ export default {
   },
   plugins: [
 	require("tailwindcss-animate"),
-function({ addUtilities }: any) {
+	require('tailwind-scrollbar')({ nocompatible: true }),
+	function({ addUtilities }: any) {
     const newUtilities = {
       '.mask-r-from-50': {
         '-webkit-mask-image': 'linear-gradient(to right, transparent 50%, black 50%)',
