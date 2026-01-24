@@ -12,24 +12,36 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail
 } from "@/components/ui/sidebar"
 import Link from "next/link";
+import { usePathname } from "next/navigation"
 
-export function AppSidebar({userId, onTaskUpdate}: {userId: string; onTaskUpdate: () => void}) {
-    const navItems = [
-        { name: 'Tasks Queue', path: '/task-queue', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
-        { name: 'Cycles', path: '/cycles-list', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' }
-    ];
+type NavItem = {
+  name: string;
+  path: string;
+  icon: React.ComponentType<any>;
+}
+
+export function AppSidebar({
+  userId, 
+  onTaskUpdate, 
+  navItems
+}: {
+  userId: string; 
+  onTaskUpdate: () => void; 
+  navItems: NavItem[]
+}) {
+    const pathname = usePathname()
+
   return (
-    <Sidebar>
-      <SidebarHeader />
-      <SidebarContent className="p-6">
-        <SidebarGroup />
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
         <SidebarGroupLabel>
             <Link href="/" prefetch={true} className="flex items-center space-x-3 mb-4 group">
                 <div className="relative transition-transform group-hover:scale-105">
                     <SummitIcon 
-                        size={48}
+                        size={32}
                         variant="default"
                         className="text-orange-500 dark:text-orange-400"
                     />
@@ -39,37 +51,50 @@ export function AppSidebar({userId, onTaskUpdate}: {userId: string; onTaskUpdate
                 </span>
             </Link>
         </SidebarGroupLabel>
+      </SidebarHeader>
+      
+      <SidebarContent>
+        <SidebarGroup>
           <SidebarGroupContent>
-            <CreateTaskButton userId={userId} onTaskUpdate={onTaskUpdate} />
-                    
-            {/* GitHub Repository Connector */}
-            <GitHubRepositoryConnector />
+            {/* All items in one SidebarMenu for consistent alignment */}
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.path}>
-                        <svg
-                            className={`mr-3 h-5 w-5 transition-colors`}
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            >
-                            <path d={item.icon} />
-                            </svg>
-                      <span>{item.name}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {/* Create Task Button as Menu Item */}
+              <SidebarMenuItem>
+                <CreateTaskButton userId={userId} onTaskUpdate={onTaskUpdate} />
+              </SidebarMenuItem>
+              
+              {/* GitHub Connector as Menu Item */}
+              <SidebarMenuItem>
+                <GitHubRepositoryConnector />
+              </SidebarMenuItem>
+              
+              {/* Navigation Items */}
+              {navItems.map((item) => {
+                const Icon = item.icon
+                const isActive = pathname === item.path
+                
+                return (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton 
+                      asChild 
+                      isActive={isActive}
+                      tooltip={item.name}
+                    >                    
+                      <Link href={item.path}>
+                        <Icon className="h-8 w-8" />
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
-        <SidebarGroup />
+        </SidebarGroup>
       </SidebarContent>
+      
       <SidebarFooter />
+      <SidebarRail />
     </Sidebar>
   )
 }
