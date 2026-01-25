@@ -162,7 +162,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
             <div className="left-0 top-0 h-full">
                 <Navbar/>
             </div>
-            <div className="flex-1 ml-32 p-8">
+            <div className="flex-1 p-8">
                 <div className="flex justify-between max-w-4xl">
                     <button onClick={() => router.back()}
                         className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-center gap-2"

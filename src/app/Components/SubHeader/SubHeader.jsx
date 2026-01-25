@@ -33,7 +33,7 @@ const SubHeader = () => {
 
     return (
         <div className="bg-white border-b dark:border-neutral-600 border-neutral-200 dark:bg-neutral-900  ">
-            <div className="max-w-7xl px-4 sm:px-6 lg:px-8 lg:ml-16">
+            <div className="max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between">
                     <nav className="flex space-x-8" aria-label="Tabs">
                     {navItems.map((item) => (
