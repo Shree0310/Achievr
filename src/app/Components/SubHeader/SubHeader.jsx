@@ -33,7 +33,7 @@ const SubHeader = () => {
 
     return (
         <div className="bg-white border-b dark:border-neutral-600 border-neutral-200 dark:bg-neutral-900  ">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl px-4 sm:px-6 lg:px-8 lg:ml-16">
                 <div className="flex justify-between">
                     <nav className="flex space-x-8" aria-label="Tabs">
                     {navItems.map((item) => (
@@ -52,7 +52,7 @@ const SubHeader = () => {
                         </Link>
                     ))}
                     </nav>
-                    <Button className="dark:bg-neutral-700 relative hover:bg-white bg-white rounded-2xl px-3 py-1 my-2 shadow-lg dark:shadow-neutral-500 " onClick={() => toggleView()}>
+                    <Button className="dark:bg-neutral-700 relative hover:bg-white bg-white rounded-2xl px-3 py-1 my-2 shadow-lg dark:shadow-neutral-500" onClick={() => toggleView()}>
                         <IconAdjustments stroke={2} className=" dark:text-white text-neutral-900" />
                         <p className="dark:text-white text-neutral-900">View</p>
                     </Button>

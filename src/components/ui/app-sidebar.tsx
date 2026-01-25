@@ -35,7 +35,7 @@ export function AppSidebar({
     const pathname = usePathname()
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="lg:mt-12">
       <SidebarHeader>
         <SidebarGroupLabel>
             <Link href="/" prefetch={true} className="flex items-center space-x-3 mb-4 group">

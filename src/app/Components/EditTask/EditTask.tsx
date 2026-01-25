@@ -146,7 +146,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
 
     useEffect(() => {
         fetchTask();
-        fetchSubTask(); // Fixed typo
+        fetchSubTask();
     },[taskId])
 
     if (loading) {
@@ -159,7 +159,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
 
     return (
         <div className="flex min-h-screen dark:bg-neutral-800/20">
-            <div className="left-0 top-0 h-full w-40">
+            <div className="left-0 top-0 h-full">
                 <Navbar/>
             </div>
             <div className="flex-1 ml-32 p-8">
