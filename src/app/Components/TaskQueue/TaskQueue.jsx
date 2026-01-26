@@ -15,12 +15,14 @@ import { IconCircleCheck } from '@tabler/icons-react';
 import { IconExclamationCircleFilled } from '@tabler/icons-react';
 import { IconChartArea } from '@tabler/icons-react';
 import { IconChartAreaLine } from '@tabler/icons-react';
+import { IconLineDashed } from '@tabler/icons-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import CreateTask from "../CreateTask/CreateTask";
 
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -30,9 +32,10 @@ function generateUUID() {
     });
 }
 
-const TaskQueue = ({ userId }) => {
+const TaskQueue = ({ userId, onTaskUpdate }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [showResults, setShowResults] = useState(false);
     const [showSortDialog, setShowSortDialog] = useState(false);
@@ -162,7 +165,20 @@ const TaskQueue = ({ userId }) => {
 
     const handleAddTask = () => {
         setIsAddingTask(true);
+        setIsOpen(true);
     }
+
+     const handleClose = () => {
+        setIsOpen(false);
+    };
+
+    const handleTaskUpdate = (action, data) => {
+        fetchTasks();
+        if (onTaskUpdate) {
+        onTaskUpdate(action, data);
+        }
+        setIsOpen(false);
+    };
 
     const filterTasks = (tasks) => {
         if (!Array.isArray(tasks)) { return []; }
@@ -365,13 +381,13 @@ const TaskQueue = ({ userId }) => {
                     </Button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent className="w-56 p-1 bg-white rounded-lg shadow-lg border border-neutral-200 z-10 ">
+                <DropdownMenuContent className="w-56 p-1 bg-white dark:bg-neutral-800  rounded-lg shadow-lg border border-neutral-200 z-10 ">
                     <DropdownMenuItem
                         onClick={handleAddTask}
-                        className="flex items-center px-3 py-2 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
+                        className="flex items-center px-6 py-2 text-sm text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:bg-neutral-900 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
                     >
                         <svg
-                            className="mr-2 h-4 w-4 text-neutral-400 group-hover:text-primary-500"
+                            className="mr-2 h-4 w-4 text-neutral-700 dark:text-neutral-400 group-hover:text-neutral-200"
                             fill="none"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -385,10 +401,10 @@ const TaskQueue = ({ userId }) => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                        className="flex items-center px-3 py-2 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
+                        className="flex items-center px-6 py-2 text-sm text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:bg-neutral-900 hover:bg-primary-50 hover:text-primary-600 rounded-md cursor-pointer transition-colors duration-150 group"
                     >
                         <svg
-                            className="mr-2 h-4 w-4 text-neutral-400 group-hover:text-primary-500"
+                            className="mr-2 h-4 w-4 text-neutral-700 dark:text-neutral-400 group-hover:text-neutral-200"
                             fill="none"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -551,14 +567,14 @@ const TaskQueue = ({ userId }) => {
                                                         placeholder="Task status"
                                                     />
                                                 </TableCell> */}
-                                                <TableCell className="">
+                                                {/* <TableCell className="">
                                                     <Input
                                                         name="priority"
                                                         value={editTask.priority}
                                                         onChange={handleEditTaskInputChange}
                                                         placeholder="Task Priority"
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
                                                 <TableCell className="">
                                                     <Input
                                                         name="efforts"
@@ -567,7 +583,7 @@ const TaskQueue = ({ userId }) => {
                                                         placeholder="Task Efforts"
                                                     />
                                                 </TableCell>
-                                                <TableCell className="">
+                                                <TableCell className="ml-10">
                                                     <Select
                                                         value={editTask.cycle_id}
                                                         onValueChange={handleEditTaskCycleChange}
@@ -613,11 +629,14 @@ const TaskQueue = ({ userId }) => {
                                                                                 : task.priority === 2 ? <IconChartAreaLine height={20} width={20} className="text-neutral-500" />
                                                                                 : task.priority === 3 ? <IconChartArea stroke={2} height={20} width={20} className="text-neutral-500" />
 
-                                                                        : <IconCircleCheck height={15} width={15} className="text-green-600"/>}
+                                                                        : <IconLineDashed height={15} width={15} className="text-gray-500"/>}
                                                                     </span>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>
-                                                                    <p>{task.priority}</p>
+                                                                    <p>{ task.priority === 1 ? "urgent"
+                                                                                : task.priority === 2 ? "medium priority"
+                                                                                : task.priority === 3 ? "low priority"
+                                                                            : "set priority"}</p>
                                                                 </TooltipContent>
                                                             </Tooltip>
                                                         </TooltipProvider>
@@ -640,17 +659,17 @@ const TaskQueue = ({ userId }) => {
                                                 </div> 
                                                 </TableCell>
                                                 {/* <TableCell className="border-r border-neutral-600">{task.status}</TableCell> */}
-                                                {task.priority ? (
+                                                {/* {task.priority ? (
                                                     <TableCell className="">{task.priority}</TableCell>
                                                 ) : (
                                                     <TableCell className="">priority is not set</TableCell>
-                                                )}
+                                                )} */}
                                                 {task.efforts ? (
-                                                    <TableCell className="">{task.efforts}</TableCell>
+                                                    <TableCell className="mt-2">{task.efforts}</TableCell>
                                                 ) : (
-                                                    <TableCell className="">efforts not set</TableCell>
+                                                    <TableCell className="mt-2"><IconLineDashed height={15} width={15} className="text-gray-500"/></TableCell>
                                                 )}
-                                                <TableCell className="">
+                                                <TableCell className="ml-24">
                                                     {task.cycles ? task.cycles.title : "cycle not set"}
                                                 </TableCell>
                                             </TableRow>
@@ -662,75 +681,21 @@ const TaskQueue = ({ userId }) => {
                         </>
                         
                     )}
-                    {isAddingtask && (
-                        <>
-                            <TableRow>
-                                <TableCell className="border-r border-l border-neutral-600">
-                                    <Input
-                                        name="title"
-                                        value={newTask.title}
-                                        onChange={handleInputChange}
-                                        placeholder="Task title" />
-                                </TableCell>
-                                <TableCell className="border-r border-neutral-600">
-                                    <Input
-                                        name="status"
-                                        value={newTask.status}
-                                        onChange={handleInputChange}
-                                        placeholder="Task status" />
-                                </TableCell>
-                                <TableCell className="border-r border-neutral-600">
-                                    <Input
-                                        name="priority"
-                                        value={newTask.priority}
-                                        onChange={handleInputChange}
-                                        placeholder="Task Priority" />
-                                </TableCell>
-                                <TableCell className="border-r border-neutral-600">
-                                    <Input
-                                        name="efforts"
-                                        value={newTask.efforts}
-                                        onChange={handleInputChange}
-                                        placeholder="Task Efforts" />
-                                </TableCell>
-                                <TableCell className="border-r border-neutral-600">
-                                    <Select
-                                        defaultValue={selectedCycle}
-                                        onValueChange={(value) => setSelectedCycle(value)}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select cycle" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {cycles.map(cycle => (
-                                                <SelectItem key={cycle.id} value={cycle.id}>{cycle.title}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </TableCell>
-                            </TableRow>
-
-                            <TableRow>
-                                <TableCell colSpan={5} className="border-r border-neutral-600 bg-neutral-50 p-3">
-                                    <div className="flex justify-end space-x-3">
-                                        <Button
-                                            onClick={handleCancel}
-                                            variant="outline"
-                                            className="px-4 py-2 border border-neutral-200 hover:bg-neutral-100 transition-colors">
-                                            Cancel
-                                        </Button>
-                                        <Button
-                                            onClick={handleSaveTask}
-                                            className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-colors shadow-sm">
-                                            Add Task
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        </>
-                    )}
                 </TableBody>
             </Table>
         </div>
+        {isAddingtask && (
+            <>
+                {isOpen && (
+                    <CreateTask
+                    onClose={handleClose}
+                    userId={userId}
+                    onTaskUpdate={handleTaskUpdate}
+                    isCreateMode={true}
+                    />
+                )}
+            </>
+        )}
 
         {/* Pagination */}
         <div className="flex justify-center items-center mt-4 mb-4 space-x-2">
