@@ -12,6 +12,15 @@ import { IconCircleDashed } from '@tabler/icons-react';
 import { IconCircleHalf2 } from '@tabler/icons-react';
 import { IconPercentage75 } from '@tabler/icons-react';
 import { IconCircleCheck } from '@tabler/icons-react';
+import { IconExclamationCircleFilled } from '@tabler/icons-react';
+import { IconChartArea } from '@tabler/icons-react';
+import { IconChartAreaLine } from '@tabler/icons-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -510,8 +519,8 @@ const TaskQueue = ({ userId }) => {
                                 if(filteredTasks.length === 0 ) return null;
                                 return (
                                     <React.Fragment key={status} > 
-                                    <TableRow className="bg-neutral-100 dark:bg-neutral-700">
-                                        <TableCell colSpan={5} className="font-semibold bg-neutral-100 dark:bg-neutral-700 px-8 text-sm">
+                                    <TableRow className="bg-neutral-100 ">
+                                        <TableCell colSpan={5} className="font-semibold bg-neutral-100 dark:bg-neutral-800 px-8 text-sm">
                                             <div className="flex gap-2">
                                                 <span className="py-1 ">{ status === "not started" 
                                                         ? <IconCircleDashed height={15} width={15} className="text-neutral-500"/> 
@@ -595,7 +604,41 @@ const TaskQueue = ({ userId }) => {
                                                 className="dark:text-neutral-300 cursor-pointer dark:hover:bg-neutral-800 hover:bg-primary-100"
                                                 onClick={() => handleEditTask(task)}
                                             >
-                                                <TableCell className="px-8">{task.title} </TableCell>
+                                                <TableCell className="pl-16 ">
+                                                    <div className="flex gap-2">
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <span className="py-1 ">{ task.priority === 1 ? <IconExclamationCircleFilled height={20} width={20} className="text-red-500"/>
+                                                                                : task.priority === 2 ? <IconChartAreaLine height={20} width={20} className="text-neutral-500" />
+                                                                                : task.priority === 3 ? <IconChartArea stroke={2} height={20} width={20} className="text-neutral-500" />
+
+                                                                        : <IconCircleCheck height={15} width={15} className="text-green-600"/>}
+                                                                    </span>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    <p>{task.priority}</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <span className="py-1 ">{ status === "not started" 
+                                                                            ? <IconCircleDashed height={15} width={15} className="text-neutral-500"/> 
+                                                                            : status === "in progress" ? <IconCircleHalf2 height={15} width={15} className="text-yellow-500"/> 
+                                                                            : status === "under review" ? <IconPercentage75 height={15} width={15} className="text-teal-700"/> 
+                                                                            : <IconCircleCheck height={15} width={15} className="text-green-600"/>}
+                                                                    </span>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    <p>{status}</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    {task.title}                                           
+                                                </div> 
+                                                </TableCell>
                                                 {/* <TableCell className="border-r border-neutral-600">{task.status}</TableCell> */}
                                                 {task.priority ? (
                                                     <TableCell className="">{task.priority}</TableCell>
