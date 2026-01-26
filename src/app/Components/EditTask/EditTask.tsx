@@ -163,7 +163,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                 <Navbar/>
             </div>
             <div className="flex-1 p-8">
-                <div className="flex justify-between max-w-4xl">
+                <div className="flex justify-between ">
                     <button onClick={() => router.back()}
                         className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-center gap-2"
                     >
@@ -171,7 +171,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                     </button>
                     <button
                         onClick={handleSave}
-                        className="px-4 py-2 ml-14 bg-neutral-600 text-white rounded-md hover:bg-neutral-700"
+                        className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-end justify-end"
                     >
                         Save Changes
                     </button>

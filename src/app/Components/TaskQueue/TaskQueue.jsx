@@ -5,9 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/utils/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, Item } from "@radix-ui/react-dropdown-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { IconCircleDashed } from '@tabler/icons-react';
+import { IconCircleHalf2 } from '@tabler/icons-react';
+import { IconPercentage75 } from '@tabler/icons-react';
+import { IconCircleCheck } from '@tabler/icons-react';
 
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -44,7 +48,7 @@ const TaskQueue = ({ userId }) => {
             efforts: ''
         }
     )
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 25;
     const totalTasks = tasks.length;
     const totalPages = Math.ceil(totalTasks / PAGE_SIZE);
     const start = currPage * PAGE_SIZE;
@@ -54,10 +58,15 @@ const TaskQueue = ({ userId }) => {
 
     const sortDialogRef = useRef(null);
 
+    const uniqueStatus = [...new Set(tasks.map((task) => task.status))];
+    console.log("uniStatus 2:", uniqueStatus);
+    console.log("All statuses", ...new Set(tasks.map(t => t.status)));
+
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editTask, setEditTask] = useState({ title: '', status: '', priority: '', efforts: '', cycle_id: '' });
 
     useEffect(() => {
+        console.log("uniqueStatus: ", uniqueStatus);
         function handleClickOutside(event) {
             if (sortDialogRef.current && !sortDialogRef.current.contains(event.target)) {
                 setShowSortDialog(false);
@@ -479,86 +488,9 @@ const TaskQueue = ({ userId }) => {
             </div>
         </div>
 
-        <div className="rounded-md border dark:border-neutral-600 border-neutral-200 m-4 bg-white dark:bg-neutral-800">
-            <Table className="border dark:border-neutral-600 border-neutral-200">
-                <TableHeader className="">
-                    <TableRow className="bg-primary-300 dark:bg-primary-700">
-                        <TableHead 
-                            onClick={sortTask("title")} 
-                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors group"
-                        >
-                            <div className="flex items-center justify-center space-x-1">
-                                <span>Title</span>
-                                {sortColumn === "title" && (
-                                    <svg 
-                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        viewBox="0 0 20 20" 
-                                        fill="currentColor"
-                                    >
-                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
-                                )}
-                            </div>
-                        </TableHead>
-                        <TableHead 
-                            onClick={sortTask("status")} 
-                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
-                        >
-                            <div className="flex items-center justify-center space-x-1">
-                                <span>Status</span>
-                                {sortColumn === "status" && (
-                                    <svg 
-                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        viewBox="0 0 20 20" 
-                                        fill="currentColor"
-                                    >
-                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
-                                )}
-                            </div>
-                        </TableHead>
-                        <TableHead 
-                            onClick={sortTask("priority")} 
-                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
-                        >
-                            <div className="flex items-center justify-center space-x-1">
-                                <span>Priority</span>
-                                {sortColumn === "priority" && (
-                                    <svg 
-                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        viewBox="0 0 20 20" 
-                                        fill="currentColor"
-                                    >
-                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
-                                )}
-                            </div>
-                        </TableHead>
-                        <TableHead 
-                            onClick={sortTask("efforts")} 
-                            className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center cursor-pointer hover:bg-primary-400 dark:hover:bg-primary-600 transition-colors"
-                        >
-                            <div className="flex items-center justify-center space-x-1">
-                                <span>Efforts</span>
-                                {sortColumn === "efforts" && (
-                                    <svg 
-                                        className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'transform rotate-180' : ''}`}
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        viewBox="0 0 20 20" 
-                                        fill="currentColor"
-                                    >
-                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
-                                )}
-                            </div>
-                        </TableHead>
-                        <TableHead className="border dark:border-neutral-600 border-neutral-200 text-black dark:text-white text-center">Cycle</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody className="bg-primary-50 dark:bg-neutral-900">
+        <div className="">
+            <Table className="">           
+                <TableBody className="bg-primary-50 dark:bg-neutral-900 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                     {loading ? (
                         <TableRow>
                             <TableCell colSpan={5} className="text-center py-4">
@@ -572,96 +504,120 @@ const TaskQueue = ({ userId }) => {
                             </TableCell>
                         </TableRow>
                     ) : (
-                        filterTasks(tasks).slice(start, end).map((task) => (
-                            editingTaskId === task.id ? (
-                                <TableRow key={task.id}>
-                                    <TableCell className="border-r border-l dark:border-neutral-600 border-neutral-200">
-                                        <Input
-                                            name="title"
-                                            value={editTask.title}
-                                            onChange={handleEditTaskInputChange}
-                                            placeholder="Task title"
-                                        />
-                                    </TableCell>
-                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
-                                        <Input
-                                            name="status"
-                                            value={editTask.status}
-                                            onChange={handleEditTaskInputChange}
-                                            placeholder="Task status"
-                                        />
-                                    </TableCell>
-                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
-                                        <Input
-                                            name="priority"
-                                            value={editTask.priority}
-                                            onChange={handleEditTaskInputChange}
-                                            placeholder="Task Priority"
-                                        />
-                                    </TableCell>
-                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
-                                        <Input
-                                            name="efforts"
-                                            value={editTask.efforts}
-                                            onChange={handleEditTaskInputChange}
-                                            placeholder="Task Efforts"
-                                        />
-                                    </TableCell>
-                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
-                                        <Select
-                                            value={editTask.cycle_id}
-                                            onValueChange={handleEditTaskCycleChange}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Select cycle" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {cycles.map(cycle => (
-                                                    <SelectItem key={cycle.id} value={cycle.id}>{cycle.title}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell colSpan={5} className="border-r dark:border-neutral-600 border-neutral-200 bg-neutral-50 p-3">
-                                        <div className="flex justify-end space-x-3">
-                                            <Button
-                                                onClick={handleCancelEditTask}
-                                                variant="outline"
-                                                className="px-4 py-2 border border-neutral-200 hover:bg-neutral-100 transition-colors">
-                                                Cancel
-                                            </Button>
-                                            <Button
-                                                onClick={handleSaveEditTask}
-                                                className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-colors shadow-sm">
-                                                Save
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                <TableRow
-                                    key={task.id}
-                                    className="text-center cursor-pointer hover:bg-primary-100"
-                                    onClick={() => handleEditTask(task)}
-                                >
-                                    <TableCell className="border-r border-l dark:border-neutral-600 border-neutral-200">{task.title} </TableCell>
-                                    <TableCell className="border-r border-neutral-600">{task.status}</TableCell>
-                                    {task.priority ? (
-                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">{task.priority}</TableCell>
-                                    ) : (
-                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">priority is not set</TableCell>
-                                    )}
-                                    {task.efforts ? (
-                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">{task.efforts}</TableCell>
-                                    ) : (
-                                        <TableCell className="border-r dark:border-neutral-600 border-neutral-200">efforts not set</TableCell>
-                                    )}
-                                    <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
-                                        {task.cycles ? task.cycles.title : "cycle not set"}
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        ))
+                        <>
+                            {uniqueStatus.map(status => {
+                                const filteredTasks = tasks.filter(task  => task.status === status)
+                                if(filteredTasks.length === 0 ) return null;
+                                return (
+                                    <React.Fragment key={status} > 
+                                    <TableRow className="bg-neutral-100 dark:bg-neutral-700">
+                                        <TableCell colSpan={5} className="font-semibold bg-neutral-100 dark:bg-neutral-700 px-8 text-sm">
+                                            <div className="flex gap-2">
+                                                <span className="py-1 ">{ status === "not started" 
+                                                        ? <IconCircleDashed height={15} width={15} className="text-neutral-500"/> 
+                                                        : status === "in progress" ? <IconCircleHalf2 height={15} width={15} className="text-yellow-500"/> 
+                                                        : status === "under review" ? <IconPercentage75 height={15} width={15} className="text-teal-700"/> 
+                                                        : <IconCircleCheck height={15} width={15} className="text-green-600"/>}
+                                                </span>
+                                                {status}
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                    {filterTasks(tasks).slice(start, end).map((task) => (
+                                        editingTaskId === task.id ? (
+                                            <TableRow key={task.id}>
+                                                <TableCell className="">
+                                                    <Input
+                                                        name="title"
+                                                        value={editTask.title}
+                                                        onChange={handleEditTaskInputChange}
+                                                        placeholder="Task title"
+                                                    />
+                                                </TableCell>
+                                                {/* <TableCell className="border-r dark:border-neutral-600 border-neutral-200">
+                                                    <Input
+                                                        name="status"
+                                                        value={editTask.status}
+                                                        onChange={handleEditTaskInputChange}
+                                                        placeholder="Task status"
+                                                    />
+                                                </TableCell> */}
+                                                <TableCell className="">
+                                                    <Input
+                                                        name="priority"
+                                                        value={editTask.priority}
+                                                        onChange={handleEditTaskInputChange}
+                                                        placeholder="Task Priority"
+                                                    />
+                                                </TableCell>
+                                                <TableCell className="">
+                                                    <Input
+                                                        name="efforts"
+                                                        value={editTask.efforts}
+                                                        onChange={handleEditTaskInputChange}
+                                                        placeholder="Task Efforts"
+                                                    />
+                                                </TableCell>
+                                                <TableCell className="">
+                                                    <Select
+                                                        value={editTask.cycle_id}
+                                                        onValueChange={handleEditTaskCycleChange}
+                                                    >
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select cycle" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {cycles.map(cycle => (
+                                                                <SelectItem key={cycle.id} value={cycle.id}>{cycle.title}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </TableCell>
+                                                <TableCell colSpan={5} className=" bg-neutral-50 p-3">
+                                                    <div className="flex justify-end space-x-3">
+                                                        <Button
+                                                            onClick={handleCancelEditTask}
+                                                            variant="outline"
+                                                            className="px-4 py-2  hover:bg-neutral-100 transition-colors">
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            onClick={handleSaveEditTask}
+                                                            className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-colors shadow-sm">
+                                                            Save
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            <TableRow
+                                                key={task.id}
+                                                className="dark:text-neutral-300 cursor-pointer dark:hover:bg-neutral-800 hover:bg-primary-100"
+                                                onClick={() => handleEditTask(task)}
+                                            >
+                                                <TableCell className="px-8">{task.title} </TableCell>
+                                                {/* <TableCell className="border-r border-neutral-600">{task.status}</TableCell> */}
+                                                {task.priority ? (
+                                                    <TableCell className="">{task.priority}</TableCell>
+                                                ) : (
+                                                    <TableCell className="">priority is not set</TableCell>
+                                                )}
+                                                {task.efforts ? (
+                                                    <TableCell className="">{task.efforts}</TableCell>
+                                                ) : (
+                                                    <TableCell className="">efforts not set</TableCell>
+                                                )}
+                                                <TableCell className="">
+                                                    {task.cycles ? task.cycles.title : "cycle not set"}
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    ))}
+                                    </React.Fragment>
+                                )
+                            })}
+                        </>
+                        
                     )}
                     {isAddingtask && (
                         <>

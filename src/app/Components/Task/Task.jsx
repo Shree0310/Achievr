@@ -62,23 +62,25 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                 {...attributes}
                 onClick={() => router.push(`/editTask/${task.id}`)}
                 className='group bg-white dark:bg-neutral-800 rounded-lg p-4 border border-neutral-200 dark:border-neutral-700 hover:border-primary-400 dark:hover:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md dark:shadow-neutral-900/20 dark:hover:shadow-neutral-900/30 cursor-move'>
-                <div className="flex items-start gap-4 mb-3">
+                <div className="flex justify-between">
+                <div className="flex gap-3 ">
                     {task.status && (
-                    <span className={`px-2.5 py-2 rounded-full text-xs font-medium`}>
+                    <span className={`p-2 h-6 w-6 rounded-full text-xs font-medium`}>
                         {task.status === 'not started' ? <IconCircleDashed stroke={2} height={15} width={15} className="text-neutral-500"  /> : 
-                          task.satus === 'in progress' ? <IconCircleHalf2 stroke={2} hheight={15} width={15} className="text-yellow-500" /> :
+                          task.satus === 'in progress' ? <IconCircleHalf2 stroke={2} height={15} width={15} className="text-yellow-500" /> :
                           task.status === 'under review' ? <IconPercentage75 stroke={2} height={15} width={15} className="text-teal-700"/>:
                           <IconCircleCheck stroke={2} height={15} width={15} className="text-green-600" /> || <IconCircleDashed stroke={2} height={15} width={15} className="text-neutral-500"/>}
                     </span>
                     )}
-                    <div className="py-1">
-                        <h3 className="font-medium text-neutral-900 dark:text-neutral-100 group-hover:text-primary-600 dark:group-hover:text-blue-400 transition-colors">
+                    <div className="p-2">
+                        <h3 className="font-medium  w-24 text-sm overflow-hidden overflow-ellipsis text-left line-clamp-2 text-neutral-900 dark:text-neutral-300 group-hover:text-primary-600 dark:group-hover:text-blue-400 transition-colors">
                             {task.title || 'Untitled Task'}
                         </h3>
                     </div>
+                </div>
                     {/* Priority Badge */}
                     {task.priority && (
-                        <span className={`px-2.5 py-2 rounded-full text-xs font-medium
+                        <span className={`p-2 h-6 w-6 flex justify-center items-center rounded-full text-xs font-medium
                             ${task.priority === '1' ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
                             task.priority === '2' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400' :
                             'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'}`}>
@@ -86,7 +88,8 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                         </span>
                     )}
                 </div>
-                <div className="flex justify-between space-y-2">
+            
+                <div className="flex justify-between mt-4">
                     <div className="flex items-center space-x-3 text-sm">
                     {task.efforts && (
                         <div className="flex items-center text-neutral-500">
@@ -97,7 +100,7 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                         </div>
                     )}
                     </div>
-                    <div className="flex justify-between items-start space-x-6 text-neutral-500">
+                    <div className="flex justify-between items-start space-x-2 text-neutral-500">
                         {/* Comments with count */}
                         <button className="flex items-center space-x-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1 transition-colors">
                             <svg viewBox="0 0 20 20" fill="currentColor" width="20" height="20" aria-label="comments">

@@ -94,7 +94,7 @@ export default function TaskQueuePage() {
                 </div>
 
                 {/* Scrollable content area */}
-                <div className="flex-1 overflow-auto">
+                <div className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                     <TaskQueue userId={userId} />
                 </div>
             </div>
