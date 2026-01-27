@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useNotifications } from "@/app/contexts/NotificationContext";
 import SubtasksTab from "@/app/Components/Subtasks/SubtasksTab";
 import GithubTab from "@/app/Components/GithubUI/GithubTab";
+import BeautifyButton from "@/app/Components/AI/BeautifyButton";
 
 const CreateTask = ({
   onClose,
@@ -359,6 +360,14 @@ const CreateTask = ({
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full px-2 py-4 placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
+                  {title.length > 5 && (
+                    <BeautifyButton
+                      text={title}
+                      type="title"
+                      onAccept={(improved) => setTitle(improved)}
+                      className="mt-2"
+                    />
+                  )}
                 </div>
 
                 {/* Description Input */}
@@ -370,6 +379,14 @@ const CreateTask = ({
                     rows={2}
                     className="w-full px-2 py-2 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-800"
                   />
+                  {description.length > 10 && (
+                    <BeautifyButton
+                      text={description}
+                      type="description"
+                      onAccept={(improved) => setDescription(improved)}
+                      className="mt-2"
+                    />
+                  )}
                 </div>
               <div className="flex flex-row gap-3">
                 {/* Status Change */}
