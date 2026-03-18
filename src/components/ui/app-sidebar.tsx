@@ -1,6 +1,7 @@
 import CreateTaskButton from "@/app/Components/CreateTask/CreateTaskButton";
 import GitHubRepositoryConnector from "@/app/Components/GitHubConnect/GitHubRepositoryConnector";
 import SummitIcon from "@/app/Components/Navbar/SummitIcon";
+import AIPlannerButton from "@/app/Components/Planner/AIPlannerButton";
 import {
   Sidebar,
   SidebarContent,
@@ -26,11 +27,13 @@ type NavItem = {
 export function AppSidebar({
   userId, 
   onTaskUpdate, 
-  navItems
+  navItems,
+  onAIPlanClick
 }: {
   userId: string; 
   onTaskUpdate: () => void; 
   navItems: NavItem[]
+  onAIPlanClick?: ()=>void
 }) {
     const pathname = usePathname()
 
@@ -88,6 +91,12 @@ export function AppSidebar({
                   </SidebarMenuItem>
                 )
               })}
+              {  onAIPlanClick && (
+                <SidebarMenuItem>
+                    <AIPlannerButton onClick={onAIPlanClick}/>
+                </SidebarMenuItem>
+              )
+              }
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

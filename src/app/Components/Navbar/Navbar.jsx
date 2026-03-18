@@ -8,11 +8,13 @@ import { AppSidebar } from "@/components/ui/app-sidebar";
 import { IconLayoutBoardSplit } from '@tabler/icons-react';
 import { IconList } from '@tabler/icons-react';
 import { IconCircleDashed } from '@tabler/icons-react';
+import { PlannerModal } from "../Planner/PlannerModal";
 
 const Navbar = ({ userId, onTaskUpdate, children }) => {
     const [data, setData] = useState(null);
     const pathname = usePathname();
     const router = useRouter();
+    const [isPlannerOpen, setIsPlannerOpen] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -55,18 +57,33 @@ const Navbar = ({ userId, onTaskUpdate, children }) => {
         });
     }, [router]);
 
+     const handleTasksAdded = () => {
+        // Trigger the parent's task update handler to refresh the board
+        if (onTaskUpdate) {
+            onTaskUpdate('refresh', null);
+        }
+        // Fallback: reload the page
+        window.location.reload();
+    };
+
     return (
         <SidebarProvider>
             <AppSidebar 
                 userId={userId} 
                 onTaskUpdate={onTaskUpdate}
                 navItems={navItems}
+                onAIPlanClick={() => setIsPlannerOpen(!isPlannerOpen)}
             />
             <main className="w-full">
                 <div className="flex-1">
                     {children}
                 </div>
             </main>
+            <PlannerModal
+                isOpen={isPlannerOpen}
+                onClose={() => setIsPlannerOpen(false)}
+                onTasksAdded={handleTasksAdded}
+                userId={userId || ''}/>
         </SidebarProvider>
     );
 }

@@ -5,12 +5,6 @@ import { tools } from '@/lib/tools';
 
 export const maxDuration = 30;
 
-const taskCardSchema = z.object({
-  title: z.string().describe('Clear, actionable task name'),
-  duration: z.string().describe('Estimated time like "2 hours" or "1 day"'),
-  priority: z.enum(['high', 'medium', 'low']).describe('Task priority level'),
-});
-
 export async function POST(req: Request) {
   const { prompt } = await req.json();
 
