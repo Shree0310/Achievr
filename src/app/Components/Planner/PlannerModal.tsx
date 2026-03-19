@@ -5,6 +5,7 @@ import { TaskCard } from './TaskCard';
 import { TaskCardArgs } from '@/lib/tools';
 import { supabase } from '@/utils/supabase/client';
 import { AnimatePresence } from 'motion/react';
+import SkeletonCard from './SkeletonCard';
 
 interface Cycle {
   id: string;
@@ -208,6 +209,9 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
           {/* Loading state */}
           {isLoading && (
             <div className="text-gray-500 animate-pulse mb-4">
+                {[0,1,2,3].map((index) => (
+                    <SkeletonCard key={`skeleton - ${index}`} index={index}/>
+                ))}
               Generating your plan...
             </div>
           )}
