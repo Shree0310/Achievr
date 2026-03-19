@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { TaskCard } from './TaskCard';
 import { TaskCardArgs } from '@/lib/tools';
 import { supabase } from '@/utils/supabase/client';
-import { AnimatePresence } from 'motion/react';
+import { AnimatePresence, LayoutGroup } from 'motion/react';
 import SkeletonCard from './SkeletonCard';
+import { motion } from 'framer-motion';
+import { MorphCard } from './MorphCard';
 
 interface Cycle {
   id: string;
@@ -178,87 +180,89 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
-          {/* Input */}
-          <form onSubmit={handleSubmit} className="mb-6">
+        {/* Input */}
+        <form onSubmit={handleSubmit} className="mb-6">
             <input
-              type="text"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-              placeholder="What do you want to accomplish?"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
-              disabled={isLoading || tasks.length > 0}
+            type="text"
+            value={goal}
+            onChange={(e) => setGoal(e.target.value)}
+            placeholder="What do you want to accomplish?"
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+            disabled={isLoading || tasks.length > 0}
             />
-            {tasks.length === 0 && (
-              <button
+            {tasks.length === 0 && !isLoading && (
+            <button
                 type="submit"
-                disabled={isLoading || !goal.trim()}
+                disabled={!goal.trim()}
                 className="mt-3 px-6 py-2 bg-indigo-600 text-white rounded-lg disabled:opacity-50 hover:bg-indigo-700 transition-colors"
-              >
-                {isLoading ? 'Planning...' : 'Generate Plan'}
-              </button>
+            >
+                Generate Plan
+            </button>
             )}
-          </form>
+        </form>
 
-          {/* Error */}
-          {error && (
+        {/* Error */}
+        {error && (
             <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-lg">
-              {error}
+            {error}
             </div>
-          )}
+        )}
 
-          {/* Loading state */}
-          {isLoading && (
-            <div className="text-gray-500 animate-pulse mb-4">
-                {[0,1,2,3].map((index) => (
-                    <SkeletonCard key={`skeleton - ${index}`} index={index}/>
-                ))}
-              Generating your plan...
-            </div>
-          )}
+        {/* Cards - skeleton or real */}
+        {(isLoading || tasks.length > 0) && (
+        <div className="space-y-3 mb-6">
+            {isLoading && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                Generating your plan...
+            </p>
+            )}
 
-          {/* Generated tasks */}
-          {tasks.length > 0 && (
-            <>
-              <div className="flex items-center justify-between mb-4">
+            {!isLoading && tasks.length > 0 && (
+            <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-neutral-800 dark:text-white">
-                  Generated {tasks.length} tasks
+                Generated {tasks.length} tasks
                 </h3>
                 <button
-                  onClick={handleClear}
-                  className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                onClick={handleClear}
+                className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 >
-                  Clear & start over
+                Clear & start over
                 </button>
-              </div>
+            </div>
+            )}
 
-              <div className="space-y-3 mb-6">
-                <AnimatePresence mode='wait'>
-                    {tasks.map((task, index) => (
-                    <TaskCard key={`task- ${index}-${task.title}`} index={index} {...task} />
-                    ))}
-                </AnimatePresence>
-              </div>
+            {/* Show 4 cards when loading, or actual task count when done */}
+            {(isLoading ? [0, 1, 2, 3] : tasks).map((item, index) => (
+            <MorphCard
+                key={`card-${index}`}
+                index={index}
+                isLoading={isLoading}
+                task={isLoading ? undefined : (item as any)}
+            />
+            ))}
+        </div>
+        )}
 
-              {/* Cycle Selection */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Add to cycle
-                </label>
-                <select
-                  value={selectedCycle}
-                  onChange={(e) => setSelectedCycle(e.target.value)}
-                  className="w-full px-4 py-2 bg-white dark:bg-neutral-700 border border-gray-300 dark:border-gray-600 rounded-lg text-neutral-900 dark:text-white"
-                >
-                  <option value="" disabled>Select Cycle</option>
-                  {cycles.map((cycle) => (
-                    <option key={cycle.id} value={cycle.id}>
-                      {cycle.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
+        {/* Cycle Selection - only show when tasks exist */}
+        {tasks.length > 0 && (
+            <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Add to cycle
+            </label>
+            <select
+                value={selectedCycle}
+                onChange={(e) => setSelectedCycle(e.target.value)}
+                className="w-full px-4 py-2 bg-white dark:bg-neutral-700 border border-gray-300 dark:border-gray-600 rounded-lg text-neutral-900 dark:text-white"
+            >
+                <option value="" disabled>Select Cycle</option>
+                {cycles.map((cycle) => (
+                <option key={cycle.id} value={cycle.id}>
+                    {cycle.title}
+                </option>
+                ))}
+            </select>
+            </div>
+        )}
         </div>
 
         {/* Footer */}

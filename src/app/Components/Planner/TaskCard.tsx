@@ -16,6 +16,7 @@ const priorityBadge = {
 
 interface TaskCardProps extends TaskCardArgs {
     index?: number;
+    layoutId?: string
 }
 
 const cardVariants = {
@@ -41,9 +42,10 @@ const cardVariants = {
     }
 }
 
-export function TaskCard({ title, duration, priority, index=0 }: TaskCardProps) {
+export function TaskCard({ title, duration, priority, index=0, layoutId }: TaskCardProps) {
   return (
     <motion.div
+      layoutId={layoutId}
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ 
         opacity: 1, 

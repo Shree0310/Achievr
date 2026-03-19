@@ -2,11 +2,13 @@ import { motion } from 'framer-motion';
 
 interface SkeletonCardProps {
     index?: number
+    layoutId?: string
 }
 
-const SkeletonCard = ({index = 0 }: SkeletonCardProps) => {
+const SkeletonCard = ({index = 0, layoutId }: SkeletonCardProps) => {
     return (
         <motion.div
+        layoutId={layoutId}
             initial={{
                 opacity: 0,
                 y: 20
