@@ -1,4 +1,6 @@
 import { TaskCardArgs } from '@/lib/tools';
+import { motion } from 'framer-motion';
+import { duration } from 'node_modules/zod/v4/classic/iso.cjs';
 
 const priorityStyles = {
   high: 'border-l-red-500 bg-red-50 dark:bg-red-950/20',
@@ -12,12 +14,56 @@ const priorityBadge = {
   low: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
 };
 
-export function TaskCard({ title, duration, priority }: TaskCardArgs) {
+interface TaskCardProps extends TaskCardArgs {
+    index?: number;
+}
+
+const cardVariants = {
+    hidden: {
+        opacity: 0,
+        y: 20,
+        scale: 0.95
+    },
+    visible:  (index: number) => ({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition :{
+            duration: 0.35,
+            delay: index * 0.1,
+            ease: "easeInOut"
+        }
+    }),
+    exit : {
+        opacity: 0,
+        scale: 0.95,
+        transition: { duration: 0.2 }
+    }
+}
+
+export function TaskCard({ title, duration, priority, index=0 }: TaskCardProps) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        transition: {
+          duration: 0.35,
+          delay: index * 0.12,
+          ease: 'easeOut',
+        }
+      }}
+      exit={{ 
+        opacity: 0, 
+        scale: 0.95,
+        transition: { duration: 0.2 }
+      }}
+      layout
       className={`
         rounded-lg border-l-4 p-4 
-        border border-gray-200 dark:border-gray-800
+        border border-gray-200 dark:border-gray-700
         ${priorityStyles[priority]}
       `}
     >
@@ -37,6 +83,6 @@ export function TaskCard({ title, duration, priority }: TaskCardArgs) {
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
         ⏱ {duration}
       </p>
-    </div>
+    </motion.div>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { TaskCard } from './TaskCard';
 import { TaskCardArgs } from '@/lib/tools';
 import { supabase } from '@/utils/supabase/client';
+import { AnimatePresence } from 'motion/react';
 
 interface Cycle {
   id: string;
@@ -142,7 +143,9 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   // Clear and start over
   const handleClear = () => {
     setTasks([]);
-    setGoal('');
+    setTimeout(() => {
+        setGoal('');
+    }, 300)
     setError(null);
   };
 
@@ -225,9 +228,11 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
               </div>
 
               <div className="space-y-3 mb-6">
-                {tasks.map((task, index) => (
-                  <TaskCard key={index} {...task} />
-                ))}
+                <AnimatePresence mode='wait'>
+                    {tasks.map((task, index) => (
+                    <TaskCard key={`task- ${index}-${task.title}`} index={index} {...task} />
+                    ))}
+                </AnimatePresence>
               </div>
 
               {/* Cycle Selection */}
