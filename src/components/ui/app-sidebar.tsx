@@ -98,15 +98,14 @@ export function AppSidebar({
                 </SidebarMenuItem>
               )
               }
-              <SidebarMenuItem>
-                <AskAchievrBtn/>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter />
+      <SidebarFooter >
+        <AskAchievrBtn/>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
