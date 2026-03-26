@@ -1,3 +1,4 @@
+import AskAchievrBtn from "@/app/Components/Ask Achievr/AskAchievrBtn";
 import CreateTaskButton from "@/app/Components/CreateTask/CreateTaskButton";
 import GitHubRepositoryConnector from "@/app/Components/GitHubConnect/GitHubRepositoryConnector";
 import SummitIcon from "@/app/Components/Navbar/SummitIcon";
@@ -97,6 +98,9 @@ export function AppSidebar({
                 </SidebarMenuItem>
               )
               }
+              <SidebarMenuItem>
+                <AskAchievrBtn/>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

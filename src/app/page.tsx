@@ -235,7 +235,7 @@ export default function Home() {
           <NotificationContainer />
           <Header user={user} />
           <SubHeader />
-          <Board />
+          <Board/>
         </div>
 
         {/* Stages component - explicitly take all remaining space */}

@@ -184,7 +184,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                                 placeholder="Enter task title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full px-2 py-8 text-3xl placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-900"
+                                className="w-full px-2 py-2 shadow-md shadow-black/10 dark:shadow-gray/10 ring-1 ring-black/10 dark:ring-gray/10 text-3xl placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-800"
                             />
                         </div>
                 
@@ -195,7 +195,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                               value={description}
                               onChange={(e) => setDescription(e.target.value)}
                               rows={2}
-                              className="w-full px-2 py-2 h-28 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-900 placeholder:text-neutral-400"
+                              className="w-full px-2 py-2 shadow-md shadow-black/10 dark:shadow-gray my-4 h-28 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-900 placeholder:text-neutral-400"
                             />
                         </div>
                         
