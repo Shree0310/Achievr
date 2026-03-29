@@ -104,7 +104,7 @@ export function AppSidebar({
       </SidebarContent>
       
       <SidebarFooter >
-        <AskAchievrBtn/>
+        {/* <AskAchievrBtn/> */}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
