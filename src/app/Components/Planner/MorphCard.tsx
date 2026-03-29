@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { PlannerSkeleton } from './PlannerSkeleton';
 
 const priorityStyles = {
   high: 'border-l-red-500 bg-red-50 dark:bg-red-950/20',
@@ -28,7 +29,7 @@ export function MorphCard({ index, isLoading, task }: MorphCardProps) {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 20 }} 
       animate={{ 
         opacity: 1, 
         y: 0,
@@ -45,13 +46,8 @@ export function MorphCard({ index, isLoading, task }: MorphCardProps) {
     >
       {isLoading || !task ? (
         // Skeleton content
-        <div className="relative overflow-hidden">
-          <div className="flex items-start justify-between gap-3">
-            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
-            <div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
-          </div>
-          <div className="mt-3 h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 animate-pulse" />
-        </div>
+          <PlannerSkeleton className="mb-6" />
+
       ) : (
         // Real content
         <motion.div

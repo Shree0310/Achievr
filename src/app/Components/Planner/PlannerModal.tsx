@@ -166,7 +166,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
                     transition={{ duration: 0.25, ease: 'easeOut' }} 
-                    className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+                    className="bg-white dark:bg-neutral-900 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
                     
                     {/* Header */}
                     <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
@@ -271,8 +271,8 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
                     {tasks.length > 0 && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.1 }} 
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.1 }} 
                             className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Add to cycle
