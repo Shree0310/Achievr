@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { PlannerSkeleton } from './PlannerSkeleton';
+import { IconTrash } from '@tabler/icons-react';
 
 const priorityStyles = {
   high: 'border-l-red-500 bg-red-50 dark:bg-red-950/20',
@@ -19,13 +20,15 @@ interface MorphCardProps {
   index: number;
   isLoading: boolean;
   task?: {
+    id: string;
     title: string;
     duration: string;
     priority: 'high' | 'medium' | 'low';
   };
+  onDelete?: (id: string) => void;
 }
 
-export function MorphCard({ index, isLoading, task }: MorphCardProps) {
+export function MorphCard({ index, isLoading, task, onDelete }: MorphCardProps) {
   return (
     <motion.div
       layout
@@ -36,6 +39,7 @@ export function MorphCard({ index, isLoading, task }: MorphCardProps) {
         transition: { delay: index * 0.1, duration: 0.3 }
       }}
       className={`
+        group relative
         rounded-lg border-l-4 p-4 border border-gray-200 dark:border-gray-700
         transition-colors duration-500
         ${isLoading || !task
@@ -54,11 +58,13 @@ export function MorphCard({ index, isLoading, task }: MorphCardProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.3 }}
+          className='group relative'
         >
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex justify-between gap-20">
             <h3 className="font-medium text-gray-900 dark:text-gray-100">
               {task.title}
             </h3>
+            <div className='flex gap-2'>
             <span
               className={`
                 text-xs font-medium px-2 py-1 rounded-full shrink-0
@@ -67,6 +73,22 @@ export function MorphCard({ index, isLoading, task }: MorphCardProps) {
             >
               {task.priority}
             </span>
+            {onDelete && (
+              <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => onDelete(task.id)}
+                  className="p-1 rounded-full opacity-0 group-hover:opacity-100
+                    hover:bg-red-100 dark:hover:bg-red-900/30 
+                    text-gray-400 hover:text-red-500 
+                    transition-all duration-200"
+                >
+                  <IconTrash size={16} />
+                </motion.button>
+            )}
+            </div>
           </div>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             ⏱ {task.duration}

@@ -107,7 +107,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   };
 
   // Transform AI output → Supabase task schema
-  const transformToSupabaseTask = (task: {title: string, duration:string, priority: string}) => ({
+  const transformToSupabaseTask = (task: {id: string, title: string, duration:string, priority: string}) => ({
     title: task.title,
     description: `Estimated: ${task.duration}`,
     status: 'not started',
@@ -269,6 +269,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
                             index={index}
                             isLoading={isLoading}
                             task={isLoading ? undefined : (item as any)}
+                            onDelete={isLoading ? undefined : removeTask}
                         />
                         ))}
                     </div>
