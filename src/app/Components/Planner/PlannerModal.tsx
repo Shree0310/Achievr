@@ -8,6 +8,7 @@ import { AnimatePresence, LayoutGroup } from 'motion/react';
 import SkeletonCard from './SkeletonCard';
 import { motion } from 'framer-motion';
 import { MorphCard } from './MorphCard';
+import { usePlannerStore } from '@/lib/planner-store';
 
 interface Cycle {
   id: string;
@@ -27,10 +28,38 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   const [isSaving, setIsSaving] = useState(false);
   const [tasks, setTasks] = useState<TaskCardArgs[]>([]);
   const [error, setError] = useState<string | null>(null);
-  
+  const messages = usePlannerStore((state) =>state.messages);
+  const isLoading2 = usePlannerStore((state) => state.isLoading);
+  const addUsermessage = usePlannerStore((state) => state.addUserMessage);
+
   // Cycle state
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [selectedCycle, setSelectedCycle] = useState<string>('');
+
+  // Log when modal opens/closes
+  useEffect(() => {
+    console.log('PLANNER MODAL isOpen CHANGED', isOpen);
+    console.warn('Modal state:', { isOpen, messagesCount: messages.length });
+
+    if (!isOpen) {
+      console.log('Modal is CLOSED');
+      return;
+    }
+
+    console.log('✅ Modal is OPEN');
+    console.log('=== ZUSTAND TEST ===');
+    console.log('Messages before:', messages);
+
+    if (messages.length === 0) {
+      console.log('📝 Adding test message to Zustand store...');
+      addUsermessage("Test Message from Zustand");
+    }
+  }, [isOpen]);
+
+  // Log whenever messages change
+  useEffect(() => {
+    console.log('Messages updated:', messages);
+  }, [messages]);
 
   // Fetch cycles on mount
   useEffect(() => {
