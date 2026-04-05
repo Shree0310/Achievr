@@ -127,4 +127,10 @@ export const usePlannerStore = create<PlannerState>((set) => ({
   },
 }));
 
+//SELECTORS FOR PERFORMANCE
+export const selectMessages = (state: PlannerState) => state.messages;
+export const selectTasks = (state: PlannerState) => state.tasks;
+export const selectIsLoading = (state: PlannerState) => state.isLoading;
+export const selectTaskCount = (state: PlannerState) =>state.tasks.length;
+
 

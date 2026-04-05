@@ -24,13 +24,16 @@ interface PlannerModalProps {
 
 export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerModalProps) {
   const [goal, setGoal] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [tasks, setTasks] = useState<TaskCardArgs[]>([]);
   const [error, setError] = useState<string | null>(null);
   const messages = usePlannerStore((state) =>state.messages);
-  const isLoading2 = usePlannerStore((state) => state.isLoading);
   const addUsermessage = usePlannerStore((state) => state.addUserMessage);
+  const tasks = usePlannerStore((state) => state.tasks);
+  const isLoading = usePlannerStore((state) => state.isLoading);
+  const setLoading = usePlannerStore((state) => state.setLoading);
+  const addTasks = usePlannerStore((state) => state.addTasks);
+  const removeTask = usePlannerStore((state) => state.removeTask);
+  const reset = usePlannerStore((state) => state.reset);
 
   // Cycle state
   const [cycles, setCycles] = useState<Cycle[]>([]);
@@ -88,7 +91,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   useEffect(() => {
     if (!isOpen) {
       setGoal('');
-      setTasks([]);
+      reset();
       setError(null);
     }
   }, [isOpen]);
@@ -98,8 +101,8 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
     e.preventDefault();
     if (!goal.trim()) return;
 
-    setIsLoading(true);
-    setTasks([]);
+    reset();
+    setLoading(true);
     setError(null);
 
     try {
@@ -119,17 +122,17 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
         .filter((tc: any) => tc.toolName === 'create_task_card')
         .map((tc: any) => tc.input);
 
-      setTasks(extractedTasks);
+      addTasks(extractedTasks);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   // Transform AI output → Supabase task schema
-  const transformToSupabaseTask = (task: TaskCardArgs) => ({
+  const transformToSupabaseTask = (task: {title: string, duration:string, priority: string}) => ({
     title: task.title,
     description: `Estimated: ${task.duration}`,
     status: 'not started',
@@ -174,7 +177,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
 
   // Clear and start over
   const handleClear = () => {
-    setTasks([]);
+    reset();
     setTimeout(() => {
         setGoal('');
     }, 300)
