@@ -39,31 +39,6 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [selectedCycle, setSelectedCycle] = useState<string>('');
 
-  // Log when modal opens/closes
-  useEffect(() => {
-    console.log('PLANNER MODAL isOpen CHANGED', isOpen);
-    console.warn('Modal state:', { isOpen, messagesCount: messages.length });
-
-    if (!isOpen) {
-      console.log('Modal is CLOSED');
-      return;
-    }
-
-    console.log('✅ Modal is OPEN');
-    console.log('=== ZUSTAND TEST ===');
-    console.log('Messages before:', messages);
-
-    if (messages.length === 0) {
-      console.log('📝 Adding test message to Zustand store...');
-      addUsermessage("Test Message from Zustand");
-    }
-  }, [isOpen]);
-
-  // Log whenever messages change
-  useEffect(() => {
-    console.log('Messages updated:', messages);
-  }, [messages]);
-
   // Fetch cycles on mount
   useEffect(() => {
     if (!isOpen) return;
