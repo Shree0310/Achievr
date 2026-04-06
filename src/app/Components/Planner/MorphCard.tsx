@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PlannerSkeleton } from './PlannerSkeleton';
-import { IconTrash } from '@tabler/icons-react';
+import { IconTrash, IconEdit, IconCheck, IconX } from '@tabler/icons-react';
+import { useState } from 'react';
 
 const priorityStyles = {
   high: 'border-l-red-500 bg-red-50 dark:bg-red-950/20',
@@ -26,9 +26,34 @@ interface MorphCardProps {
     priority: 'high' | 'medium' | 'low';
   };
   onDelete?: (id: string) => void;
+  onUpdate?: (id: string, updates: { title?: string; priority?: 'high' | 'medium' | 'low' }) => void;
 }
 
-export function MorphCard({ index, isLoading, task, onDelete }: MorphCardProps) {
+export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(task?.title || '');
+  const [editPriority, setEditPriority] = useState<'high' | 'medium' | 'low'>(task?.priority || 'medium');
+
+  const handleSave = () => {
+    if (task && onUpdate) {
+      onUpdate(task.id, { title: editTitle, priority: editPriority });
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditTitle(task?.title || '');
+    setEditPriority(task?.priority || 'medium');
+    setIsEditing(false);
+  };
+
+  const startEditing = () => {
+    setEditTitle(task?.title || '');
+    setEditPriority(task?.priority || 'medium');
+    setIsEditing(true);
+  };
+
   return (
     <motion.div
       layout
@@ -38,56 +63,134 @@ export function MorphCard({ index, isLoading, task, onDelete }: MorphCardProps) 
         y: 0,
         transition: { delay: index * 0.1, duration: 0.3 }
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={`
-        group relative
+        relative
         rounded-lg border-l-4 p-4 border border-gray-200 dark:border-gray-700
         transition-colors duration-500
         ${isLoading || !task
           ? 'border-l-gray-300 dark:border-l-gray-600 bg-gray-50 dark:bg-gray-800/50'
-          : priorityStyles[task.priority]
+          : priorityStyles[isEditing ? editPriority : task.priority]
         }
       `}
     >
       {isLoading || !task ? (
         // Skeleton content
-          <PlannerSkeleton className="mb-6" />
-
+        <div className="relative overflow-hidden">
+          <div className="flex items-start justify-between gap-3">
+            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
+            <div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+          </div>
+          <div className="mt-3 h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 animate-pulse" />
+        </div>
+      ) : isEditing ? (
+        // Edit mode
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="space-y-3"
+        >
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
+              bg-white dark:bg-neutral-800 text-gray-900 dark:text-white text-sm"
+            autoFocus
+          />
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              {(['high', 'medium', 'low'] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setEditPriority(p)}
+                  className={`
+                    text-xs font-medium px-3 py-1.5 rounded-full transition-all
+                    ${editPriority === p 
+                      ? priorityBadge[p] + ' ring-2 ring-offset-1 ring-gray-400'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+                    }
+                  `}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-1">
+              <button
+                onClick={handleSave}
+                className="p-1.5 rounded-full bg-green-100 dark:bg-green-900/30 
+                  text-green-600 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+              >
+                <IconCheck size={16} />
+              </button>
+              <button
+                onClick={handleCancel}
+                className="p-1.5 rounded-full bg-gray-100 dark:bg-gray-800 
+                  text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <IconX size={16} />
+              </button>
+            </div>
+          </div>
+        </motion.div>
       ) : (
-        // Real content
+        // View mode
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.3 }}
-          className='group relative'
         >
-          <div className="flex justify-between gap-20">
-            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+          <div className="flex justify-between gap-4">
+            <h3 className="font-medium text-gray-900 dark:text-gray-100 flex-1">
               {task.title}
             </h3>
-            <div className='flex gap-2'>
-            <span
-              className={`
-                text-xs font-medium px-2 py-1 rounded-full shrink-0
-                ${priorityBadge[task.priority]}
-              `}
-            >
-              {task.priority}
-            </span>
-            {onDelete && (
-              <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+            <div className="flex items-center gap-2">
+              <span
+                className={`
+                  text-xs font-medium px-2 py-1 rounded-full shrink-0
+                  ${priorityBadge[task.priority]}
+                `}
+              >
+                {task.priority}
+              </span>
+              
+              {/* Edit button */}
+              {onUpdate && (
+                <motion.button
+                  animate={{ 
+                    opacity: isHovered ? 1 : 0, 
+                    scale: isHovered ? 1 : 0.8 
+                  }}
+                  transition={{ duration: 0.15 }}
+                  onClick={startEditing}
+                  className="p-1.5 rounded-full
+                    hover:bg-blue-100 dark:hover:bg-blue-900/30 
+                    text-gray-400 hover:text-blue-500 
+                    transition-colors duration-200"
+                >
+                  <IconEdit size={16} />
+                </motion.button>
+              )}
+              
+              {/* Delete button */}
+              {onDelete && (
+                <motion.button
+                  animate={{ 
+                    opacity: isHovered ? 1 : 0, 
+                    scale: isHovered ? 1 : 0.8 
+                  }}
+                  transition={{ duration: 0.15 }}
                   onClick={() => onDelete(task.id)}
-                  className="p-1 rounded-full opacity-0 group-hover:opacity-100
+                  className="p-1.5 rounded-full
                     hover:bg-red-100 dark:hover:bg-red-900/30 
                     text-gray-400 hover:text-red-500 
-                    transition-all duration-200"
+                    transition-colors duration-200"
                 >
                   <IconTrash size={16} />
                 </motion.button>
-            )}
+              )}
             </div>
           </div>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">

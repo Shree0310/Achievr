@@ -33,6 +33,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   const setLoading = usePlannerStore((state) => state.setLoading);
   const addTasks = usePlannerStore((state) => state.addTasks);
   const removeTask = usePlannerStore((state) => state.removeTask);
+  const updateTask = usePlannerStore((state) => state.updateTask);
   const reset = usePlannerStore((state) => state.reset);
 
   // Cycle state
@@ -270,6 +271,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
                             isLoading={isLoading}
                             task={isLoading ? undefined : (item as any)}
                             onDelete={isLoading ? undefined : removeTask}
+                            onUpdate={isLoading ? undefined : updateTask}
                         />
                         ))}
                     </div>
