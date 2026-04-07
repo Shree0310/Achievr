@@ -15,6 +15,8 @@ export interface ExplainBlock {
     bullets: string;
 }
 
+//Suggest Actions Block is how AI gives clickable option to the user
+//The user drives the conversation by clicking buttons rather than typing everything
 export interface SuggestActionsBlock {
     type: 'suggest_actions';
     prompt: string;
