@@ -11,7 +11,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
-import TiptapToolbar from './TiptapToolbar';
+import { SlashCommand, slashCommandSuggestion } from './SlashCommandExtension';
 
 interface Task {
     id : string,
@@ -48,7 +48,14 @@ const EditTask = ({taskId}:EditTaskProps) => {
         extensions: [
             StarterKit,
             Placeholder.configure({
-                placeholder: 'Enter Task Description',
+                placeholder: ({ node }) => {
+                    if (node.type.name === 'heading') {
+                        return `Heading`
+                    }
+                    return 'Type "/" for commands'
+                },
+                showOnlyWhenEditable: true,
+                showOnlyCurrent: false,
             }),
             Image.configure({
                 HTMLAttributes: {
@@ -60,6 +67,9 @@ const EditTask = ({taskId}:EditTaskProps) => {
                 HTMLAttributes: {
                     class: 'text-blue-500 hover:text-blue-700 underline',
                 },
+            }),
+            SlashCommand.configure({
+                suggestion: slashCommandSuggestion,
             }),
         ],
         content: description,
@@ -232,8 +242,7 @@ const EditTask = ({taskId}:EditTaskProps) => {
                         </div>
                 
                         {/* Description Input */}
-                        <div className="border border-neutral-300 dark:border-neutral-700 rounded-lg overflow-hidden my-4">
-                            <TiptapToolbar editor={editor} />
+                        <div className="border border-neutral-300 dark:border-neutral-700 rounded-lg overflow-hidden my-4 p-2">
                             <EditorContent editor={editor} />
                         </div>
                         
@@ -291,24 +300,18 @@ const EditTask = ({taskId}:EditTaskProps) => {
                                 <h1 className="text-lg py-4 font-semibold">Subtasks</h1>
                                 <button className="text-lg py-4 h-6 px-4 font-semibold" onClick={handleNewSubtask}>+</button>
                             </div>
-                            <SubtasksTab 
-                                subTasks={subTasks}
-                                taskToEdit={task} 
-                                userId={userId} 
-                                onSubtaskCreated={fetchSubTask} // Better than window.location.reload()
-                            />
                             {addSubTaskMode && <div className="div">
                                 <div className="dark:bg-neutral-800 my-4 rounded-md">
                                     <input 
                                         type="text"
-                                        className="w-full pt-2 px-3 mt-2 h-10 text-neutral-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-neutral-500 text-sm bg-neutral-100 dark:bg-neutral-800 placeholder:text-sm" 
-                                        placeholder="Sub task title"
+                                        className="w-full px-3 h-10 my-3 text-neutral-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-neutral-500 text-sm bg-neutral-100 dark:bg-neutral-800 placeholder:text-sm" 
+                                        placeholder="Subtask Title"
                                         value={newSubtaskTitle}
                                         onChange={(e) => setNewSubtaskTitle(e.target.value)}
                                     />
                                     <input 
                                         type="text"
-                                        className="w-full px-3 h-10 text-neutral-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-neutral-500 text-sm bg-neutral-100 dark:bg-neutral-800 placeholder:text-sm"  
+                                        className="w-full px-3 h-10 my-3 text-neutral-500 focus-visible:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible::border-none dark:text-neutral-500 text-sm bg-neutral-100 dark:bg-neutral-800 placeholder:text-sm"  
                                         placeholder="Add Description"
                                         value={newSubtaskDes}
                                         onChange={(e) => setNewSubtaskDes(e.target.value)}
@@ -319,6 +322,12 @@ const EditTask = ({taskId}:EditTaskProps) => {
                                     </button>
                             </div>
                             }
+                            <SubtasksTab 
+                                subTasks={subTasks}
+                                taskToEdit={task} 
+                                userId={userId} 
+                                onSubtaskCreated={fetchSubTask} // Better than window.location.reload()
+                            />
                         </div>
                         
                         <div className="py-4 px-4 mt-8">
