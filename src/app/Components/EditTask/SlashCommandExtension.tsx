@@ -48,8 +48,11 @@ export const slashCommandSuggestion: Partial<SuggestionOptions> = {
       onStart: (props) => {
         component = new ReactRenderer(SlashCommandMenu, {
           props: {
-            ...props,
             items: props.items,
+            command: (item: any) => {
+              item.command(props.editor)
+              props.editor.chain().focus().deleteRange(props.range).run()
+            },
           },
           editor: props.editor,
         })
@@ -71,8 +74,11 @@ export const slashCommandSuggestion: Partial<SuggestionOptions> = {
 
       onUpdate(props) {
         component?.updateProps({
-          ...props,
           items: props.items,
+          command: (item: any) => {
+            item.command(props.editor)
+            props.editor.chain().focus().deleteRange(props.range).run()
+          },
         })
 
         if (!props.clientRect) {

@@ -128,10 +128,16 @@ const GitHubRepositoryConnector = () => {
   }, [user?.id])
 
   // Check if user has GitHub connected
-  const demoUser = localStorage.getItem('demoUser')
-  
-  const hasGitHubToken = user?.user_metadata?.github_access_token || 
-    (demoUser && JSON.parse(demoUser).user_metadata?.access_token)
+  const [hasGitHubToken, setHasGitHubToken] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const demoUser = localStorage.getItem('demoUser')
+      const tokenExists = user?.user_metadata?.github_access_token ||
+        (demoUser && JSON.parse(demoUser).user_metadata?.access_token)
+      setHasGitHubToken(!!tokenExists)
+    }
+  }, [user])
 
   // Auto-fetch repositories when user has GitHub connected (only once)
   useEffect(() => {
