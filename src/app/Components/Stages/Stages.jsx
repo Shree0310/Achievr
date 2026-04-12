@@ -110,14 +110,14 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
 
     // Handle new task created
     const handleTaskCreated = (newTask) => {
-        setTasks(prevTasks => [...(prevTasks || []), newTask]);
+        setTasks(prevTasks => [newTask, ...(prevTasks || [])]);
     };
 
     // Handle task updates, deletions, and creations
     const handleTaskUpdates = (action, data) => {
         switch (action) {
             case "create":
-                setTasks(prevTasks => [...(prevTasks || []), data]);
+                setTasks(prevTasks => [data, ...(prevTasks || [])]);
                 break;
             case "update":
                 setTasks(prevTasks => prevTasks.map(task => task.id === data.id ? data : task));

@@ -98,8 +98,8 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className={`fixed bg-white dark:bg-neutral-900 shadow-2xl overflow-hidden flex flex-col ${
               isExpanded
-                ? 'inset-0 z-[60]'
-                : 'bottom-4 right-4 z-50'
+                ? 'inset-0 z-[60] border-0'
+                : 'bottom-4 right-4 z-50 border border-gray-300 dark:border-neutral-800'
             }`}
           >
             {/* Header - Sticky */}

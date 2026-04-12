@@ -7,8 +7,10 @@ import { IconCircleDashed } from '@tabler/icons-react';
 import { IconCircleHalf2 } from '@tabler/icons-react';
 import { IconPercentage75 } from '@tabler/icons-react';
 import { IconCircleCheck } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import EditTask from "../EditTask/EditTask";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
 
 
 const { useDraggable } = require("@dnd-kit/core");
@@ -53,6 +55,29 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
         }
     }
 
+    const handleDelete = async (e) => {
+        e.stopPropagation(); // Prevent task edit dialog from opening
+
+        if (window.confirm('Are you sure you want to delete this task?')) {
+            try {
+                const { error } = await supabase
+                    .from('tasks')
+                    .delete()
+                    .eq('id', task.id);
+
+                if (error) throw error;
+
+                // Notify parent component to update the UI
+                if (onTaskUpdate) {
+                    onTaskUpdate('delete', task.id);
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                alert('Failed to delete task. Please try again.');
+            }
+        }
+    }
+
     return (
         <>
             <Card
@@ -62,11 +87,12 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                 {...attributes}
                 onClick={() => router.push(`/editTask/${task.id}`)}
                 className='group bg-white dark:bg-neutral-800 rounded-lg p-4 border border-neutral-200 dark:border-neutral-700 hover:border-primary-400 dark:hover:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md dark:shadow-neutral-900/20 dark:hover:shadow-neutral-900/30 cursor-move'>
+
                 <div className="flex justify-between">
                 <div className="flex gap-3 ">
                     {task.status && (
                     <span className={`p-2 h-6 w-6 rounded-full text-xs font-medium`}>
-                        {task.status === 'not started' ? <IconCircleDashed stroke={2} height={15} width={15} className="text-neutral-500"  /> : 
+                        {task.status === 'not started' ? <IconCircleDashed stroke={2} height={15} width={15} className="text-neutral-500"  /> :
                           task.satus === 'in progress' ? <IconCircleHalf2 stroke={2} height={15} width={15} className="text-yellow-500" /> :
                           task.status === 'under review' ? <IconPercentage75 stroke={2} height={15} width={15} className="text-teal-700"/>:
                           <IconCircleCheck stroke={2} height={15} width={15} className="text-green-600" /> || <IconCircleDashed stroke={2} height={15} width={15} className="text-neutral-500"/>}
@@ -78,15 +104,25 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                         </h3>
                     </div>
                 </div>
-                    {/* Priority Badge */}
-                    {task.priority && (
-                        <span className={`p-2 h-6 w-6 flex justify-center items-center rounded-full text-xs font-medium
-                            ${task.priority === '1' ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
-                            task.priority === '2' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400' :
-                            'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'}`}>
-                            P{task.priority}
-                        </span>
-                    )}
+                    {/* Priority Badge and Delete Button */}
+                    <div className="flex items-start gap-2 -mt-1">
+                        {task.priority && (
+                            <span className={`p-2 h-6 w-6 flex justify-center items-center rounded-full text-xs font-medium
+                                ${task.priority === '1' ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
+                                task.priority === '2' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400' :
+                                'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'}`}>
+                                P{task.priority}
+                            </span>
+                        )}
+                        {/* Delete button - always visible */}
+                        <button
+                            onClick={handleDelete}
+                            className="p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-all duration-200"
+                            title="Delete task"
+                        >
+                            <IconTrash size={16} />
+                        </button>
+                    </div>
                 </div>
             
                 <div className="flex justify-between mt-4">
