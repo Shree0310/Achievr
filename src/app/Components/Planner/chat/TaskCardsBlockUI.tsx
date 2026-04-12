@@ -11,6 +11,11 @@ interface TaskCardsBlockUIProps {
 export function TaskCardsBlockUI({ block }: TaskCardsBlockUIProps) {
   const removeTask = usePlannerStore((state) => state.removeTask);
   const updateTask = usePlannerStore((state) => state.updateTask);
+  const allTasks = usePlannerStore((state) => state.tasks);
+
+  // Get the task IDs from the block to filter live tasks
+  const blockTaskIds = new Set(block.tasks.map(t => t.id));
+  const liveTasks = allTasks.filter(t => blockTaskIds.has(t.id));
 
   return (
     <motion.div
@@ -18,7 +23,7 @@ export function TaskCardsBlockUI({ block }: TaskCardsBlockUIProps) {
       animate={{ opacity: 1 }}
       className="space-y-2 max-w-[90%]"
     >
-      {block.tasks.map((task, index) => (
+      {liveTasks.map((task, index) => (
         <MorphCard
           key={task.id}
           index={index}
