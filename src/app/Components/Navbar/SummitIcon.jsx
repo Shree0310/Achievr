@@ -1,12 +1,11 @@
-import React from 'react';
-
-const SummitIcon = ({ 
-  size = 40, 
+const SummitIcon = ({
+  size = 40,
   className = "",
   variant = "default" // "default" or "dark"
 }) => {
-  const gradientId = `summit-grad-${Math.random().toString(36).substr(2, 9)}`;
-  
+  // Use a stable ID based on variant instead of random
+  const gradientId = `summit-grad-${variant}`;
+
   const colors = {
     default: ["#F59E0B", "#D97706"], // Orange gradient
     dark: ["#FCD34D", "#F59E0B"]     // Lighter orange for dark theme

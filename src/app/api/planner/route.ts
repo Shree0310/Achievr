@@ -96,39 +96,64 @@ const tools: Anthropic.Messages.Tool[] = [
       required: ['content'],
     },
   },
+  {
+    name: 'list_features',
+    description: 'Present a list of features, MVP items, or planning points. Use when user asks to define, list, or brainstorm features.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        heading: {
+          type: 'string',
+          description: 'Heading for the list (e.g., "MVP Features for Fitness App")',
+        },
+        items: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'List of features or items',
+        },
+      },
+      required: ['heading', 'items'],
+    },
+  },
 ];
 
 const SYSTEM_PROMPT = `You are an AI project planner assistant. Help users turn vague goals into concrete, actionable project plans.
 
-## How to respond
+## CRITICAL INSTRUCTION - READ CAREFULLY
 
-1. When a user shares a goal, FIRST use explain_approach to:
-   - Acknowledge their goal
-   - List 3-5 key considerations as bullets
-   - Set expectations for what you'll help with
+You MUST ALWAYS use suggest_actions tool after explain_approach. NEVER skip suggest_actions.
 
-2. THEN use suggest_actions to offer 2-4 possible next steps, such as:
-   - "Draft an MVP feature list"
-   - "Create project tasks now"
-   - "Ask clarifying questions"
-   - "Create a timeline"
+## Response patterns (MANDATORY):
 
-3. When the user wants tasks, use create_task_card multiple times (4-8 tasks typically):
-   - Make tasks specific and actionable
-   - Vary priorities realistically
-   - Include realistic duration estimates
+### Pattern 1: Initial goal from user
+User says: "I want to build X" or "Help me with Y"
+YOU MUST USE BOTH TOOLS:
+1. explain_approach (context + 3-5 bullets)
+2. suggest_actions (2-4 buttons like "Create project tasks now", "Draft MVP features", "Ask clarifying questions")
 
-4. After creating tasks, use suggest_actions again for follow-ups like:
-   - "Add more tasks"
-   - "Refine these tasks"
-   - "Add milestones"
+### Pattern 2: User requests SPECIFIC features or planning
+User says: "Define MVP features", "Draft features", "What features should I include", etc.
+YOU MUST USE:
+1. Multiple create_task_card (4-8 feature-based tasks, vary priorities, include durations)
+   - Each task represents a key feature or component
+   - Make them specific and actionable
+2. suggest_actions (follow-up options like "Add more features", "Refine these", "Create implementation timeline")
 
-## Rules
-- Always start with explain_approach for new goals
-- Always end your turn with suggest_actions (except for final confirmation)
-- Use send_text sparingly, only for brief confirmations
-- Create 4-8 tasks when asked to generate a project plan
-- Be conversational but efficient
+### Pattern 3: User requests general tasks or "Create tasks"
+User says: "Create project tasks now", "Create tasks", "Give me tasks"
+YOU MUST USE:
+1. Multiple create_task_card (6-10 comprehensive project tasks, vary priorities, include durations)
+   - Cover all aspects: planning, design, development, testing, deployment
+   - Make tasks concrete and actionable
+2. suggest_actions (follow-up options like "Add more tasks", "Break down complex tasks", "Add milestones")
+
+### Pattern 4: Brief acknowledgment
+Only use send_text for very brief confirmations (rare)
+
+## ABSOLUTE RULE
+- Every response MUST end with suggest_actions (except final confirmations)
+- If you use explain_approach, you MUST also use suggest_actions in the SAME response
+- When user asks for features, MVP, or tasks → ALWAYS create task cards, NOT just explanations
 `;
 
 export async function POST(req: Request) {
@@ -168,12 +193,59 @@ export async function POST(req: Request) {
       }
     }
 
-    // Build assistant response for history
-    const newHistory = [
+    // Debug logging
+    console.log('Tool calls:', toolCalls.map(tc => tc.tool).join(', '));
+
+    // Debug bullets rendering
+    const explainApproach = toolCalls.find(tc => tc.tool === 'explain_approach');
+    if (explainApproach) {
+      console.log('Explain approach bullets:', JSON.stringify(explainApproach.args.bullets, null, 2));
+      console.log('Bullets type:', typeof explainApproach.args.bullets);
+      console.log('Is array?', Array.isArray(explainApproach.args.bullets));
+    }
+
+    // Fallback: If explain_approach was used but suggest_actions wasn't, add a default suggest_actions
+    const hasExplainApproach = toolCalls.some(tc => tc.tool === 'explain_approach');
+    const hasSuggestActions = toolCalls.some(tc => tc.tool === 'suggest_actions');
+
+    if (hasExplainApproach && !hasSuggestActions) {
+      console.log('⚠️ Adding fallback suggest_actions');
+      toolCalls.push({
+        tool: 'suggest_actions',
+        args: {
+          prompt: 'What would you like to do next?',
+          actions: [
+            { id: 'create_tasks', label: 'Create project tasks now' },
+            { id: 'ask_questions', label: 'Ask clarifying questions' },
+            { id: 'define_mvp', label: 'Define MVP features' },
+          ],
+        },
+      });
+    }
+
+    // Build tool results for any tool uses
+    const toolResults = response.content
+      .filter((block): block is Anthropic.Messages.ToolUseBlock => block.type === 'tool_use')
+      .map(block => ({
+        type: 'tool_result' as const,
+        tool_use_id: block.id,
+        content: 'Success', // Acknowledge tool use
+      }));
+
+    // Build conversation history with tool results
+    const newHistory: Anthropic.Messages.MessageParam[] = [
       ...conversationHistory,
       { role: 'user', content: message },
       { role: 'assistant', content: response.content },
     ];
+
+    // If there were tool uses, add a user message with tool results
+    if (toolResults.length > 0) {
+      newHistory.push({
+        role: 'user',
+        content: toolResults,
+      });
+    }
 
     return Response.json({
       toolCalls,

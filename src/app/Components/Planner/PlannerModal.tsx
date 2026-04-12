@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlannerStore } from '@/lib/planner-store';
 import { ChatContainer } from './chat/ChatContainer';
 import { supabase } from '@/utils/supabase/client';
+import { IconMaximize, IconMinimize } from '@tabler/icons-react';
 
 interface PlannerModalProps {
   isOpen: boolean;
@@ -16,11 +17,13 @@ interface PlannerModalProps {
 export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerModalProps) {
   const tasks = usePlannerStore((state) => state.tasks);
   const reset = usePlannerStore((state) => state.reset);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Reset when modal closes
   useEffect(() => {
     if (!isOpen) {
       reset();
+      setIsExpanded(false);
     }
   }, [isOpen, reset]);
 
@@ -76,10 +79,22 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              width: isExpanded ? '100%' : undefined,
+              height: isExpanded ? '100%' : undefined,
+              maxWidth: isExpanded ? '100%' : undefined,
+              borderRadius: isExpanded ? '0px' : undefined,
+            }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="bg-white dark:bg-neutral-900 rounded-xl shadow-xl w-full max-w-2xl h-[80vh] overflow-hidden flex flex-col"
+            className={`bg-white dark:bg-neutral-900 shadow-xl overflow-hidden flex flex-col ${
+              isExpanded
+                ? 'w-full h-full max-w-full rounded-none'
+                : 'w-full max-w-2xl h-[80vh] rounded-xl'
+            }`}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
@@ -91,14 +106,28 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
                   Chat with AI to plan your project
                 </p>
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
-              >
-                <svg className="w-5 h-5 text-neutral-500 dark:text-white" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
+                  title={isExpanded ? "Exit fullscreen" : "Expand to fullscreen"}
+                >
+                  {isExpanded ? (
+                    <IconMinimize className="w-5 h-5 text-neutral-500 dark:text-white" />
+                  ) : (
+                    <IconMaximize className="w-5 h-5 text-neutral-500 dark:text-white" />
+                  )}
+                </button>
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
+                  title="Close"
+                >
+                  <svg className="w-5 h-5 text-neutral-500 dark:text-white" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Chat Container */}

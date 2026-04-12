@@ -67,6 +67,7 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
       // Process tool calls into content blocks
       const contentBlocks: ContentBlock[] = [];
       const newTasks: any[] = [];
+      let suggestActionsBlock: ContentBlock | null = null;
 
       for (const tc of data.toolCalls || []) {
         switch (tc.tool) {
@@ -79,11 +80,12 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
             break;
 
           case 'suggest_actions':
-            contentBlocks.push({
+            // Store suggest_actions separately to add at the end
+            suggestActionsBlock = {
               type: 'suggest_actions',
               prompt: tc.args.prompt,
               actions: tc.args.actions,
-            });
+            };
             break;
 
           case 'create_task_card':
@@ -113,6 +115,11 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
           type: 'task_cards',
           tasks: tasksWithIds,
         });
+      }
+
+      // Add suggest_actions at the END
+      if (suggestActionsBlock) {
+        contentBlocks.push(suggestActionsBlock);
       }
 
       // Add plain text if no tool calls
@@ -153,7 +160,7 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-neutral-700 scrollbar-track-transparent">
         {/* Welcome message if empty */}
         {messages.length === 0 && (
           <motion.div

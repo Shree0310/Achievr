@@ -44,15 +44,27 @@ export const slashCommandSuggestion: Partial<SuggestionOptions> = {
     let component: ReactRenderer<SlashCommandMenuRef>
     let popup: TippyInstance[]
 
+    const executeCommand = (props: any, item: any) => {
+      const { editor, range } = props
+
+      // Delete the slash and any query text first
+      editor.chain().focus().deleteRange(range).run()
+
+      // Then execute the command
+      item.command(editor)
+
+      // Destroy popup to close menu
+      if (popup && popup[0]) {
+        popup[0].destroy()
+      }
+    }
+
     return {
       onStart: (props) => {
         component = new ReactRenderer(SlashCommandMenu, {
           props: {
             items: props.items,
-            command: (item: any) => {
-              item.command(props.editor)
-              props.editor.chain().focus().deleteRange(props.range).run()
-            },
+            command: (item: any) => executeCommand(props, item),
           },
           editor: props.editor,
         })
@@ -75,10 +87,7 @@ export const slashCommandSuggestion: Partial<SuggestionOptions> = {
       onUpdate(props) {
         component?.updateProps({
           items: props.items,
-          command: (item: any) => {
-            item.command(props.editor)
-            props.editor.chain().focus().deleteRange(props.range).run()
-          },
+          command: (item: any) => executeCommand(props, item),
         })
 
         if (!props.clientRect) {

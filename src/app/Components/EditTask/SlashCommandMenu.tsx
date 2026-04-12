@@ -109,7 +109,7 @@ export const getSlashCommandItems = (editor: Editor): SlashCommandItem[] => [
     description: 'Large section heading',
     icon: <Heading1 size={18} />,
     command: (editor) => {
-      editor.chain().focus().toggleHeading({ level: 1 }).run()
+      editor.chain().focus().setHeading({ level: 1 }).run()
     },
   },
   {
@@ -117,7 +117,7 @@ export const getSlashCommandItems = (editor: Editor): SlashCommandItem[] => [
     description: 'Medium section heading',
     icon: <Heading2 size={18} />,
     command: (editor) => {
-      editor.chain().focus().toggleHeading({ level: 2 }).run()
+      editor.chain().focus().setHeading({ level: 2 }).run()
     },
   },
   {
@@ -125,7 +125,7 @@ export const getSlashCommandItems = (editor: Editor): SlashCommandItem[] => [
     description: 'Small section heading',
     icon: <Heading3 size={18} />,
     command: (editor) => {
-      editor.chain().focus().toggleHeading({ level: 3 }).run()
+      editor.chain().focus().setHeading({ level: 3 }).run()
     },
   },
   {
