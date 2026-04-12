@@ -6,6 +6,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CommentBox from "../Comments/CommentBox";
 import SubtasksTab from "../Subtasks/SubtasksTab";
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import TiptapToolbar from './TiptapToolbar';
 
 interface Task {
     id : string,
@@ -36,6 +42,36 @@ const EditTask = ({taskId}:EditTaskProps) => {
     const [priority, setPriority] = useState("");
     const [efforts, setEfforts] = useState("");
     const [userId, setUserId] = useState<string | undefined>("");
+
+    const editor = useEditor({
+        immediatelyRender: false,
+        extensions: [
+            StarterKit,
+            Placeholder.configure({
+                placeholder: 'Enter Task Description',
+            }),
+            Image.configure({
+                HTMLAttributes: {
+                    class: 'max-w-full h-auto rounded-lg my-4',
+                },
+            }),
+            Link.configure({
+                openOnClick: false,
+                HTMLAttributes: {
+                    class: 'text-blue-500 hover:text-blue-700 underline',
+                },
+            }),
+        ],
+        content: description,
+        onUpdate: ({ editor }) => {
+            setDescription(editor.getHTML())
+        },
+        editorProps:{
+            attributes: {
+                class: 'w-full px-2 py-2 min-h-28 border-none focus:outline-none bg-white dark:bg-neutral-900 prose prose-sm max-w-none'
+            }
+        }
+    })
 
     const fetchSubTask = async () => { 
         try{
@@ -149,6 +185,13 @@ const EditTask = ({taskId}:EditTaskProps) => {
         fetchSubTask();
     },[taskId])
 
+    // Update editor content when description changes
+    useEffect(() => {
+        if (editor && description !== editor.getHTML()) {
+            editor.commands.setContent(description)
+        }
+    }, [description, editor])
+
     if (loading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
@@ -160,12 +203,12 @@ const EditTask = ({taskId}:EditTaskProps) => {
     return (
         <div className="flex min-h-screen dark:bg-neutral-800/20">
             <div className="left-0 top-0 h-full">
-                <Navbar/>
+                <Navbar userId={userId} onTaskUpdate={fetchTask}></Navbar>
             </div>
             <div className="flex-1 p-8">
                 <div className="flex justify-between ">
                     <button onClick={() => router.back()}
-                        className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-center gap-2"
+                        className="text-neutral-600 py-2 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-center gap-2"
                     >
                         ← Back to Board
                     </button>
@@ -184,19 +227,14 @@ const EditTask = ({taskId}:EditTaskProps) => {
                                 placeholder="Enter task title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full px-2 py-2 shadow-md shadow-black/10 dark:shadow-gray/10 ring-1 ring-black/10 dark:ring-gray/10 text-3xl placeholder:text-xl border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-800"
+                                className="w-full px-2 py-1 text-2xl placeholder:text-xl border-none focus:outline-none bg-white dark:bg-neutral-900"
                             />
                         </div>
                 
                         {/* Description Input */}
-                        <div>
-                            <textarea
-                              placeholder="Enter task description"
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              rows={2}
-                              className="w-full px-2 py-2 shadow-md shadow-black/10 dark:shadow-gray my-4 h-28 border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-white dark:bg-neutral-900 placeholder:text-neutral-400"
-                            />
+                        <div className="border border-neutral-300 dark:border-neutral-700 rounded-lg overflow-hidden my-4">
+                            <TiptapToolbar editor={editor} />
+                            <EditorContent editor={editor} />
                         </div>
                         
                         <div className="flex flex-row gap-3 my-4">
