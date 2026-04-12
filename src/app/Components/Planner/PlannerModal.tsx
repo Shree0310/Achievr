@@ -70,34 +70,40 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-        >
+        <>
+          {/* Backdrop - only show when expanded */}
+          {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              onClick={() => setIsExpanded(false)}
+            />
+          )}
+
+          {/* Chat widget */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{
               opacity: 1,
               scale: 1,
               y: 0,
-              width: isExpanded ? '100%' : undefined,
-              height: isExpanded ? '100%' : undefined,
-              maxWidth: isExpanded ? '100%' : undefined,
-              borderRadius: isExpanded ? '0px' : undefined,
+              width: isExpanded ? '100%' : '400px',
+              height: isExpanded ? '100%' : '600px',
+              borderRadius: isExpanded ? '0px' : '16px',
             }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className={`bg-white dark:bg-neutral-900 shadow-xl overflow-hidden flex flex-col ${
+            className={`fixed bg-white dark:bg-neutral-900 shadow-2xl overflow-hidden flex flex-col ${
               isExpanded
-                ? 'w-full h-full max-w-full rounded-none'
-                : 'w-full max-w-2xl h-[80vh] rounded-xl'
+                ? 'inset-0 z-[60]'
+                : 'bottom-4 right-4 z-50'
             }`}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
+            {/* Header - Sticky */}
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900">
               <div>
                 <h2 className="text-xl font-semibold text-neutral-800 dark:text-white">
                   ✨ AI Project Planner
@@ -133,7 +139,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
             {/* Chat Container */}
             <ChatContainer onSaveToBoard={handleSaveToBoard} />
           </motion.div>
-        </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

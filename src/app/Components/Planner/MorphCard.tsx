@@ -30,7 +30,6 @@ interface MorphCardProps {
 }
 
 export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task?.title || '');
   const [editPriority, setEditPriority] = useState<'high' | 'medium' | 'low'>(task?.priority || 'medium');
@@ -57,14 +56,12 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ 
-        opacity: 1, 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{
+        opacity: 1,
         y: 0,
         transition: { delay: index * 0.1, duration: 0.3 }
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={`
         relative
         rounded-lg border-l-4 p-4 border border-gray-200 dark:border-gray-700
@@ -156,40 +153,30 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
                 {task.priority}
               </span>
               
-              {/* Edit button */}
+              {/* Edit button - Always visible, more prominent on hover */}
               {onUpdate && (
-                <motion.button
-                  animate={{ 
-                    opacity: isHovered ? 1 : 0, 
-                    scale: isHovered ? 1 : 0.8 
-                  }}
-                  transition={{ duration: 0.15 }}
+                <button
                   onClick={startEditing}
-                  className="p-1.5 rounded-full
-                    hover:bg-blue-100 dark:hover:bg-blue-900/30 
-                    text-gray-400 hover:text-blue-500 
-                    transition-colors duration-200"
+                  className="p-1.5 rounded-full opacity-60 hover:opacity-100
+                    hover:bg-blue-100 dark:hover:bg-blue-900/30
+                    text-gray-400 hover:text-blue-500
+                    transition-all duration-200"
                 >
                   <IconEdit size={16} />
-                </motion.button>
+                </button>
               )}
-              
-              {/* Delete button */}
+
+              {/* Delete button - Always visible, more prominent on hover */}
               {onDelete && (
-                <motion.button
-                  animate={{ 
-                    opacity: isHovered ? 1 : 0, 
-                    scale: isHovered ? 1 : 0.8 
-                  }}
-                  transition={{ duration: 0.15 }}
+                <button
                   onClick={() => onDelete(task.id)}
-                  className="p-1.5 rounded-full
-                    hover:bg-red-100 dark:hover:bg-red-900/30 
-                    text-gray-400 hover:text-red-500 
-                    transition-colors duration-200"
+                  className="p-1.5 rounded-full opacity-60 hover:opacity-100
+                    hover:bg-red-100 dark:hover:bg-red-900/30
+                    text-gray-400 hover:text-red-500
+                    transition-all duration-200"
                 >
                   <IconTrash size={16} />
-                </motion.button>
+                </button>
               )}
             </div>
           </div>

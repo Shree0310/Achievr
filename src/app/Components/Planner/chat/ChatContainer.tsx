@@ -79,6 +79,14 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
             });
             break;
 
+          case 'list_features':
+            contentBlocks.push({
+              type: 'list_features',
+              heading: tc.args.heading,
+              items: tc.args.items,
+            });
+            break;
+
           case 'suggest_actions':
             // Store suggest_actions separately to add at the end
             suggestActionsBlock = {

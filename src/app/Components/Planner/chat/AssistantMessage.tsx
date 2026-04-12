@@ -5,6 +5,7 @@ import { ContentBlock } from '@/lib/planner-store';
 import { ExplainBlockUI } from './ExplainBlockUI';
 import { SuggestActionsUI } from './SuggestActionsUI';
 import { TaskCardsBlockUI } from './TaskCardsBlockUI';
+import { ListFeaturesUI } from './ListFeaturesUI';
 
 interface AssistantMessageProps {
   content: ContentBlock[];
@@ -46,7 +47,10 @@ export function AssistantMessage({ content, onActionClick, index = 0 }: Assistan
           
           case 'task_cards':
             return <TaskCardsBlockUI key={blockIndex} block={block} />;
-          
+
+          case 'list_features':
+            return <ListFeaturesUI key={blockIndex} block={block} />;
+
           default:
             return null;
         }

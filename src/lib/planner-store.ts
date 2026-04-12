@@ -28,7 +28,13 @@ export interface TaskCardsBlock {
     tasks: PlannerTask[];
 }
 
-export type ContentBlock = TextBlock | ExplainBlock | SuggestActionsBlock | TaskCardsBlock;
+export interface ListFeaturesBlock {
+    type: 'list_features';
+    heading: string;
+    items: string[];
+}
+
+export type ContentBlock = TextBlock | ExplainBlock | SuggestActionsBlock | TaskCardsBlock | ListFeaturesBlock;
 
 //Chat Message - User sends strings, Assistant sends content blocks
 export interface ChatMessage {
