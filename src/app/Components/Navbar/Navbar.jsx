@@ -57,13 +57,12 @@ const Navbar = ({ userId, onTaskUpdate, children }) => {
         });
     }, [router]);
 
-     const handleTasksAdded = () => {
+     const handleTasksAdded = async () => {
         // Trigger the parent's task update handler to refresh the board
         if (onTaskUpdate) {
             onTaskUpdate('refresh', null);
         }
-        // Fallback: reload the page
-        window.location.reload();
+        // No page reload - let the UI update smoothly
     };
 
     return (

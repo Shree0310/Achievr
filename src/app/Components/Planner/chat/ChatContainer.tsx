@@ -6,7 +6,7 @@ import { usePlannerStore, ContentBlock } from '@/lib/planner-store';
 import { UserMessage } from './UserMessage';
 import { AssistantMessage } from './AssistantMessage';
 import { TypingIndicator } from './TypingIndicator';
-import { IconSend, IconSparkles } from '@tabler/icons-react';
+import { IconSend, IconSparkles, IconCheck, IconLoader2 } from '@tabler/icons-react';
 
 interface ChatContainerProps {
   onSaveToBoard?: () => void;
@@ -15,6 +15,8 @@ interface ChatContainerProps {
 export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Zustand store
   const messages = usePlannerStore((state) => state.messages);
@@ -165,6 +167,27 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
     sendMessage(input);
   };
 
+  // Handle save to board with loading state
+  const handleSaveToBoard = async () => {
+    if (!onSaveToBoard) return;
+
+    setIsSaving(true);
+
+    try {
+      await onSaveToBoard();
+      setShowSuccess(true);
+
+      // Hide success message after 2 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error saving to board:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Messages area */}
@@ -218,7 +241,7 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
 
       {/* Task summary bar */}
       <AnimatePresence>
-        {tasks.length > 0 && (
+        {tasks.length > 0 && !showSuccess && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -230,11 +253,36 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
                 {tasks.length} task{tasks.length > 1 ? 's' : ''} ready to add
               </span>
               <button
-                onClick={onSaveToBoard}
-                className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                onClick={handleSaveToBoard}
+                disabled={isSaving}
+                className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                Add to Board
+                {isSaving ? (
+                  <>
+                    <IconLoader2 className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Add to Board'
+                )}
               </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Success message */}
+        {showSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="px-4 py-3 bg-green-50 dark:bg-green-950/30 border-t border-green-200 dark:border-green-800"
+          >
+            <div className="flex items-center justify-center gap-2 text-green-700 dark:text-green-300">
+              <IconCheck className="w-5 h-5" />
+              <span className="text-sm font-medium">
+                Tasks added to board successfully!
+              </span>
             </div>
           </motion.div>
         )}

@@ -125,17 +125,23 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
             case "delete":
                 setTasks(prevTasks => prevTasks.filter(task => task.id !== data));
                 break;
+            case "refresh":
+                // Refresh all data from the database
+                fetchData();
+                break;
             default:
                 break;
         }
-        
-        // Refresh comment counts and subtask counts after any task update
-        setTimeout(() => {
-            if (tasks && tasks.length > 0) {
-                fetchCommentCounts();
-                fetchSubtasks();
-            }
-        }, 100);
+
+        // Refresh comment counts and subtask counts after any task update (except refresh which already fetches everything)
+        if (action !== "refresh") {
+            setTimeout(() => {
+                if (tasks && tasks.length > 0) {
+                    fetchCommentCounts();
+                    fetchSubtasks();
+                }
+            }, 100);
+        }
     };
 
     // Handle subtask visibility toggle

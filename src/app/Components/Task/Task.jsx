@@ -8,9 +8,11 @@ import { IconCircleHalf2 } from '@tabler/icons-react';
 import { IconPercentage75 } from '@tabler/icons-react';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { IconTrash } from '@tabler/icons-react';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import EditTask from "../EditTask/EditTask";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
+import { AnimatePresence, motion } from "framer-motion";
 
 
 const { useDraggable } = require("@dnd-kit/core");
@@ -20,6 +22,7 @@ const { transform } = require("typescript");
 
 const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, showSubtasks, subTasksCount,subTasks  }) => {
     const [isEditMode, setIsEditMode] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
         
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: id,
@@ -55,28 +58,46 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
         }
     }
 
-    const handleDelete = async (e) => {
+    const handleDeleteClick = (e) => {
         e.stopPropagation(); // Prevent task edit dialog from opening
+        setShowDeleteConfirm(true);
+    };
 
-        if (window.confirm('Are you sure you want to delete this task?')) {
-            try {
-                const { error } = await supabase
-                    .from('tasks')
-                    .delete()
-                    .eq('id', task.id);
+    const handleConfirmDelete = async () => {
+        try {
+            // First, delete all related comments
+            const { error: commentsError } = await supabase
+                .from('comments')
+                .delete()
+                .eq('task_id', task.id);
 
-                if (error) throw error;
+            if (commentsError) throw commentsError;
 
-                // Notify parent component to update the UI
-                if (onTaskUpdate) {
-                    onTaskUpdate('delete', task.id);
-                }
-            } catch (error) {
-                console.error('Error deleting task:', error);
-                alert('Failed to delete task. Please try again.');
+            // Then delete the task
+            const { error: taskError } = await supabase
+                .from('tasks')
+                .delete()
+                .eq('id', task.id);
+
+            if (taskError) throw taskError;
+
+            // Notify parent component to update the UI
+            if (onTaskUpdate) {
+                onTaskUpdate('delete', task.id);
             }
+
+            setShowDeleteConfirm(false);
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            alert('Failed to delete task. Please try again.');
+            setShowDeleteConfirm(false);
         }
-    }
+    };
+
+    const handleCancelDelete = (e) => {
+        e.stopPropagation();
+        setShowDeleteConfirm(false);
+    };
 
     return (
         <>
@@ -116,7 +137,7 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                         )}
                         {/* Delete button - always visible */}
                         <button
-                            onClick={handleDelete}
+                            onClick={handleDeleteClick}
                             className="p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-all duration-200"
                             title="Delete task"
                         >
@@ -181,6 +202,64 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
                 //     subTasks={subTasks}
                 // />
             )}
+
+            {/* Custom Delete Confirmation Modal - Portal to body */}
+            <AnimatePresence>
+                {showDeleteConfirm && (
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={handleCancelDelete}
+                            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                        />
+
+                        {/* Modal */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            transition={{ duration: 0.2 }}
+                            className="relative w-full max-w-md mx-4"
+                        >
+                            <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-2xl p-6">
+                                {/* Icon and Title */}
+                                <div className="flex items-start gap-4 mb-4">
+                                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                                        <IconAlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                            Delete Task
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Are you sure you want to delete "{task.title}"?
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Buttons */}
+                                <div className="flex gap-3 justify-end mt-6">
+                                    <button
+                                        onClick={handleCancelDelete}
+                                        className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-600 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleConfirmDelete}
+                                        className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition-colors"
+                                    >
+                                        Delete Task
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </>
     )
 }

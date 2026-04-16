@@ -10,7 +10,7 @@ import { IconMaximize, IconMinimize } from '@tabler/icons-react';
 interface PlannerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onTasksAdded: () => void;
+  onTasksAdded: () => Promise<void> | void;
   userId: string;
 }
 
@@ -59,8 +59,13 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
 
       if (error) throw error;
 
-      onTasksAdded();
-      onClose();
+      // Call onTasksAdded and wait if it's async
+      await Promise.resolve(onTasksAdded());
+
+      // Close modal after a short delay to show success message
+      setTimeout(() => {
+        onClose();
+      }, 2500);
 
     } catch (error) {
       console.error('Failed to save tasks:', error);
