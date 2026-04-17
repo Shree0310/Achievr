@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ContentBlock } from '@/lib/planner-store';
 import { ExplainBlockUI } from './ExplainBlockUI';
 import { SuggestActionsUI } from './SuggestActionsUI';
@@ -14,22 +14,24 @@ interface AssistantMessageProps {
 }
 
 export function AssistantMessage({ content, onActionClick, index = 0 }: AssistantMessageProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.3 }}
+      transition={{ delay: index * 0.05, duration: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
       className="flex flex-col gap-3"
     >
       {content.map((block, blockIndex) => {
         switch (block.type) {
           case 'text':
             return (
-              <div 
-                key={blockIndex} 
-                className="max-w-[85%] bg-gray-100 dark:bg-neutral-800 px-4 py-2.5 rounded-2xl rounded-bl-sm"
+              <div
+                key={blockIndex}
+                className="max-w-[85%] bg-white dark:bg-gray-800 px-5 py-3 rounded-2xl rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-700"
               >
-                <p className="text-sm text-gray-800 dark:text-gray-200">{block.content}</p>
+                <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{block.content}</p>
               </div>
             );
           

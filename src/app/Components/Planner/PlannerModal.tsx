@@ -107,40 +107,47 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
               damping: 30,
               mass: 0.8
             }}
-            className={`fixed bg-white dark:bg-neutral-900 shadow-2xl overflow-hidden flex flex-col ${
+            className={`fixed bg-white dark:bg-gray-900 shadow-2xl overflow-hidden flex flex-col ${
               isExpanded
                 ? 'inset-0 z-[60] border-0'
-                : 'bottom-4 right-4 z-50 border border-gray-300 dark:border-neutral-800'
+                : 'bottom-4 right-4 z-50 border border-gray-200 dark:border-gray-800'
             }`}
           >
             {/* Header - Sticky */}
-            <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900">
-              <div>
-                <h2 className="text-xl font-semibold text-neutral-800 dark:text-white">
-                  ✨ AI Project Planner
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Chat with AI to plan your project
-                </p>
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    AI Planner
+                  </h2>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Plan smarter, build faster
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-150 active:scale-95"
                   title={isExpanded ? "Exit fullscreen" : "Expand to fullscreen"}
                 >
                   {isExpanded ? (
-                    <IconMinimize className="w-5 h-5 text-neutral-500 dark:text-white" />
+                    <IconMinimize className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                   ) : (
-                    <IconMaximize className="w-5 h-5 text-neutral-500 dark:text-white" />
+                    <IconMaximize className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                   )}
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-150 active:scale-95"
                   title="Close"
                 >
-                  <svg className="w-5 h-5 text-neutral-500 dark:text-white" viewBox="0 0 24 24" fill="none">
+                  <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" viewBox="0 0 24 24" fill="none">
                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </button>

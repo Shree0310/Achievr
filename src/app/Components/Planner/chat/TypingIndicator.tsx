@@ -1,27 +1,30 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 export function TypingIndicator() {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className="flex items-center gap-2"
+      exit={shouldReduceMotion ? undefined : { opacity: 0, y: -10 }}
+      transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
+      className="flex items-center gap-3"
     >
-      <div className="bg-gray-100 dark:bg-neutral-800 rounded-2xl rounded-bl-sm px-4 py-3">
-        <div className="flex items-center gap-1.5">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-bl-sm px-5 py-3.5 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2">
           {[0, 1, 2].map((i) => (
             <motion.div
               key={i}
-              className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500"
-              animate={{
-                y: [0, -6, 0],
-                opacity: [0.5, 1, 0.5],
+              className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+              animate={shouldReduceMotion ? {} : {
+                y: [0, -8, 0],
+                opacity: [0.4, 1, 0.4],
               }}
               transition={{
-                duration: 0.8,
+                duration: 0.9,
                 repeat: Infinity,
                 delay: i * 0.15,
                 ease: 'easeInOut',
@@ -30,7 +33,10 @@ export function TypingIndicator() {
           ))}
         </div>
       </div>
-      <span className="text-xs text-gray-400">AI is thinking...</span>
+      <div className="flex items-center gap-2">
+        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">AI is thinking</span>
+      </div>
     </motion.div>
   );
 }

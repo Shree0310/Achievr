@@ -192,23 +192,23 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 scroll-smooth scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent bg-gray-50/50 dark:bg-gray-950/50">
         {/* Welcome message if empty */}
         {messages.length === 0 && (
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
-            className="text-center py-12"
+            className="text-center py-16 px-4"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-4">
-              <IconSparkles className="w-8 h-8 text-white" />
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 mb-6 shadow-2xl shadow-blue-500/30">
+              <IconSparkles className="w-10 h-10 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              AI Project Planner
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+              Welcome to AI Planner
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-              Tell me what you want to build, and I'll help turn it into a concrete plan with tasks.
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
+              Describe your project idea, and I'll help you create a structured plan with actionable tasks. Let's build something amazing together.
             </p>
           </motion.div>
         )}
@@ -249,16 +249,19 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
             transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
-            className="px-4 py-3 bg-green-50 dark:bg-green-950/30 border-t border-green-200 dark:border-green-800"
+            className="px-6 py-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border-t border-emerald-200 dark:border-emerald-900/50"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm text-green-700 dark:text-green-300">
-                {tasks.length} task{tasks.length > 1 ? 's' : ''} ready to add
-              </span>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span className="text-sm font-medium text-emerald-900 dark:text-emerald-100">
+                  {tasks.length} task{tasks.length > 1 ? 's' : ''} ready
+                </span>
+              </div>
               <button
                 onClick={handleSaveToBoard}
                 disabled={isSaving}
-                className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-medium rounded-xl hover:from-emerald-700 hover:to-teal-700 active:scale-95 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-emerald-500/25"
               >
                 {isSaving ? (
                   <>
@@ -266,7 +269,12 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
                     Saving...
                   </>
                 ) : (
-                  'Add to Board'
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add to Board
+                  </>
                 )}
               </button>
             </div>
@@ -280,12 +288,14 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
             transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
-            className="px-4 py-3 bg-green-50 dark:bg-green-950/30 border-t border-green-200 dark:border-green-800"
+            className="px-6 py-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border-t border-emerald-200 dark:border-emerald-900/50"
           >
-            <div className="flex items-center justify-center gap-2 text-green-700 dark:text-green-300">
-              <IconCheck className="w-5 h-5" />
-              <span className="text-sm font-medium">
-                Tasks added to board successfully!
+            <div className="flex items-center justify-center gap-2.5">
+              <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                <IconCheck className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-emerald-900 dark:text-emerald-100">
+                Tasks added successfully!
               </span>
             </div>
           </motion.div>
@@ -295,26 +305,32 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
       {/* Input area */}
       <form
         onSubmit={handleSubmit}
-        className="p-4 border-t border-gray-200 dark:border-neutral-700"
+        className="p-6 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
       >
-        <div className="flex items-center gap-3">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="What do you want to build?"
-            disabled={isLoading}
-            className="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-neutral-700 
-              bg-white dark:bg-neutral-800 text-gray-900 dark:text-white 
-              placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 
-              disabled:opacity-50"
-          />
+        <div className="flex items-end gap-3">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Describe your project idea..."
+              disabled={isLoading}
+              className="w-full px-5 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                placeholder-gray-400 dark:placeholder-gray-500
+                focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10
+                disabled:opacity-50 disabled:cursor-not-allowed
+                transition-all duration-150"
+            />
+          </div>
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="p-3 rounded-xl bg-indigo-600 text-white
-              disabled:opacity-50 disabled:cursor-not-allowed
-              hover:bg-indigo-700 active:scale-[0.97] transition-all duration-150"
+            className="p-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white
+              disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale
+              hover:from-blue-700 hover:to-purple-700 active:scale-95
+              transition-all duration-150 shadow-lg shadow-blue-500/25
+              disabled:shadow-none"
           >
             <IconSend className="w-5 h-5" />
           </button>
