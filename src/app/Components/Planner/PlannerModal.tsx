@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { usePlannerStore } from '@/lib/planner-store';
 import { ChatContainer } from './chat/ChatContainer';
 import { supabase } from '@/utils/supabase/client';
@@ -18,6 +18,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
   const tasks = usePlannerStore((state) => state.tasks);
   const reset = usePlannerStore((state) => state.reset);
   const [isExpanded, setIsExpanded] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   // Reset when modal closes
   useEffect(() => {
@@ -79,10 +80,10 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
           {/* Backdrop - only show when expanded */}
           {isExpanded && (
             <motion.div
-              initial={{ opacity: 0 }}
+              initial={shouldReduceMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+              transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
               onClick={() => setIsExpanded(false)}
             />
@@ -90,7 +91,7 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
 
           {/* Chat widget */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95, y: 20 }}
             animate={{
               opacity: 1,
               scale: 1,
@@ -99,8 +100,13 @@ export function PlannerModal({ isOpen, onClose, onTasksAdded, userId }: PlannerM
               height: isExpanded ? '100%' : '600px',
               borderRadius: isExpanded ? '0px' : '16px',
             }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95, y: 20 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+              mass: 0.8
+            }}
             className={`fixed bg-white dark:bg-neutral-900 shadow-2xl overflow-hidden flex flex-col ${
               isExpanded
                 ? 'inset-0 z-[60] border-0'

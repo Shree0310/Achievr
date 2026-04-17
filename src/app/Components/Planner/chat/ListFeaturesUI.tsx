@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ListFeaturesBlock } from '@/lib/planner-store';
 import { IconSparkles } from '@tabler/icons-react';
 
@@ -9,6 +9,8 @@ interface ListFeaturesUIProps {
 }
 
 export function ListFeaturesUI({ block }: ListFeaturesUIProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <div className="max-w-[85%] bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 px-5 py-4 rounded-2xl rounded-bl-sm border border-indigo-200 dark:border-indigo-800">
       <div className="flex items-center gap-2 mb-3">
@@ -21,9 +23,13 @@ export function ListFeaturesUI({ block }: ListFeaturesUIProps) {
         {block.items.map((item, i) => (
           <motion.li
             key={i}
-            initial={{ opacity: 0, x: -10 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.08, duration: 0.2 }}
+            transition={{
+              delay: shouldReduceMotion ? 0 : i * 0.05,
+              duration: 0.2,
+              ease: [0.215, 0.61, 0.355, 1]
+            }}
             className="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300"
           >
             <span className="text-indigo-500 dark:text-indigo-400 font-bold mt-0.5 min-w-[20px]">

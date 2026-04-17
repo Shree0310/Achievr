@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { IconTrash, IconEdit, IconCheck, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 
@@ -33,6 +33,7 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task?.title || '');
   const [editPriority, setEditPriority] = useState<'high' | 'medium' | 'low'>(task?.priority || 'medium');
+  const shouldReduceMotion = useReducedMotion();
 
   const handleSave = () => {
     if (task && onUpdate) {
@@ -56,16 +57,20 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
       animate={{
         opacity: 1,
         y: 0,
-        transition: { delay: index * 0.1, duration: 0.3 }
+        transition: {
+          delay: shouldReduceMotion ? 0 : index * 0.05,
+          duration: 0.2,
+          ease: [0.215, 0.61, 0.355, 1]
+        }
       }}
       className={`
         relative
         rounded-lg border-l-4 p-4 border border-gray-200 dark:border-gray-700
-        transition-colors duration-500
+        transition-colors duration-300
         ${isLoading || !task
           ? 'border-l-gray-300 dark:border-l-gray-600 bg-gray-50 dark:bg-gray-800/50'
           : priorityStyles[isEditing ? editPriority : task.priority]
@@ -84,8 +89,9 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
       ) : isEditing ? (
         // Edit mode
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
+          transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
           className="space-y-3"
         >
           <input
@@ -117,15 +123,17 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
             <div className="flex gap-1">
               <button
                 onClick={handleSave}
-                className="p-1.5 rounded-full bg-green-100 dark:bg-green-900/30 
-                  text-green-600 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                className="p-1.5 rounded-full bg-green-100 dark:bg-green-900/30
+                  text-green-600 hover:bg-green-200 dark:hover:bg-green-900/50
+                  active:scale-[0.97] transition-all duration-150"
               >
                 <IconCheck size={16} />
               </button>
               <button
                 onClick={handleCancel}
-                className="p-1.5 rounded-full bg-gray-100 dark:bg-gray-800 
-                  text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="p-1.5 rounded-full bg-gray-100 dark:bg-gray-800
+                  text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700
+                  active:scale-[0.97] transition-all duration-150"
               >
                 <IconX size={16} />
               </button>
@@ -135,9 +143,9 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
       ) : (
         // View mode
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
+          transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
         >
           <div className="flex justify-between gap-4">
             <h3 className="font-medium text-gray-900 dark:text-gray-100 flex-1">
@@ -160,7 +168,8 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
                   className="p-1.5 rounded-full opacity-60 hover:opacity-100
                     hover:bg-blue-100 dark:hover:bg-blue-900/30
                     text-gray-400 hover:text-blue-500
-                    transition-all duration-200"
+                    active:scale-[0.97]
+                    transition-all duration-150"
                 >
                   <IconEdit size={16} />
                 </button>
@@ -173,7 +182,8 @@ export function MorphCard({ index, isLoading, task, onDelete, onUpdate }: MorphC
                   className="p-1.5 rounded-full opacity-60 hover:opacity-100
                     hover:bg-red-100 dark:hover:bg-red-900/30
                     text-gray-400 hover:text-red-500
-                    transition-all duration-200"
+                    active:scale-[0.97]
+                    transition-all duration-150"
                 >
                   <IconTrash size={16} />
                 </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { TaskCardsBlock, usePlannerStore } from '@/lib/planner-store';
 import { MorphCard } from '../MorphCard';
 
@@ -12,6 +12,7 @@ export function TaskCardsBlockUI({ block }: TaskCardsBlockUIProps) {
   const removeTask = usePlannerStore((state) => state.removeTask);
   const updateTask = usePlannerStore((state) => state.updateTask);
   const allTasks = usePlannerStore((state) => state.tasks);
+  const shouldReduceMotion = useReducedMotion();
 
   // Get the task IDs from the block to filter live tasks
   const blockTaskIds = new Set(block.tasks.map(t => t.id));
@@ -19,8 +20,9 @@ export function TaskCardsBlockUI({ block }: TaskCardsBlockUIProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
+      initial={shouldReduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
       className="space-y-2 max-w-[90%]"
     >
       {liveTasks.map((task, index) => (

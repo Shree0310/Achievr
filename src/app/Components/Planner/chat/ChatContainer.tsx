@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { usePlannerStore, ContentBlock } from '@/lib/planner-store';
 import { UserMessage } from './UserMessage';
 import { AssistantMessage } from './AssistantMessage';
@@ -17,6 +17,7 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   // Zustand store
   const messages = usePlannerStore((state) => state.messages);
@@ -195,8 +196,9 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
         {/* Welcome message if empty */}
         {messages.length === 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
             className="text-center py-12"
           >
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-4">
@@ -243,9 +245,10 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
       <AnimatePresence>
         {tasks.length > 0 && !showSuccess && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
             className="px-4 py-3 bg-green-50 dark:bg-green-950/30 border-t border-green-200 dark:border-green-800"
           >
             <div className="flex items-center justify-between">
@@ -273,9 +276,10 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
         {/* Success message */}
         {showSuccess && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
             className="px-4 py-3 bg-green-50 dark:bg-green-950/30 border-t border-green-200 dark:border-green-800"
           >
             <div className="flex items-center justify-center gap-2 text-green-700 dark:text-green-300">
@@ -305,17 +309,15 @@ export function ChatContainer({ onSaveToBoard }: ChatContainerProps) {
               placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 
               disabled:opacity-50"
           />
-          <motion.button
+          <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-3 rounded-xl bg-indigo-600 text-white 
-              disabled:opacity-50 disabled:cursor-not-allowed 
-              hover:bg-indigo-700 transition-colors"
+            className="p-3 rounded-xl bg-indigo-600 text-white
+              disabled:opacity-50 disabled:cursor-not-allowed
+              hover:bg-indigo-700 active:scale-[0.97] transition-all duration-150"
           >
             <IconSend className="w-5 h-5" />
-          </motion.button>
+          </button>
         </div>
       </form>
     </div>
