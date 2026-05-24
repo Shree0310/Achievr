@@ -176,7 +176,7 @@ export async function POST(req: Request) {
     }
 
     // DEMO MODE: Mock AI responses until Anthropic API key is properly configured
-    const USE_DEMO_MODE = false; // Set to false after waiting 5-10 min for Anthropic billing to activate
+    const USE_DEMO_MODE = true; // Set to false after waiting 5-10 min for Anthropic billing to activate
 
     if (USE_DEMO_MODE) {
       console.log('🎭 DEMO MODE: Using hardcoded responses (not Claude AI)');
