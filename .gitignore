@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Authentication tokens
 .npmrc
+
+# Test scripts with API keys
+test-anthropic*.js

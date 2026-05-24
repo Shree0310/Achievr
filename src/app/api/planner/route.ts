@@ -175,19 +175,251 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Message is required' }, { status: 400 });
     }
 
+    // DEMO MODE: Mock AI responses until Anthropic API key is properly configured
+    const USE_DEMO_MODE = false; // Set to false after waiting 5-10 min for Anthropic billing to activate
+
+    if (USE_DEMO_MODE) {
+      console.log('🎭 DEMO MODE: Using hardcoded responses (not Claude AI)');
+      console.log('💡 To use real Claude AI: Add billing to your Anthropic account, then set USE_DEMO_MODE = false');
+
+      // Wait a bit to simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const lowerMessage = message.toLowerCase();
+      let mockToolCalls: any[] = [];
+
+      // Pattern 1: Initial request - explain approach
+      if (conversationHistory.length === 0 || lowerMessage.includes('build') || lowerMessage.includes('create app')) {
+        mockToolCalls = [
+          {
+            tool: 'explain_approach',
+            args: {
+              context: "I'll help you plan this project step by step. Here's my approach:",
+              bullets: [
+                "Define the core features and MVP scope",
+                "Break down into manageable tasks with time estimates",
+                "Prioritize based on dependencies and value",
+                "Create a realistic timeline"
+              ]
+            }
+          },
+          {
+            tool: 'suggest_actions',
+            args: {
+              prompt: "What would you like to do next?",
+              actions: [
+                { id: 'features', label: 'Define MVP features' },
+                { id: 'tasks', label: 'Create project tasks' },
+                { id: 'questions', label: 'Ask clarifying questions' }
+              ]
+            }
+          }
+        ];
+      }
+      // Pattern 2: User asks for features
+      else if (lowerMessage.includes('feature') || lowerMessage.includes('mvp') || lowerMessage.includes('define')) {
+        const projectType = lowerMessage.includes('fitness') ? 'Fitness App' :
+                          lowerMessage.includes('ecommerce') ? 'E-commerce Platform' :
+                          lowerMessage.includes('social') ? 'Social Network' : 'Your Project';
+
+        mockToolCalls = [
+          {
+            tool: 'list_features',
+            args: {
+              heading: `MVP Features for ${projectType}`,
+              items: [
+                "User authentication and profile management",
+                "Dashboard with key metrics and overview",
+                "Core functionality (main feature set)",
+                "Data storage and management",
+                "Responsive design for mobile and desktop",
+                "Search and filtering capabilities",
+                "User settings and preferences",
+                "Notifications system"
+              ]
+            }
+          },
+          {
+            tool: 'suggest_actions',
+            args: {
+              prompt: "Ready to move forward?",
+              actions: [
+                { id: 'create_tasks', label: 'Turn these into tasks' },
+                { id: 'add_features', label: 'Add more features' },
+                { id: 'refine', label: 'Refine features' }
+              ]
+            }
+          }
+        ];
+      }
+      // Pattern 3: User asks to create tasks
+      else if (lowerMessage.includes('task') || lowerMessage.includes('turn these')) {
+        mockToolCalls = [
+          {
+            tool: 'create_task_card',
+            args: {
+              title: "Set up project structure and authentication",
+              duration: "3 days",
+              priority: "high",
+              description: "Initialize project, set up auth system"
+            }
+          },
+          {
+            tool: 'create_task_card',
+            args: {
+              title: "Build main dashboard UI",
+              duration: "5 days",
+              priority: "high",
+              description: "Create responsive dashboard layout"
+            }
+          },
+          {
+            tool: 'create_task_card',
+            args: {
+              title: "Implement core functionality",
+              duration: "1 week",
+              priority: "high",
+              description: "Develop main feature set"
+            }
+          },
+          {
+            tool: 'create_task_card',
+            args: {
+              title: "Set up database and data models",
+              duration: "2 days",
+              priority: "high",
+              description: "Design and implement data schema"
+            }
+          },
+          {
+            tool: 'create_task_card',
+            args: {
+              title: "Add search and filtering",
+              duration: "4 days",
+              priority: "medium",
+              description: "Implement search functionality"
+            }
+          },
+          {
+            tool: 'create_task_card',
+            args: {
+              title: "Build notifications system",
+              duration: "3 days",
+              priority: "medium",
+              description: "Create notification infrastructure"
+            }
+          },
+          {
+            tool: 'create_task_card',
+            args: {
+              title: "Testing and bug fixes",
+              duration: "5 days",
+              priority: "low",
+              description: "Comprehensive testing and fixes"
+            }
+          },
+          {
+            tool: 'suggest_actions',
+            args: {
+              prompt: "Tasks created! What's next?",
+              actions: [
+                { id: 'add_board', label: 'Add to board' },
+                { id: 'refine', label: 'Refine tasks' },
+                { id: 'start_over', label: 'Start new plan' }
+              ]
+            }
+          }
+        ];
+      }
+      // Default response
+      else {
+        mockToolCalls = [
+          {
+            tool: 'send_text',
+            args: {
+              content: "I can help you plan your project! Try asking me to 'Define MVP features' or 'Create project tasks'."
+            }
+          },
+          {
+            tool: 'suggest_actions',
+            args: {
+              prompt: "How can I help?",
+              actions: [
+                { id: 'features', label: 'Define features' },
+                { id: 'tasks', label: 'Create tasks' },
+                { id: 'plan', label: 'Full project plan' }
+              ]
+            }
+          }
+        ];
+      }
+
+      // Build mock conversation history
+      const newHistory: Anthropic.Messages.MessageParam[] = [
+        ...conversationHistory,
+        { role: 'user', content: message },
+        { role: 'assistant', content: [{ type: 'text', text: 'Demo response' }] }
+      ];
+
+      return Response.json({
+        toolCalls: mockToolCalls,
+        text: '',
+        conversationHistory: newHistory,
+        // Add metadata to indicate demo mode
+        _meta: { mode: 'demo', source: 'hardcoded' }
+      });
+    }
+
+    // ========================================
+    // REAL CLAUDE AI MODE
+    // ========================================
+    // This section uses the actual Claude API (requires working Anthropic API key with billing)
     // Build messages array for Anthropic
     const messages: Anthropic.Messages.MessageParam[] = [
       ...conversationHistory,
       { role: 'user', content: message },
     ];
 
-    const response = await anthropic.messages.create({
-      model: 'claude-3-haiku-20240307',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages,
-      tools,
-    });
+    console.log('🤖 REAL MODE: Using Claude AI');
+
+    // Try multiple models in order of preference
+    const modelsToTry = [
+      'claude-3-5-sonnet-20241022',
+      'claude-3-5-sonnet-20240620',
+      'claude-3-opus-20240229',
+      'claude-3-sonnet-20240229',
+      'claude-3-haiku-20240307'
+    ];
+
+    let response;
+    let lastError;
+
+    for (const model of modelsToTry) {
+      try {
+        console.log(`Trying model: ${model}`);
+        response = await anthropic.messages.create({
+          model,
+          max_tokens: 4096,
+          system: SYSTEM_PROMPT,
+          messages,
+          tools,
+        });
+        console.log(`✅ Success with model: ${model}`);
+        break;
+      } catch (error: any) {
+        console.log(`❌ Failed with ${model}: ${error.message}`);
+        lastError = error;
+        if (!error.message?.includes('not_found_error')) {
+          // If it's not a model not found error, throw immediately
+          throw error;
+        }
+        continue;
+      }
+    }
+
+    if (!response) {
+      throw new Error(`No available Claude models. Last error: ${lastError?.message}. Please ensure billing is set up at https://console.anthropic.com/settings/billing`);
+    }
 
     // Collect all tool calls from the response
     const toolCalls: any[] = [];
@@ -394,12 +626,23 @@ export async function POST(req: Request) {
       toolCalls,
       text: textContent,
       conversationHistory: newHistory,
+      // Add metadata to indicate real AI mode
+      _meta: { mode: 'real', source: 'claude-ai' }
     });
 
   } catch (error: any) {
     console.error('Planner API error:', error);
+
+    // Provide helpful error messages
+    let userMessage = error.message;
+    if (error.message?.includes('not_found_error') || error.message?.includes('No available Claude models')) {
+      userMessage = '⚠️ Your Anthropic API key needs billing activated. Please:\n1. Go to https://console.anthropic.com/settings/billing\n2. Add a payment method\n3. Wait 5-10 minutes for activation\n4. Refresh this page';
+    } else if (error.message?.includes('authentication')) {
+      userMessage = '⚠️ Invalid API key. Please check your ANTHROPIC_API_KEY in .env.local';
+    }
+
     return Response.json(
-      { error: 'Failed to process request', message: error.message },
+      { error: 'Failed to process request', message: userMessage },
       { status: 500 }
     );
   }
