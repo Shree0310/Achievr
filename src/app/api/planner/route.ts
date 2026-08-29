@@ -156,11 +156,14 @@ YOU MUST USE:
 2. suggest_actions (buttons like "Turn these into tasks", "Add technical architecture", "Refine features")
 
 ### Pattern 3: User asks to CREATE TASKS
-User says: "Create tasks", "Turn these into tasks", "Create project plan"
+User says ANY variation of: "Create tasks", "Turn these into tasks", "Create project plan", "create basic level one tasks", "make tasks", "generate tasks"
 
-CRITICAL INSTRUCTION - YOU MUST CALL create_task_card MULTIPLE TIMES:
+YOU MUST IMMEDIATELY call create_task_card with a real task.
 
-If you just showed 7 features, you must create 7 tasks by calling create_task_card 7 separate times.
+Example: User says "create basic level one tasks for this"
+YOU MUST CALL: create_task_card(title: "Set up project structure and dependencies", duration: "2 days", priority: "high")
+
+DO NOT just explain - CREATE THE TASK IMMEDIATELY.
 
 Example: If features were [Login, Dashboard, API, Database, Testing, Deployment, Monitoring]
 You MUST make these tool calls:
@@ -193,7 +196,7 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    console.log('🤖 Using OpenAI GPT-4');
+    console.log('🤖 Using OpenAI GPT-4o-mini');
 
     // Build messages array for OpenAI
     const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
@@ -223,15 +226,33 @@ export async function POST(req: Request) {
     // Add current user message
     messages.push({ role: 'user', content: message });
 
-    // Call OpenAI
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Fast and cheap model with tool calling
-      messages,
-      tools,
-      temperature: 0.7,
-    });
+    // Call OpenAI with retry logic for rate limits
+    let completion;
+    let retries = 3;
 
-    const response = completion.choices[0].message;
+    while (retries > 0) {
+      try {
+        completion = await openai.chat.completions.create({
+          model: 'gpt-4o-mini', // Better tool calling than gpt-3.5-turbo
+          messages,
+          tools,
+          tool_choice: 'auto', // Force tool usage when appropriate
+          temperature: 0.7,
+        });
+        break; // Success, exit retry loop
+      } catch (error: any) {
+        if (error.status === 429 && retries > 1) {
+          // Rate limit - wait and retry
+          console.log(`Rate limit hit, waiting 3s before retry... (${retries - 1} retries left)`);
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          retries--;
+        } else {
+          throw error; // Not a rate limit or out of retries
+        }
+      }
+    }
+
+    const response = completion!.choices[0].message;
 
     // Extract tool calls and text
     const toolCalls: any[] = [];
@@ -247,6 +268,75 @@ export async function POST(req: Request) {
     }
 
     console.log('Tool calls:', toolCalls.map(tc => tc.tool).join(', '));
+
+    // Auto-generate remaining tasks if user asked to create tasks
+    const userAskedForTasks = message.toLowerCase().includes('turn') ||
+                               message.toLowerCase().includes('create task') ||
+                               message.toLowerCase().includes('into task');
+
+    if (userAskedForTasks && toolCalls.some(tc => tc.tool === 'create_task_card')) {
+      // Look for list_features in recent conversation
+      let featureList: string[] = [];
+      for (const msg of conversationHistory.slice(-4)) {
+        if (msg.role === 'assistant' && typeof msg.content !== 'string') {
+          // This might contain tool results from a previous list_features call
+          // We'll extract from message text for now (OpenAI limitation)
+        }
+      }
+
+      // If we found features and only created 1 task, create the rest
+      // For now, create 5-7 common tasks for any app
+      const taskCardCalls = toolCalls.filter(tc => tc.tool === 'create_task_card');
+      if (taskCardCalls.length === 1) {
+        console.log('⚠️ Only 1 task created, auto-generating more tasks');
+
+        const additionalTasks = [
+          { title: 'Design user interface and experience', duration: '1 week', priority: 'high' },
+          { title: 'Set up backend infrastructure', duration: '3 days', priority: 'high' },
+          { title: 'Implement core features', duration: '2 weeks', priority: 'high' },
+          { title: 'Create database schema', duration: '2 days', priority: 'high' },
+          { title: 'Build authentication system', duration: '4 days', priority: 'medium' },
+          { title: 'Add testing and QA', duration: '1 week', priority: 'medium' },
+        ];
+
+        for (const task of additionalTasks) {
+          toolCalls.push({
+            tool: 'create_task_card',
+            args: task,
+          });
+        }
+      }
+    }
+
+    // OpenAI doesn't call multiple tools in parallel like Claude
+    // If we got list_features or explain_approach but no suggest_actions, add it manually
+    const hasExplainApproach = toolCalls.some(tc => tc.tool === 'explain_approach');
+    const hasListFeatures = toolCalls.some(tc => tc.tool === 'list_features');
+    const hasSuggestActions = toolCalls.some(tc => tc.tool === 'suggest_actions');
+
+    if ((hasExplainApproach || hasListFeatures) && !hasSuggestActions) {
+      console.log('⚠️ Adding fallback suggest_actions');
+
+      const defaultActions = hasListFeatures
+        ? [
+            { id: 'create_tasks', label: 'Turn these into tasks' },
+            { id: 'add_more', label: 'Add more features' },
+            { id: 'refine', label: 'Refine these features' },
+          ]
+        : [
+            { id: 'create_tasks', label: 'Create project tasks now' },
+            { id: 'ask_questions', label: 'Ask clarifying questions' },
+            { id: 'define_mvp', label: 'Define MVP features' },
+          ];
+
+      toolCalls.push({
+        tool: 'suggest_actions',
+        args: {
+          prompt: 'What would you like to do next?',
+          actions: defaultActions,
+        },
+      });
+    }
 
     // Build new conversation history
     const newHistory = [
