@@ -2,12 +2,15 @@ import OpenAI from 'openai';
 
 export const maxDuration = 60;
 
-// Debug logging
-console.log('🔑 OPENAI_API_KEY loaded:', process.env.OPENAI_API_KEY?.substring(0, 20) + '...');
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAIClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set');
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 // Tool schemas for OpenAI
 const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
@@ -225,6 +228,9 @@ export async function POST(req: Request) {
 
     // Add current user message
     messages.push({ role: 'user', content: message });
+
+    // Get OpenAI client (lazy-loaded to avoid build-time errors)
+    const openai = getOpenAIClient();
 
     // Call OpenAI with retry logic for rate limits
     let completion;
