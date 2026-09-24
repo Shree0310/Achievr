@@ -111,6 +111,26 @@ https://api.openai.com
 
 ## Other Security Headers
 
+### Strict-Transport-Security (HSTS)
+**Value:** `max-age=31536000; includeSubDomains; preload`
+
+**Purpose:** Force browsers to always use HTTPS, preventing SSL-stripping attacks.
+
+**What it does:**
+- `max-age=31536000` - Browser remembers to use HTTPS for 1 year (31,536,000 seconds)
+- `includeSubDomains` - Applies to all subdomains
+- `preload` - Eligible for Chrome's HSTS preload list
+
+**Example attack prevented:**
+- Attacker performs man-in-the-middle attack on public WiFi
+- Tries to downgrade user's connection from HTTPS to HTTP
+- With HSTS: Browser refuses, shows error instead
+- Without HSTS: Connection downgraded, attacker can intercept traffic
+
+**Why Achievr needs this:** Protects users on insecure networks (coffee shops, airports) from having their session tokens stolen.
+
+**Note:** Only works in production (HTTPS). Localhost (HTTP) ignores this header.
+
 ### X-Content-Type-Options: nosniff
 **Purpose:** Prevent MIME-sniffing attacks.
 **What it does:** Forces browsers to respect the `Content-Type` header instead of guessing the file type.
@@ -189,12 +209,32 @@ curl -I https://achievr.sourashreeart.com
 
 Expected output should include:
 ```
+strict-transport-security: max-age=31536000; includeSubDomains; preload
 content-security-policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; ...
 x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
 x-frame-options: DENY
 permissions-policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
 ```
+
+### Testing with Online Tools
+
+After deployment, validate your security headers:
+
+1. **SecurityHeaders.com**
+   - Visit: https://securityheaders.com
+   - Enter: `https://achievr.sourashreeart.com`
+   - Target grade: **A or A+**
+
+2. **CSP Evaluator (Google)**
+   - Visit: https://csp-evaluator.withgoogle.com/
+   - Paste your CSP string from the curl output
+   - Expected warnings: `'unsafe-inline'` and `'unsafe-eval'` (acceptable for Next.js)
+
+3. **Mozilla Observatory**
+   - Visit: https://observatory.mozilla.org/
+   - Scan: `achievr.sourashreeart.com`
+   - Target score: **A or A+**
 
 ### Known Limitations
 
