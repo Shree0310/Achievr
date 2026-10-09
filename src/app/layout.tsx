@@ -7,6 +7,7 @@ import { ThemeProvider } from "../app/contexts/ThemeContext";
 import { SessionProviderWrapper } from "@/app/providers/SessionProvider";
 import NotificationSubscription from "../app/Components/Notifications/NotificationSubscription";
 import PushNotificationManager from "../app/Components/Notifications/PushNotificationManager";
+import QueryProvider from "@/components/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,13 +48,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-50 dark:bg-neutral-900 text-gray-900 dark:text-white transition-colors duration-300`}>
         <SessionProviderWrapper>
-          <ThemeProvider>
-            <NotificationProvider>
-              <NotificationSubscription />
-              <PushNotificationManager />
-              {children}
-            </NotificationProvider>
-          </ThemeProvider>
+          <QueryProvider>
+            <ThemeProvider>
+              <NotificationProvider>
+                <NotificationSubscription />
+                <PushNotificationManager />
+                {children}
+              </NotificationProvider>
+            </ThemeProvider>
+          </QueryProvider>
         </SessionProviderWrapper>
       </body>
     </html>
