@@ -13,6 +13,7 @@ import EditTask from "../EditTask/EditTask";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
+import { useDeleteTask } from "@/hooks/useDeleteTask";
 
 
 const { useDraggable } = require("@dnd-kit/core");
@@ -23,7 +24,10 @@ const { transform } = require("typescript");
 const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, showSubtasks, subTasksCount,subTasks  }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-        
+
+    // 🎯 React Query mutation hook for deleting
+    const deleteTaskMutation = useDeleteTask();
+
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: id,
         data: {
@@ -63,35 +67,25 @@ const Task = ({ task, id, onTaskUpdate, commentCount = 0, onToggleSubtasks, show
         setShowDeleteConfirm(true);
     };
 
-    const handleConfirmDelete = async () => {
-        try {
-            // First, delete all related comments
-            const { error: commentsError } = await supabase
-                .from('comments')
-                .delete()
-                .eq('task_id', task.id);
+    const handleConfirmDelete = () => {
+        // 🚀 USE REACT QUERY MUTATION for delete!
+        deleteTaskMutation.mutate(task.id, {
+            onSuccess: () => {
+                console.log("✅ Task deleted successfully");
 
-            if (commentsError) throw commentsError;
+                // Notify parent component to update the UI
+                if (onTaskUpdate) {
+                    onTaskUpdate('delete', task.id);
+                }
 
-            // Then delete the task
-            const { error: taskError } = await supabase
-                .from('tasks')
-                .delete()
-                .eq('id', task.id);
-
-            if (taskError) throw taskError;
-
-            // Notify parent component to update the UI
-            if (onTaskUpdate) {
-                onTaskUpdate('delete', task.id);
+                setShowDeleteConfirm(false);
+            },
+            onError: (error) => {
+                console.error('❌ Error deleting task:', error);
+                alert('Failed to delete task. Please try again.');
+                setShowDeleteConfirm(false);
             }
-
-            setShowDeleteConfirm(false);
-        } catch (error) {
-            console.error('Error deleting task:', error);
-            alert('Failed to delete task. Please try again.');
-            setShowDeleteConfirm(false);
-        }
+        });
     };
 
     const handleCancelDelete = (e) => {

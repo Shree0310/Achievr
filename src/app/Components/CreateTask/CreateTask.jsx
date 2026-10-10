@@ -11,6 +11,7 @@ import SubtasksTab from "@/app/Components/Subtasks/SubtasksTab";
 import GithubTab from "@/app/Components/GithubUI/GithubTab";
 import BeautifyButton from "@/app/Components/AI/BeautifyButton";
 import { useCreateTask } from "@/hooks/useCreateTask";
+import { useUpdateTask } from "@/hooks/useUpdateTask";
 
 const CreateTask = ({
   onClose,
@@ -30,7 +31,6 @@ const CreateTask = ({
     taskToEdit?.priority?.toString() || ""
   );
   const [efforts, setEfforts] = useState(taskToEdit?.efforts?.toString() || "");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [cycles, setCycles] = useState([]);
   const [selectedCycle, setSelectedCycle] = useState("");
@@ -42,8 +42,9 @@ const CreateTask = ({
   const [createSubtaskMode,setCreateSubtaskMode] = useState(false);
   const [isGithubMode, setIsGithubMode] = useState(false);
 
-  // 🎯 React Query mutation hook for creating tasks
+  // 🎯 React Query mutation hooks
   const createTaskMutation = useCreateTask();
+  const updateTaskMutation = useUpdateTask();
 
   useEffect(() => {
     if (isEditMode && taskToEdit) {
@@ -116,40 +117,47 @@ const CreateTask = ({
 
     setError(null);
 
-    try {
-      if (!userId) {
-        console.log("user id is missing");
-      }
-      if (!selectedCycle) {
-        console.log("cycle id of selected cycle is missing");
-      }
+    if (!userId) {
+      console.log("user id is missing");
+    }
+    if (!selectedCycle) {
+      console.log("cycle id of selected cycle is missing");
+    }
 
-      if (isEditMode && taskToEdit) {
-        // Edit mode still uses manual loading state
-        setIsLoading(true);
-        //update a task in supabase
-        const { data, error } = await supabase
-          .from("tasks")
-          .update([
-            {
-              title: title,
-              description: description,
-              status: status === null ? "" : status,
-              priority: priority === null ? "" : priority,
-              efforts: efforts === null ? "" : efforts,
-              cycle_id: selectedCycle,
-              user_id: userId,
+    if (isEditMode && taskToEdit) {
+        // 🚀 USE REACT QUERY MUTATION for updates!
+        updateTaskMutation.mutate(
+          {
+            id: taskToEdit.id,
+            title,
+            description,
+            status: status === null ? "" : status,
+            priority: priority === null ? "" : priority,
+            efforts: efforts === null ? "" : efforts,
+            cycle_id: selectedCycle,
+          },
+          {
+            onSuccess: (data) => {
+              console.log("✅ Task updated successfully:", data);
+
+              // Call the callback to update parent state
+              if (onTaskUpdate) {
+                onTaskUpdate("update", data);
+              }
+
+              // Reset form and close modal
+              resetForm();
+              if (onClose) onClose();
             },
-          ])
-          .eq("id", taskToEdit.id)
-          .select();
-        if (error) throw error;
-        console.log("Task updated successfully:", data);
+            onError: (error) => {
+              console.error("❌ Error updating task:", error);
+              setError(error.message);
+            },
+          }
+        );
 
-        // Call the callback to update parent state
-        if (onTaskUpdate && data && data.length > 0) {
-          onTaskUpdate("update", data[0]);
-        }
+        // Return early - mutation handles the rest
+        return;
       } else {
         // 🚀 USE REACT QUERY MUTATION - This replaces the manual Supabase call!
         createTaskMutation.mutate(
@@ -207,16 +215,6 @@ const CreateTask = ({
         // Return early - mutation handles the rest asynchronously
         return;
       }
-
-      // For edit mode: Reset form and close modal
-      resetForm();
-      if (onClose) onClose();
-    } catch (error) {
-      console.error("Error creating/updating task:", error);
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const resetForm = () => {
@@ -498,9 +496,9 @@ const CreateTask = ({
               {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode && !isGithubMode &&
                 <button
                   onClick={handleCreateTask}
-                  disabled={isEditMode ? isLoading : createTaskMutation.isPending}
+                  disabled={isEditMode ? updateTaskMutation.isPending : createTaskMutation.isPending}
                   className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                  {(isEditMode ? isLoading : createTaskMutation.isPending)
+                  {(isEditMode ? updateTaskMutation.isPending : createTaskMutation.isPending)
                     ? "Processing..."
                     : !isEditMode && isCreateMode
                     ? "Create Task"
