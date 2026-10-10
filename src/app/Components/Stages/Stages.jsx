@@ -7,17 +7,21 @@ import Task from '../Task/Task';
 import DroppableColumn from '../DroppableColumn/DroppableColumn';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Subtasks from "@/app/Components/Subtasks/Subtasks";
+import { useTasks } from "@/hooks/useTasks";
 
 const Stages = ({ className = "", onTaskUpdate, userId }) => {
-    const [tasks, setTasks] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    // 🚀 React Query hook - replaces manual state + fetch!
+    const { data: tasks, isLoading: loading, error: queryError, refetch } = useTasks(userId);
+
     const [activeId, setActiveId] = useState(null);
     const [activeDragData, setActiveDragData] = useState(null);
     const [commentCounts, setCommentCounts] = useState({});
     const [subTasks, setSubTasks] = useState(null);
     const [subTaskId, setSubTaskId] = useState(null);
     const [subTasksCount, setSubTaskCount] = useState({});
+
+    // Convert query error to string for compatibility
+    const error = queryError?.message || '';
 
     // ✅ IMPORTANT: Always define sensors in the same way - don't change order or structure
     const sensors = useSensors(
@@ -29,37 +33,14 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
         })
     );
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     // Fetch comment counts and subtask counts for all tasks
+    // React Query automatically fetches tasks, so we just need to fetch counts when tasks change
     useEffect(() => {
         if (tasks && tasks.length > 0) {
             fetchCommentCounts();
             fetchSubtasks();
         }
     }, [tasks]);
-
-    async function fetchData() {
-        try {
-            setLoading(true);
-            const { data, error } = await supabase
-                .from('tasks')
-                .select('*')
-                .eq('user_id', userId)
-
-            if (error) {
-                throw error;
-            }
-
-            setTasks(data || []);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    }
 
     const fetchSubtasks = async () => {
         try{
@@ -108,32 +89,23 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
         }
     };
 
-    // Handle new task created
-    const handleTaskCreated = (newTask) => {
-        setTasks(prevTasks => [newTask, ...(prevTasks || [])]);
-    };
-
     // Handle task updates, deletions, and creations
     const handleTaskUpdates = (action, data) => {
+        // 🎯 With React Query, we just refetch from server instead of manual state updates
+        // This ensures we always have the latest data from the database
         switch (action) {
             case "create":
-                setTasks(prevTasks => [data, ...(prevTasks || [])]);
-                break;
             case "update":
-                setTasks(prevTasks => prevTasks.map(task => task.id === data.id ? data : task));
-                break;
             case "delete":
-                setTasks(prevTasks => prevTasks.filter(task => task.id !== data));
-                break;
             case "refresh":
-                // Refresh all data from the database
-                fetchData();
+                // React Query refetch - gets fresh data from server
+                refetch();
                 break;
             default:
                 break;
         }
 
-        // Refresh comment counts and subtask counts after any task update (except refresh which already fetches everything)
+        // Refresh comment counts and subtask counts after any task update
         if (action !== "refresh") {
             setTimeout(() => {
                 if (tasks && tasks.length > 0) {
@@ -323,7 +295,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="notStarted"
                         title="Not Started"
-                        onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
                             <p className="text-center text-neutral-500 p-4">loading..</p>
@@ -360,7 +331,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="inProgress"
                         title="In Progress"
-                        onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
                             <p className="text-center text-neutral-500 p-4">loading..</p>
@@ -394,7 +364,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="underReview"
                         title="Under Review"
-                        onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
                             <p className="text-center text-neutral-500 p-4">loading..</p>
@@ -428,7 +397,6 @@ const Stages = ({ className = "", onTaskUpdate, userId }) => {
                     <DroppableColumn
                         id="completed"
                         title="Completed"
-                        onTaskCreated={handleTaskCreated}
                     >
                         {loading ? (
                             <p className="text-center text-neutral-500 p-4">loading..</p>

@@ -24,3 +24,14 @@ export interface CreateTaskData {
   user_id: string;
   cycle_id?: string;
 }
+
+// Data needed to UPDATE a task
+export interface UpdateTaskData {
+  id: string;
+  title?: string;
+  description?: string;
+  status?: string;
+  priority?: string;
+  efforts?: string;
+  cycle_id?: string;
+}

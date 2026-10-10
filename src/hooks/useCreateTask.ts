@@ -40,8 +40,8 @@ export function useCreateTask() {
 
     // What to do when the mutation succeeds
     onSuccess: (data) => {
-      // Invalidate the tasks query so it refetches
-      // This automatically updates the task list UI
+      // Invalidate ALL tasks queries (for all users)
+      // This automatically refetches any active useTasks() hooks
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
 
       console.log("✅ Task created successfully:", data);
