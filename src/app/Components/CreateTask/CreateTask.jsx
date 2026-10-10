@@ -10,6 +10,7 @@ import { useNotifications } from "@/app/contexts/NotificationContext";
 import SubtasksTab from "@/app/Components/Subtasks/SubtasksTab";
 import GithubTab from "@/app/Components/GithubUI/GithubTab";
 import BeautifyButton from "@/app/Components/AI/BeautifyButton";
+import { useCreateTask } from "@/hooks/useCreateTask";
 
 const CreateTask = ({
   onClose,
@@ -40,6 +41,9 @@ const CreateTask = ({
   const [isSubtasksMode, setIsSubtasksMode] = useState(false);
   const [createSubtaskMode,setCreateSubtaskMode] = useState(false);
   const [isGithubMode, setIsGithubMode] = useState(false);
+
+  // 🎯 React Query mutation hook for creating tasks
+  const createTaskMutation = useCreateTask();
 
   useEffect(() => {
     if (isEditMode && taskToEdit) {
@@ -110,7 +114,6 @@ const CreateTask = ({
       return;
     }
 
-    setIsLoading(true);
     setError(null);
 
     try {
@@ -122,6 +125,8 @@ const CreateTask = ({
       }
 
       if (isEditMode && taskToEdit) {
+        // Edit mode still uses manual loading state
+        setIsLoading(true);
         //update a task in supabase
         const { data, error } = await supabase
           .from("tasks")
@@ -146,56 +151,68 @@ const CreateTask = ({
           onTaskUpdate("update", data[0]);
         }
       } else {
-        // Insert task into Supabase
-        const { data, error } = await supabase
-          .from("tasks")
-          .insert([
-            {
-              title,
-              description,
-              priority: priority || null,
-              efforts: efforts || null,
-              status: "not started", // Default status
-              user_id: userId,
-              cycle_id: selectedCycle,
-            },
-          ])
-          .select();
-          setTasks(data)
-        if (error) throw error;
-        console.log("Task created successfully:", data);
-        
-        if (data && data.length > 0) {
-          // Add notification
-          const { data: notificationData, error: notificationError } = await supabase
-            .from("notifications")
-            .insert({
-              event_type: "task added",
-              user_id: userId,
-              event_time: new Date(),
-              title: "New task Added",
-              description: "",
-            })
-            .select();
-            
-          addNotification({
-            type: "info",
-            title: "New Task Added",
-            message: `A new task was created "${title}"`,
-          });
+        // 🚀 USE REACT QUERY MUTATION - This replaces the manual Supabase call!
+        createTaskMutation.mutate(
+          {
+            title,
+            description,
+            priority: priority || null,
+            efforts: efforts || null,
+            status: "not started",
+            user_id: userId,
+            cycle_id: selectedCycle,
+          },
+          {
+            // Success callback for this specific mutation
+            onSuccess: async (data) => {
+              console.log("✅ Task created successfully:", data);
+              setTasks([data]); // Update local tasks state
 
-          // Call the callback to update parent state
-          if (onTaskUpdate) {
-            onTaskUpdate("create", data[0]);
+              // Add notification to Supabase
+              const { data: notificationData, error: notificationError } = await supabase
+                .from("notifications")
+                .insert({
+                  event_type: "task added",
+                  user_id: userId,
+                  event_time: new Date(),
+                  title: "New task Added",
+                  description: "",
+                })
+                .select();
+
+              // Show notification in UI
+              addNotification({
+                type: "info",
+                title: "New Task Added",
+                message: `A new task was created "${title}"`,
+              });
+
+              // Call the callback to update parent state
+              if (onTaskUpdate) {
+                onTaskUpdate("create", data);
+              }
+
+              // Reset form and close modal
+              resetForm();
+              if (onClose) onClose();
+            },
+            // Error callback for this specific mutation
+            onError: (error) => {
+              console.error("❌ Error creating task:", error);
+              setError(error.message);
+            },
           }
-        }
+        );
+
+        // Return early - mutation handles the rest asynchronously
+        return;
       }
 
-      // Reset form and close modal
+      // For edit mode: Reset form and close modal
       resetForm();
       if (onClose) onClose();
     } catch (error) {
-      console.error("Error creating task:", error);
+      console.error("Error creating/updating task:", error);
       setError(error.message);
     } finally {
       setIsLoading(false);
@@ -481,9 +498,9 @@ const CreateTask = ({
               {(isCreateMode || isEditMode) && !isAddCommentsMode && !isSubtasksMode && !isGithubMode &&
                 <button
                   onClick={handleCreateTask}
-                  disabled={isLoading}
+                  disabled={isEditMode ? isLoading : createTaskMutation.isPending}
                   className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                  {isLoading
+                  {(isEditMode ? isLoading : createTaskMutation.isPending)
                     ? "Processing..."
                     : !isEditMode && isCreateMode
                     ? "Create Task"
