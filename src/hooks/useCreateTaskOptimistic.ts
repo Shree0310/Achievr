@@ -6,6 +6,13 @@ import type { CreateTaskData, Task } from "@/types/task";
 
 // API function (same as before)
 async function createTask(taskData: CreateTaskData): Promise<Task> {
+  // 🐌 DEMO: Add artificial delay to see optimistic update in action
+  // Remove this in production!
+  await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+
+  // 💥 DEMO: Uncomment to test rollback on error
+  // throw new Error("Simulated network error!");
+
   const { data, error } = await supabase
     .from("tasks")
     .insert([

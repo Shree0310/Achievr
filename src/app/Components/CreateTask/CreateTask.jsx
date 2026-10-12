@@ -10,7 +10,7 @@ import { useNotifications } from "@/app/contexts/NotificationContext";
 import SubtasksTab from "@/app/Components/Subtasks/SubtasksTab";
 import GithubTab from "@/app/Components/GithubUI/GithubTab";
 import BeautifyButton from "@/app/Components/AI/BeautifyButton";
-import { useCreateTask } from "@/hooks/useCreateTask";
+import { useCreateTaskOptimistic as useCreateTask } from "@/hooks/useCreateTaskOptimistic";
 import { useUpdateTask } from "@/hooks/useUpdateTask";
 
 const CreateTask = ({
